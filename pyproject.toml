@@ -10,6 +10,11 @@ python = "^3.11"
 pandas = "^2.2.3"
 
 
+[tool.poetry.group.dev.dependencies]
+faker = "^37.0.0"
+ipython = "^9.0.2"
+ipykernel = "^6.29.5"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
