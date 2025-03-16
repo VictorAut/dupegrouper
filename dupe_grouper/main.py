@@ -1,5 +1,6 @@
 import typing
 import functools
+import itertools
 from fuzzywuzzy import fuzz
 import numpy as np
 import pandas as pd
@@ -35,19 +36,53 @@ def assign_group_id(df: pd.DataFrame, attribute: str):
 
 df = pd.DataFrame(
     {
-        "id": {44: 1, 55: 2, 31: 3, 9: 4, 6: 5, 89: 6, 19: 7, 76: 8, 7: 9},
-        "group_id": {44: 1, 55: 2, 31: 3, 9: 4, 6: 5, 89: 6, 19: 7, 76: 8, 7: 9},
+        "id": {44: 1, 55: 2, 31: 3, 9: 4, 6: 5, 12: 6, 89: 7, 19: 8, 76: 9, 7: 10},
+        "group_id": {
+            44: 1,
+            55: 2,
+            31: 3,
+            9: 4,
+            6: 5,
+            12: 6,
+            89: 7,
+            19: 8,
+            76: 9,
+            7: 10,
+        },
         "email": {
-            44: "a@example.com",
-            55: "b@example.com",
+            44: "bbab@example.com",
+            55: "bb@example.com",
             31: "a@example.com",
             9: "hellothere@example.com",
-            6: "bb@example.com",
-            89: "bb@example.com",
+            6: "b@example.com",
+            12: "bab@example.com",
+            89: "b@example.com",
             19: "hellthere@example.com",
-            76: "heythere@example.com",
+            76: "hellathere@example.com",
             7: "irrelevant@hotmail.com",
         },
+    }
+)
+
+df = pd.DataFrame(
+    {
+        "id": range(1, 1001),
+        "group_id": range(1, 1001),
+        "email": np.random.choice(
+            [
+                "bbab@example.com",
+                "b@example.com",
+                "a@example.com",
+                "hellothere@example.com",
+                "bb@example.com",
+                "bab@example.com",
+                "bb@example.com",
+                "hellthere@example.com",
+                "heythere@example.com",
+                "irrelevant@hotmail.com",
+            ],
+            1000,
+        ),
     }
 )
 
@@ -55,36 +90,93 @@ df = df.reset_index(drop=True)
 
 df = assign_group_id(df, "email")
 
+from functools import wraps
+from time import time
 
-for i in range(0, len(df)):
-    df["_attr"] = df["email"].at[i]
-    df["score"] = df.apply(
-        lambda row: fuzz.ratio(row["email"], row["_attr"]), axis=1
-    )
-    df["_attr"] = df.apply(
-        lambda row: row["_attr"] if row["score"] > 95 else None, axis=1
-    )
-    print(df)
-    print('------------------------------')
-    df = assign_group_id(df, "_attr")
-    df = df.astype({'group_id': int})
-    print(df)
-    print('------------------------------')
-    print('------------------------------')
-    print('------------------------------')
 
-for i, val in enumerate(df['email']):
-    print(val)
-    df["_attr"] = df.apply(
-        lambda row: val if fuzz.ratio(row["email"], val) > 95 else None, axis=1
-    )
-    print(df)
-    print('------------------------------')
-    df = assign_group_id(df, "_attr")
-    df = df.astype({'group_id': int})
-    print(df)
-    print('------------------------------')
-    print('------------------------------')
-    print('------------------------------')
+def timing(f):
+    @wraps(f)
+    def wrap(*args, **kw):
+        ts = time()
+        result = f(*args, **kw)
+        te = time()
+        print(f"TIMING: function: {f.__name__}, time: {te - ts}")
+        return result
 
-df
+    return wrap
+
+
+# @functools.cache
+def _fuzz_ratio(val1, val2):
+    return fuzz.ratio(val1, val2)
+
+
+@timing
+def fuzz_group(
+    df: pd.DataFrame,
+    attr: str,
+    /,
+    *,
+    lock_group: bool = True,
+    tolerance: float = 0.05,
+):
+
+    df = df.copy()  # TODO remove and WTF
+
+    ratio = 100 * (1 - tolerance)
+
+    deduped_ids = set()
+
+    uattrs = df[attr].unique()
+
+    similarity_matrix = {
+        (e1, e2): _fuzz_ratio(e1, e2) for e1 in uattrs for e2 in uattrs
+    }
+
+    for val in uattrs:
+
+        df["_fuzzy_match"] = None
+
+        lock_mask = ~df["group_id"].isin(deduped_ids) if lock_group else slice(None)
+
+        df.loc[lock_mask, "_fuzzy_match"] = df.loc[lock_mask, attr].map(
+            lambda row: val if similarity_matrix.get((val, row), 0) > ratio else None
+        )
+
+        df = assign_group_id(df, "_fuzzy_match")
+
+        if len(matches := df.dropna(subset="_fuzzy_match")) > 1:
+            deduped_ids.add(int(matches.reset_index(drop=True).at[0, "group_id"]))
+
+    return df.astype({"group_id": int}).drop(columns="_fuzzy_match")
+
+
+@timing
+def fuzz_group2(
+    df: pd.DataFrame,
+    attr: str,
+    /,
+    *,
+    tolerance: float = 0.05,
+):
+    ratio = 100 * (1 - tolerance)
+
+    uattrs = df[attr].unique()
+
+    similarity_matrix = np.array(
+        [[_fuzz_ratio(s1, s2) for s1 in uattrs] for s2 in uattrs]
+    )
+
+    match_indices = np.where(similarity_matrix >= ratio)
+
+    fuzzy_map = {uattrs[i]: uattrs[j] for i, j in zip(*match_indices)}
+
+    df.loc[:, "_fuzzy_match"] = df[attr].map(fuzzy_map)
+
+    return assign_group_id(df, "_fuzzy_match").drop(columns="_fuzzy_match")
+
+
+a = fuzz_group(df, "email", lock_group=False)
+b = fuzz_group2(df, "email")
+
+a.equals(b)
