@@ -12,17 +12,50 @@ df["address_number"] = df["address_number"].astype("Int64").astype("string")
 
 class DupeGrouper:
 
-    def __init__(self, df):
+    def __init__(self, df: pd.DataFrame):
         self.df = df
         df["group_id"] = range(1, len(df) + 1)
 
-    def group_exact(self, df, attribute: str):
-        pass
+    @staticmethod
+    def _assign_group_id(df: pd.DataFrame, attr: str):
+        return df.assign(
+            group_id=df.groupby(attr)["group_id"]
+            .transform("first")
+            .fillna(df["group_id"])
+        )
+
+    def exact_group(self, attr: str):
+        self.df = self._assign_group_id(self.df, attr)
+        return self
+
+    @staticmethod
+    @functools.cache
+    def _fuzz_ratio(s1, s2):
+        return fuzz.ratio(s1, s2)
+
+    def fuzz_group(self, attr: str, /, *, tolerance: float = 0.05):
+        ratio = 100 * (1 - tolerance)
+
+        uattrs = self.df[attr].unique()
+
+        similarity_matrix = np.array(
+            [[self._fuzz_ratio(s1, s2) for s1 in uattrs] for s2 in uattrs]
+        )
+
+        match_indices = np.where(similarity_matrix >= ratio)
+
+        fuzzy_map = {uattrs[i]: uattrs[j] for i, j in zip(*match_indices)}
+
+        self.df = assign_group_id(self.df, self.df[attr].map(fuzzy_map))
+
+        return self
 
 
 deduper = DupeGrouper(df)
 
-df["group_id"] = range(1, len(df) + 1)
+deduper.exact_group("email").fuzz_group("email")
+
+deduper.df
 
 
 def assign_group_id(df: pd.DataFrame, attribute: str):
@@ -104,79 +137,3 @@ def timing(f):
         return result
 
     return wrap
-
-
-# @functools.cache
-def _fuzz_ratio(val1, val2):
-    return fuzz.ratio(val1, val2)
-
-
-@timing
-def fuzz_group(
-    df: pd.DataFrame,
-    attr: str,
-    /,
-    *,
-    lock_group: bool = True,
-    tolerance: float = 0.05,
-):
-
-    df = df.copy()  # TODO remove and WTF
-
-    ratio = 100 * (1 - tolerance)
-
-    deduped_ids = set()
-
-    uattrs = df[attr].unique()
-
-    similarity_matrix = {
-        (e1, e2): _fuzz_ratio(e1, e2) for e1 in uattrs for e2 in uattrs
-    }
-
-    for val in uattrs:
-
-        df["_fuzzy_match"] = None
-
-        lock_mask = ~df["group_id"].isin(deduped_ids) if lock_group else slice(None)
-
-        df.loc[lock_mask, "_fuzzy_match"] = df.loc[lock_mask, attr].map(
-            lambda row: val if similarity_matrix.get((val, row), 0) > ratio else None
-        )
-
-        df = assign_group_id(df, "_fuzzy_match")
-
-        if len(matches := df.dropna(subset="_fuzzy_match")) > 1:
-            deduped_ids.add(int(matches.reset_index(drop=True).at[0, "group_id"]))
-
-    return df.astype({"group_id": int}).drop(columns="_fuzzy_match")
-
-
-@timing
-def fuzz_group2(
-    df: pd.DataFrame,
-    attr: str,
-    /,
-    *,
-    tolerance: float = 0.05,
-):
-    ratio = 100 * (1 - tolerance)
-
-    uattrs = df[attr].unique()
-
-    similarity_matrix = np.array(
-        [[_fuzz_ratio(s1, s2) for s1 in uattrs] for s2 in uattrs]
-    )
-
-    match_indices = np.where(similarity_matrix >= ratio)
-
-    fuzzy_map = {uattrs[i]: uattrs[j] for i, j in zip(*match_indices)}
-
-    df.loc[:, "_fuzzy_match"] = df[attr].map(fuzzy_map)
-
-    return assign_group_id(df, "_fuzzy_match").drop(columns="_fuzzy_match")
-
-
-a = fuzz_group(df, "email", lock_group=False)
-b = fuzz_group2(df, "email")
-
-a.equals(b)
