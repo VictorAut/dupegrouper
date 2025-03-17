@@ -2,7 +2,7 @@
 name = "dupe-grouper"
 version = "0.1.0"
 description = ""
-authors = ["VictorAutonell-Oiry <victora@profusion.com>"]
+authors = ["VictorAutonell-Oiry"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
