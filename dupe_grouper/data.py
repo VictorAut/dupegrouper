@@ -60,8 +60,8 @@ df2 = pd.DataFrame(
 
 df3 = pd.DataFrame(
     {
-        "id": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-        "group_id": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "id": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        "group_id": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
         "address": [
             "97 Dollis park Road, N3 1BT, London, United Kingdom",
             "Carrer Pineda, 49, 08859, Begues, Barcelona, Espana",
@@ -72,7 +72,8 @@ df3 = pd.DataFrame(
             "Dollis Park Road N3, UK",
             "70a, DH1 1HY, UK",
             "35 Trowbridge Road, E9 5LD, London, UK",
-            "35 E9, UK"
+            "35 E9, UK",
+            "totally random non existant address"
         ],
     }
 )
