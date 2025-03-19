@@ -60,9 +60,10 @@ df2 = pd.DataFrame(
 
 df3 = pd.DataFrame(
     {
-        "id": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-        "group_id": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        "id": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+        "group_id": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
         "address": [
+            "70a, DH1 1HY, UK",
             "97 Dollis park Road, N3 1BT, London, United Kingdom",
             "Carrer Pineda, 49, 08859, Begues, Barcelona, Espana",
             "Carrer Valencia, 81, 08859, Begues, Barcelona",
@@ -70,6 +71,7 @@ df3 = pd.DataFrame(
             "70a Gilesgate, DH1 1HY, Durham, United Kingdom",
             "C. Pineda 49, 08860, Barcelona",
             "Dollis Park Road N3, UK",
+            "70a, DH1 1HY, UK",
             "70a, DH1 1HY, UK",
             "35 Trowbridge Road, E9 5LD, London, UK",
             "35 E9, UK",
