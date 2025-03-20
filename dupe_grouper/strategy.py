@@ -9,7 +9,7 @@ import pandas as pd
 class DeduplicationStrategy(ABC):
 
     @staticmethod
-    def _assign_group_id(df: pd.DataFrame, attr: str):
+    def _assign_group_id(df: pd.DataFrame, attr: str) -> pd.DataFrame:
         return df.assign(
             group_id=df.groupby(attr)["group_id"]
             .transform("first")
@@ -19,3 +19,5 @@ class DeduplicationStrategy(ABC):
     @abstractmethod
     def dedupe(self, df: pd.DataFrame, attr: str) -> pd.DataFrame:
         pass
+
+# TODO thing about getters and setters in children of `DeduplicationStrategy`

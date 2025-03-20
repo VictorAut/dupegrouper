@@ -1,3 +1,4 @@
+import functools
 import typing
 
 import numpy as np
@@ -15,16 +16,42 @@ from strategy import DeduplicationStrategy
 
 class TfIdf(DeduplicationStrategy):
 
-    def __init__(self, ngram: int = 3, tolerance: float = 0.05):
+    def __init__(
+        self,
+        ngram: int | tuple[int, int] = 3,
+        tolerance: float = 0.05,
+        topn: int = 4,
+        **kwargs,
+    ):
         self.ngram = ngram
         self.tolerance = tolerance
+        self.topn = topn
+        self.kwargs = kwargs
 
-    def _vectorize(self, **kwargs) -> TfidfVectorizer:
+    
+    @functools.singledispatchmethod
+    def _vectorize(self, ngram) -> TfidfVectorizer:
+        # del ngram # unused by generic TODO
+        return TypeError("ngram must be of type int or a length 2 tuple of integers")
+    
+    @_vectorize.register(int)
+    def _(self, ngram) -> TfidfVectorizer:
         return TfidfVectorizer(
             analyzer="char",
-            ngram_range=(self.ngram, self.ngram),
-            **kwargs,
+            ngram_range=(ngram, ngram),
+            **self.kwargs,
         )
+
+    @_vectorize.register(tuple)
+    def _(self, ngram) -> TfidfVectorizer:
+        return TfidfVectorizer(
+            analyzer="char",
+            ngram_range=ngram,
+            **self.kwargs,
+        )
+    
+    def _get_vectorizer(self):
+        return self._vectorize(self.ngram)
 
     def _get_similarities_matrix(
         self,
@@ -35,7 +62,7 @@ class TfIdf(DeduplicationStrategy):
         return sp_matmul_topn(
             (mat := vectorizer.fit_transform(array)),
             mat.T,
-            top_n=4,
+            top_n=self.topn,
             threshold=1 - self.tolerance,
             sort=True,
         )
@@ -46,10 +73,9 @@ class TfIdf(DeduplicationStrategy):
         array: np.ndarray,
         /,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-
         sparse_coo = sparse.tocoo()  # i.e. COO format
 
-        # floating point precision handling for 'perfect' match filter
+        # floating point precision handling of perfect match filter
         mask = ~np.isclose(sparse_coo.data, 1.0)
 
         rows, cols = sparse_coo.row[mask], sparse_coo.col[mask]
@@ -72,44 +98,40 @@ class TfIdf(DeduplicationStrategy):
     def _gen_map(
         matches: tuple[np.ndarray, np.ndarray, np.ndarray],
     ) -> typing.Iterator[dict[str, str]]:
-
         seen = set()
 
-        # iter in ascending order of similarities
+        # iter: reorder to similarities score ascending
         for i, j, _ in zip(*map(np.flip, matches)):
 
-            # not self-reference; not repeated
+            # not inversed; not repeated
             if {(i, j), (j, i)}.isdisjoint(seen):
                 seen.add((i, j))
                 yield {i: j}
 
-    def dedupe(self, df: pd.DataFrame, attr: str, /):
-        print("deduping...")
-
-        vectorizer = self._vectorize()
+    # use typing.override decorator and then docstring only on parent .dedupe TODO
+    def dedupe(self, df: pd.DataFrame, attr: str, /) -> pd.DataFrame:
+        print(f"evaluating {self.__class__.__name__}")
+        vectorizer = self._get_vectorizer()
 
         similarities = self._get_similarities_matrix(vectorizer, df[attr])
 
         matches = self._get_matches_array(similarities, df[attr])
 
-        tfidf_maps = self._gen_map(matches)
+        for tfidf_map in self._gen_map(matches):
 
-        print(type(tfidf_maps))
-
-        for tfidf_map in tfidf_maps:
-            print("gen")
-            print(tfidf_map)
-            df =  self._assign_group_id(df, df[attr].map(tfidf_map).fillna(df[attr]))
+            df = self._assign_group_id(df, df[attr].map(tfidf_map).fillna(df[attr]))
 
         return df
 
 
-import data
+# import data
 
-df = data.df3
+# df = data.df1
 
-deduper = TfIdf()
 
-dir(deduper)
+# deduper = TfIdf(ngram=3, tolerance=0.7)
 
-deduper.dedupe(df, "address")
+# deduper.dedupe(df.reset_index(drop=True), "email")
+
+# TODO check why these results are weird
+# Also need to actually cast to arrays e.g. with .to_numpy()

@@ -21,7 +21,7 @@ class Fuzzy(DeduplicationStrategy):
         return fuzz.ratio(s1, s2)
 
     def dedupe(self, df: pd.DataFrame, attr: str, /):
-
+        print(f"evaluating {self.__class__.__name__}")
         uattrs = df[attr].unique()
 
         similarity_matrix = np.array(
