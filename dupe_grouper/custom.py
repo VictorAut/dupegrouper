@@ -12,7 +12,7 @@ from strategy import DeduplicationStrategy
 _T = typing.TypeVar("_T")
 
 
-# TFIDF:
+# CUSTOM:
 
 
 class Custom(DeduplicationStrategy):
@@ -44,9 +44,6 @@ class Custom(DeduplicationStrategy):
         )
 
 
-
-
-
 def my_func(df: pd.DataFrame, attr: str, /, match_str: str) -> dict[str, str]:
     my_map = {}
     for irow, _ in df.iterrows():
@@ -58,6 +55,7 @@ def my_func(df: pd.DataFrame, attr: str, /, match_str: str) -> dict[str, str]:
                 my_map[left] = right
                 break
     return my_map
+
 
 # import data
 # df = data.df3

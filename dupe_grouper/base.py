@@ -1,26 +1,21 @@
 import collections.abc
-import functools
 from types import NoneType
 import typing
 
 import pandas as pd
 from multipledispatch import dispatch
 
+from deduplication import Custom
 from strategy import DeduplicationStrategy
 
 
 # TYPES:
 
 
-strategy_map = collections.abc.Mapping[
+strategies_map = collections.abc.Mapping[
     str,
     tuple[
-        #
-        tuple[
-            #
-            DeduplicationStrategy,
-            collections.abc.Mapping[str, typing.Any],
-        ],
+        DeduplicationStrategy,
         ...,
     ],
 ]
@@ -34,41 +29,52 @@ class DupeGrouper:
     def __init__(self, df: pd.DataFrame):
         self.df = df
         self.df["group_id"] = range(1, len(df) + 1)
-        self._strategies: list[DeduplicationStrategy] | strategy_map = []
+        self._strategy_collection: list[DeduplicationStrategy] | strategies_map = []
 
-    @property
-    def strategies(self) -> list[DeduplicationStrategy] | strategy_map:
-        return self._strategies
+    @dispatch(DeduplicationStrategy, str)
+    def _call_strategy_deduper(self, strategy, _attr):
+        return strategy.dedupe(self.df, _attr)
 
-    @strategies.setter
-    def strategies(self, value: list[DeduplicationStrategy] | strategy_map):
-        if not isinstance(value, (list, dict)):
-            raise TypeError("strategies must be a list of subclasses of base.DeduplicationStrategy or a `strategy_map` dict.")
-        self._strategies = value
-
-    def add_strategy(self, strategy: DeduplicationStrategy):
-        self._strategies.append(strategy)
-
-    def map_strategies(self, strategy_map: strategy_map):
-        self._strategies = strategy_map
+    @dispatch(tuple, str)
+    def _call_strategy_deduper(
+        self,
+        strategy: tuple[typing.Callable, typing.Any],
+        _attr,
+    ):
+        func, kwargs = strategy
+        return Custom(func=func, df=self.df, attr=_attr, **kwargs).dedupe()
 
     @dispatch(list, str)
-    def _dedupe(self, strategies, attr):
-        for strategy in strategies:
+    def _dedupe(self, strategy_collection, attr):
+        for strategy in strategy_collection:
 
             self.df = strategy.dedupe(self.df, attr)
 
-        self._strategies = []  # re-initialise
+        self._strategy_collection = []  # re-initialise
 
     @dispatch(dict, NoneType)
-    def _dedupe(self, strategies: strategy_map, attr):
-        del attr  # Unused when strategies are mapped
-        for _attr, dedupers_and_kwargs in strategies.items():
-            for deduper, kwargs in dedupers_and_kwargs:
-                self.df = deduper(**kwargs).dedupe(self.df, _attr)
+    def _dedupe(self, strategy_collection: strategies_map, attr):
+        del attr  # Unused when strategies are mapping
+        for _attr, strategies in strategy_collection.items():
+            for strategy in strategies:
+                # self.df = strategy.dedupe(self.df, _attr)
+                self.df = self._call_strategy_deduper(strategy, _attr)
 
-        self._strategies = []  # re-initialise
+        self._strategy_collection = []  # re-initialise
+
+    # PUBLIC API:
+
+    @property
+    def strategies(self) -> list[DeduplicationStrategy] | strategies_map:
+        return self._strategy_collection
+
+    @dispatch(DeduplicationStrategy)
+    def add_strategy(self, strategy):
+        self._strategy_collection.append(strategy)
+
+    @dispatch(dict)
+    def add_strategy(self, strategy: strategies_map):
+        self._strategy_collection = strategy
 
     def dedupe(self, attr: str | None = None):
-        self._dedupe(self._strategies, attr)
-
+        self._dedupe(self._strategy_collection, attr)
