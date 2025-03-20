@@ -58,17 +58,10 @@ class DupeGrouper:
 
         self.strategies = []  # re-initialise
 
-    # @typing.override
+    @typing.override
     def dedupe(self, attr: str | None = None):
         self._dedupe(self.strategies, attr)
 
-    # def dedupe(self, attr: str):
-
-    #     for strategy in self.strategies:
-
-    #         self.df = strategy.dedupe(self.df, attr)
-
-    #     self.strategies = []
 
 
 import data
@@ -95,7 +88,7 @@ df1 = data.df3
 dg = DupeGrouper(df1)
 
 strategies: strategy_map = {
-    "email": (
+    "address": (
         (deduplication.Exact, {}),
         (deduplication.Fuzzy, {"tolerance": 0.05}),
         (deduplication.TfIdf, {"tolerance": 0.5, "ngram": 3, "topn": 4}),
