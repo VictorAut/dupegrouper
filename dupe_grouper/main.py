@@ -32,6 +32,7 @@ strategies: strategy_map = {
     )
 }
 
+
 dg.map_strategies(strategies)
 
 dg.dedupe()
