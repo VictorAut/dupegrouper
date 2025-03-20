@@ -1,5 +1,6 @@
 import functools
 import typing
+from typing_extensions import override
 
 import numpy as np
 import pandas as pd
@@ -28,12 +29,11 @@ class TfIdf(DeduplicationStrategy):
         self.topn = topn
         self.kwargs = kwargs
 
-    
     @functools.singledispatchmethod
     def _vectorize(self, ngram) -> TfidfVectorizer:
-        # del ngram # unused by generic TODO
+        del ngram  # Unused by generic
         return TypeError("ngram must be of type int or a length 2 tuple of integers")
-    
+
     @_vectorize.register(int)
     def _(self, ngram) -> TfidfVectorizer:
         return TfidfVectorizer(
@@ -49,7 +49,7 @@ class TfIdf(DeduplicationStrategy):
             ngram_range=ngram,
             **self.kwargs,
         )
-    
+
     def _get_vectorizer(self):
         return self._vectorize(self.ngram)
 
@@ -73,7 +73,7 @@ class TfIdf(DeduplicationStrategy):
         array: np.ndarray,
         /,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-        sparse_coo = sparse.tocoo()  # i.e. COO format
+        sparse_coo = sparse.tocoo()
 
         # floating point precision handling of perfect match filter
         mask = ~np.isclose(sparse_coo.data, 1.0)
@@ -108,7 +108,7 @@ class TfIdf(DeduplicationStrategy):
                 seen.add((i, j))
                 yield {i: j}
 
-    # use typing.override decorator and then docstring only on parent .dedupe TODO
+    @override
     def dedupe(self, df: pd.DataFrame, attr: str, /) -> pd.DataFrame:
         print(f"evaluating {self.__class__.__name__}")
         vectorizer = self._get_vectorizer()
@@ -135,3 +135,4 @@ class TfIdf(DeduplicationStrategy):
 
 # TODO check why these results are weird
 # Also need to actually cast to arrays e.g. with .to_numpy()
+# Also need to think about dfs that come in with unordered indexes for above but also in general

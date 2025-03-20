@@ -1,3 +1,5 @@
+from typing_extensions import override
+
 import pandas as pd
 
 from strategy import DeduplicationStrategy
@@ -8,6 +10,7 @@ from strategy import DeduplicationStrategy
 
 class Exact(DeduplicationStrategy):
 
-    def dedupe(self, df: pd.DataFrame, attr: str, /):
+    @override
+    def dedupe(self, df: pd.DataFrame, attr: str, /) -> pd.DataFrame:
         print(f"evaluating {self.__class__.__name__}")
         return self._assign_group_id(df, attr)

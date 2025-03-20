@@ -1,4 +1,5 @@
 import functools
+from typing_extensions import override
 
 import numpy as np
 import pandas as pd
@@ -20,7 +21,8 @@ class Fuzzy(DeduplicationStrategy):
     def _fuzz_ratio(s1, s2):
         return fuzz.ratio(s1, s2)
 
-    def dedupe(self, df: pd.DataFrame, attr: str, /):
+    @override
+    def dedupe(self, df: pd.DataFrame, attr: str, /) -> pd.DataFrame:
         print(f"evaluating {self.__class__.__name__}")
         uattrs = df[attr].unique()
 

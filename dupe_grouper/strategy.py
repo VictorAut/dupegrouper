@@ -19,5 +19,3 @@ class DeduplicationStrategy(ABC):
     @abstractmethod
     def dedupe(self, df: pd.DataFrame, attr: str) -> pd.DataFrame:
         pass
-
-# TODO thing about getters and setters in children of `DeduplicationStrategy`

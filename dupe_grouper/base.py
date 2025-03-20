@@ -1,3 +1,4 @@
+import collections.abc
 import functools
 from types import NoneType
 import typing
@@ -11,14 +12,14 @@ from strategy import DeduplicationStrategy
 # TYPES:
 
 
-strategy_map = typing.Mapping[
+strategy_map = collections.abc.Mapping[
     str,
     tuple[
         #
         tuple[
             #
             DeduplicationStrategy,
-            typing.Mapping[str, typing.Any],
+            collections.abc.Mapping[str, typing.Any],
         ],
         ...,
     ],
@@ -33,13 +34,23 @@ class DupeGrouper:
     def __init__(self, df: pd.DataFrame):
         self.df = df
         self.df["group_id"] = range(1, len(df) + 1)
-        self.strategies = []
+        self._strategies: list[DeduplicationStrategy] | strategy_map = []
+
+    @property
+    def strategies(self) -> list[DeduplicationStrategy] | strategy_map:
+        return self._strategies
+
+    @strategies.setter
+    def strategies(self, value: list[DeduplicationStrategy] | strategy_map):
+        if not isinstance(value, (list, dict)):
+            raise TypeError("strategies must be a list of subclasses of base.DeduplicationStrategy or a `strategy_map` dict.")
+        self._strategies = value
 
     def add_strategy(self, strategy: DeduplicationStrategy):
-        self.strategies.append(strategy)
+        self._strategies.append(strategy)
 
     def map_strategies(self, strategy_map: strategy_map):
-        self.strategies = strategy_map
+        self._strategies = strategy_map
 
     @dispatch(list, str)
     def _dedupe(self, strategies, attr):
@@ -47,7 +58,7 @@ class DupeGrouper:
 
             self.df = strategy.dedupe(self.df, attr)
 
-        self.strategies = []  # re-initialise
+        self._strategies = []  # re-initialise
 
     @dispatch(dict, NoneType)
     def _dedupe(self, strategies: strategy_map, attr):
@@ -56,49 +67,8 @@ class DupeGrouper:
             for deduper, kwargs in dedupers_and_kwargs:
                 self.df = deduper(**kwargs).dedupe(self.df, _attr)
 
-        self.strategies = []  # re-initialise
+        self._strategies = []  # re-initialise
 
-    @typing.override
     def dedupe(self, attr: str | None = None):
-        self._dedupe(self.strategies, attr)
+        self._dedupe(self._strategies, attr)
 
-
-
-import data
-import deduplication
-
-df1 = data.df3
-
-dg = DupeGrouper(df1)
-
-dg.add_strategy(deduplication.Exact())
-dg.add_strategy(deduplication.Fuzzy(tolerance=0.05))
-dg.add_strategy(deduplication.TfIdf(tolerance=0.7))
-
-dg.dedupe("address")
-
-dg.strategies
-
-dg.df
-
-######################
-
-df1 = data.df3
-
-dg = DupeGrouper(df1)
-
-strategies: strategy_map = {
-    "address": (
-        (deduplication.Exact, {}),
-        (deduplication.Fuzzy, {"tolerance": 0.05}),
-        (deduplication.TfIdf, {"tolerance": 0.5, "ngram": 3, "topn": 4}),
-    )
-}
-
-dg.map_strategies(strategies)
-
-dg.dedupe()
-
-dg.strategies
-
-dg.df
