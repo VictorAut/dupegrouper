@@ -25,12 +25,10 @@ strategies_map = collections.abc.Mapping[
 ]
 
 
-# TODO
-
 
 class _ChooseDataFrame:
 
-    # TODO dask, vaex, pyspark frames
+    # TODO vaex, pyspark frames
 
     @singledispatchmethod    
     def __init__(self, df):
