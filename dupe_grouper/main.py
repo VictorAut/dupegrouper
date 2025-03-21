@@ -1,3 +1,5 @@
+import dask.dataframe as dd
+import polars as pl
 import pandas as pd
 import data
 import deduplication
@@ -5,6 +7,39 @@ import deduplication
 from base import DupeGrouper, strategies_map
 
 from custom import my_func
+
+
+# pandas
+
+df = pd.read_csv("multi_df.csv")
+
+dg = DupeGrouper(df)
+
+dg.df.group_id
+
+# polars
+
+df  = pl.read_csv("multi_df.csv")
+
+dg = DupeGrouper(df)
+
+dg.df
+
+# dask
+
+df  = dd.read_csv("multi_df.csv")
+
+dg = DupeGrouper(df)
+
+dg.df
+
+
+
+
+
+
+
+######################
 
 df1 = data.df3
 

@@ -1,9 +1,11 @@
 import collections.abc
-import functools
+from functools import singledispatchmethod
 from types import NoneType
 import typing
 
+import dask.dataframe as dd
 import pandas as pd
+import polars as pl
 from multipledispatch import dispatch
 
 from deduplication import Custom
@@ -23,19 +25,38 @@ strategies_map = collections.abc.Mapping[
 ]
 
 
+# TODO
+
+
+class _ChooseDataFrame:
+
+    # TODO dask, vaex, pyspark frames
+
+    @singledispatchmethod    
+    def __init__(self, df):
+        raise NotImplementedError(f"Unsupported data frame: {type(df)}")
+    
+    @__init__.register(pd.DataFrame | dd.DataFrame)
+    def _(self, df):
+        self._df = df.assign(group_id = range(1, len(df) + 1))
+
+    @__init__.register(pl.DataFrame)
+    def _(self, df):
+        self._df = df.with_columns(group_id = range(1, len(df) + 1))
+
+    @property
+    def choose(self):
+        return self._df
+
+
 # BASE:
 
 
 class DupeGrouper:
 
     def __init__(self, df: pd.DataFrame):
-        # self.df = df
-        # self.df["group_id"] = range(1, len(df) + 1)
-        self._get_df(df)
+        self._df = _ChooseDataFrame(df).choose
         self._strategy_collection: list[DeduplicationStrategy] | strategies_map = []
-
-    def _get_df(self, df: pd.DataFrame) -> pd.DataFrame:
-        self._df = df.assign(group_id = range(1, len(df) + 1))
 
     @dispatch(DeduplicationStrategy, str)
     def _call_strategy_deduper(self, strategy, _attr):
@@ -72,9 +93,9 @@ class DupeGrouper:
     def strategies(self) -> list[DeduplicationStrategy] | strategies_map:
         return self._strategy_collection
 
-    @functools.singledispatchmethod
+    @singledispatchmethod
     def add_strategy(self, strategy: DeduplicationStrategy | tuple | strategies_map):
-        return NotImplementedError(f"Not implemented with type {type(strategy)}")
+        return NotImplementedError(f"Unsupported strategy: {type(strategy)}")
 
     @add_strategy.register(DeduplicationStrategy | tuple)
     def _(self, strategy: tuple[typing.Callable, typing.Any]):
