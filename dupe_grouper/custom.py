@@ -3,7 +3,7 @@ from typing_extensions import override
 
 import pandas as pd
 
-from strategy import DeduplicationStrategy
+from strategy import DeduplicationStrategy, TMP_ATTR_LABEL
 
 
 # TYPES:
@@ -32,16 +32,18 @@ class Custom(DeduplicationStrategy):
     @override
     def dedupe(self) -> pd.DataFrame:
         print(f"evaluating {self.__class__.__name__}")
-        return self._assign_group_id(
-            self._df,
-            self._df[self._attr].map(
-                self._func(
-                    self._df,
-                    self._attr,
-                    **self._kwargs,
-                )
-            ),
-        )
+
+        tmp_attr: str = TMP_ATTR_LABEL
+
+        attr_map = self._map_dict(self._df, self._attr, self._func(
+                self._df,
+                self._attr,
+                **self._kwargs,
+            ))
+        
+        self._df = self._put_col(self._df, tmp_attr, attr_map)
+
+        return self._drop_col(self._assign_group_id(self._df, tmp_attr), tmp_attr)
 
 
 def my_func(df: pd.DataFrame, attr: str, /, match_str: str) -> dict[str, str]:
@@ -55,8 +57,3 @@ def my_func(df: pd.DataFrame, attr: str, /, match_str: str) -> dict[str, str]:
                 my_map[left] = right
                 break
     return my_map
-
-
-# import data
-# df = data.df3
-# my_func(df, "address", "london")

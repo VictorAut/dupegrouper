@@ -9,7 +9,7 @@ from scipy.sparse import csr_matrix
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sparse_dot_topn import sp_matmul_topn
 
-from strategy import DeduplicationStrategy
+from strategy import DeduplicationStrategy, TMP_ATTR_LABEL
 
 
 # TFIDF:
@@ -21,13 +21,13 @@ class TfIdf(DeduplicationStrategy):
         self,
         ngram: int | tuple[int, int] = 3,
         tolerance: float = 0.05,
-        topn: int = 4,
+        topn: int = 2,
         **kwargs,
     ):
-        self.ngram = ngram
-        self.tolerance = tolerance
-        self.topn = topn
-        self.kwargs = kwargs
+        self._ngram = ngram
+        self._tolerance = tolerance
+        self._topn = topn
+        self._kwargs = kwargs
 
     @functools.singledispatchmethod
     def _vectorize(self, ngram) -> TfidfVectorizer:
@@ -39,7 +39,7 @@ class TfIdf(DeduplicationStrategy):
         return TfidfVectorizer(
             analyzer="char",
             ngram_range=(ngram, ngram),
-            **self.kwargs,
+            **self._kwargs,
         )
 
     @_vectorize.register(tuple)
@@ -47,11 +47,11 @@ class TfIdf(DeduplicationStrategy):
         return TfidfVectorizer(
             analyzer="char",
             ngram_range=ngram,
-            **self.kwargs,
+            **self._kwargs,
         )
 
     def _get_vectorizer(self):
-        return self._vectorize(self.ngram)
+        return self._vectorize(self._ngram)
 
     def _get_similarities_matrix(
         self,
@@ -62,8 +62,8 @@ class TfIdf(DeduplicationStrategy):
         return sp_matmul_topn(
             (mat := vectorizer.fit_transform(array)),
             mat.T,
-            top_n=self.topn,
-            threshold=1 - self.tolerance,
+            top_n=self._topn,
+            threshold=1 - self._tolerance,
             sort=True,
         )
 
@@ -111,28 +111,21 @@ class TfIdf(DeduplicationStrategy):
     @override
     def dedupe(self, df: pd.DataFrame, attr: str, /) -> pd.DataFrame:
         print(f"evaluating {self.__class__.__name__}")
+
+        tmp_attr: str = TMP_ATTR_LABEL
+
         vectorizer = self._get_vectorizer()
 
-        similarities = self._get_similarities_matrix(vectorizer, df[attr])
+        similarities = self._get_similarities_matrix(vectorizer, self._get_col(df, attr))
 
-        matches = self._get_matches_array(similarities, df[attr])
+        matches = self._get_matches_array(similarities, np.array(self._get_col(df, attr)))
 
         for tfidf_map in self._gen_map(matches):
 
-            df = self._assign_group_id(df, df[attr].map(tfidf_map).fillna(df[attr]))
+            attr_map = self._map_dict(df, attr, tfidf_map)
 
-        return df
+            new_attr = self._fill_na(attr_map, self._get_col(df, attr))
 
+            df = self._put_col(df, tmp_attr, new_attr)
 
-# import data
-
-# df = data.df1
-
-
-# deduper = TfIdf(ngram=3, tolerance=0.7)
-
-# deduper.dedupe(df.reset_index(drop=True), "email")
-
-# TODO check why these results are weird
-# Also need to actually cast to arrays e.g. with .to_numpy()
-# Also need to think about dfs that come in with unordered indexes for above but also in general
+            return self._drop_col(self._assign_group_id(df, tmp_attr), tmp_attr)

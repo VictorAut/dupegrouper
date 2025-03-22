@@ -1,6 +1,6 @@
-import dask.dataframe as dd
 import polars as pl
 import pandas as pd
+
 import data
 import deduplication
 
@@ -15,7 +15,7 @@ df = pd.read_csv("multi_df.csv")
 
 dg = DupeGrouper(df)
 
-dg.df.group_id
+dg.df
 
 # polars
 
@@ -25,13 +25,6 @@ dg = DupeGrouper(df)
 
 dg.df
 
-# dask
-
-df  = dd.read_csv("multi_df.csv")
-
-dg = DupeGrouper(df)
-
-dg.df
 
 
 
@@ -40,19 +33,31 @@ dg.df
 
 
 ######################
+import polars as pl
+import pandas as pd
+import data
+import deduplication
 
-df1 = data.df3
+from base import DupeGrouper, strategies_map
 
-dg = DupeGrouper(df1)
+from custom import my_func
+
+# df = data.df4
+# df  = pl.read_csv("multi_df.csv")
+df  = pd.read_csv("multi_df.csv")
+
+dg = DupeGrouper(df)
 
 dg.add_strategy(deduplication.Exact())
-dg.add_strategy(deduplication.Fuzzy(tolerance=0.05))
-dg.add_strategy(deduplication.TfIdf(tolerance=0.7))
+dg.add_strategy(deduplication.Fuzzy(tolerance=0.3))
+dg.add_strategy(deduplication.TfIdf(tolerance=0.6))
 dg.add_strategy((my_func, {'match_str': "london"}))
 
 dg.dedupe("address")
 
-dg.strategies
+# dg.strategies
+
+# dg.report
 
 dg.df
 
@@ -65,8 +70,8 @@ dg = DupeGrouper(df1)
 strategies: strategies_map = {
     "address": (
         deduplication.Exact(),
-        deduplication.Fuzzy(tolerance=0.05),
-        deduplication.TfIdf(tolerance=0.5, ngram=(3, 3), topn=4),
+        deduplication.Fuzzy(tolerance=0.2),
+        deduplication.TfIdf(tolerance=0.7, ngram=3, topn=4),
         (my_func, {'match_str': "london"})
     )
 }

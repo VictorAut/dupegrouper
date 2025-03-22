@@ -1,9 +1,9 @@
+import collections
 import collections.abc
 from functools import singledispatchmethod
 from types import NoneType
 import typing
 
-import dask.dataframe as dd
 import pandas as pd
 import polars as pl
 from multipledispatch import dispatch
@@ -26,15 +26,13 @@ strategies_map = collections.abc.Mapping[
 
 
 
-class _ChooseDataFrame:
-
-    # TODO vaex, pyspark frames
+class _InitDataFrame:
 
     @singledispatchmethod    
     def __init__(self, df):
         raise NotImplementedError(f"Unsupported data frame: {type(df)}")
     
-    @__init__.register(pd.DataFrame | dd.DataFrame)
+    @__init__.register(pd.DataFrame)
     def _(self, df):
         self._df = df.assign(group_id = range(1, len(df) + 1))
 
@@ -53,8 +51,9 @@ class _ChooseDataFrame:
 class DupeGrouper:
 
     def __init__(self, df: pd.DataFrame):
-        self._df = _ChooseDataFrame(df).choose
+        self._df = _InitDataFrame(df).choose
         self._strategy_collection: list[DeduplicationStrategy] | strategies_map = []
+        DeduplicationStrategy._tally = collections.defaultdict(list)
 
     @dispatch(DeduplicationStrategy, str)
     def _call_strategy_deduper(self, strategy, _attr):
@@ -73,6 +72,7 @@ class DupeGrouper:
     def _dedupe(self, strategy_collection, attr):
         for strategy in strategy_collection:
             self._df = self._call_strategy_deduper(strategy, attr)
+        self._tally: dict = DeduplicationStrategy._tally
 
     @dispatch(dict, NoneType)
     def _dedupe(self, strategy_collection: strategies_map, attr):
@@ -80,6 +80,10 @@ class DupeGrouper:
         for attr, strategies in strategy_collection.items():
             for strategy in strategies:
                 self._df = self._call_strategy_deduper(strategy, attr)
+        self._tally: dict = DeduplicationStrategy._tally
+    
+    def _report(self):
+        return {k:v for k,v in self._tally.items() if len(v) > 1} 
 
     # PUBLIC API:
 
@@ -105,3 +109,10 @@ class DupeGrouper:
 
     def dedupe(self, attr: str | None = None):
         self._dedupe(self._strategy_collection, attr)
+
+    # TODO: implement public `report`
+    @property
+    def report(self) -> dict:
+        pass 
+        # print(self._report())
+        

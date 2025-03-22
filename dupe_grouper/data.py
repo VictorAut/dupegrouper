@@ -74,8 +74,44 @@ df3 = pd.DataFrame(
             "70a, DH1 1HY, UK",
             "70a, DH1 1HY, UK",
             "35 Trowbridge Road, E9 5LD, London, UK",
-            "35 E9, UK",
-            "totally random non existant address"
+            "35 Trowbridge E9, UK",
+            "totally random non existant address",
+        ],
+    }
+)
+
+df4 = pd.DataFrame(
+    {
+        "id": [
+            "a001",
+            "a002",
+            "a003",
+            "a004",
+            "a005",
+            "a006",
+            "a007",
+            "a008",
+            "a009",
+            "a010",
+            "a011",
+            "a012",
+            "a013",
+        ],
+        "group_id": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+        "address": [
+            "70a, DH1 1HY, UK",
+            "97 Dollis park Road, N3 1BT, London, United Kingdom",
+            "Carrer Pineda, 49, 08859, Begues, Barcelona, Espana",
+            "Carrer Valencia, 81, 08859, Begues, Barcelona",
+            "4 Brinkworth Way, E9 5JX, London, United Kingdom",
+            "70a Gilesgate, DH1 1HY, Durham, United Kingdom",
+            "C. Pineda 49, 08860, Barcelona",
+            "Dollis Park Road N3, UK",
+            "70a, DH1 1HY, UK",
+            "70a, DH1 1HY, UK",
+            "35 Trowbridge Road, E9 5LD, London, UK",
+            "35 Trowbridge E9, UK",
+            "totally random non existant address",
         ],
     }
 )
