@@ -1,9 +1,16 @@
+import logging
 import typing
 from typing_extensions import override
 
 import pandas as pd
 
 from dupegrouper.strategy import DeduplicationStrategy, TMP_ATTR_LABEL
+
+
+# LOGGER:
+
+
+logger = logging.getLogger(__name__)
 
 
 # TYPES:
@@ -31,9 +38,12 @@ class Custom(DeduplicationStrategy):
 
     @override
     def dedupe(self) -> pd.DataFrame:
-        print(f"evaluating {self.__class__.__name__}")
+        logger.debug(
+            f'Deduping attribute "{self._attr}" with {self._func.__name__}'
+            f'({", ".join(f"{k}={v}" for k, v in self._kwargs.items())})'
+        )
 
-        tmp_attr: str = TMP_ATTR_LABEL
+        tmp_attr: str = self._attr + TMP_ATTR_LABEL
 
         attr_map = self._map_dict(
             self._df,
@@ -45,6 +55,10 @@ class Custom(DeduplicationStrategy):
             ),
         )
 
+        logger.debug(f"Assigning duplicated {self._attr} instances to attribute {tmp_attr}")
         self._df = self._put_col(self._df, tmp_attr, attr_map)
 
-        return self._drop_col(self._assign_group_id(self._df, tmp_attr), tmp_attr)
+        df = self._drop_col(self._assign_group_id(self._df, tmp_attr), tmp_attr)
+
+        logger.debug(f"Finished grouping dupes of attribute {self._attr}")
+        return df

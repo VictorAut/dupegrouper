@@ -1,3 +1,3 @@
-from .base import DupeGrouper
+from dupegrouper.base import DupeGrouper
 
 __all__ = ["DupeGrouper"]

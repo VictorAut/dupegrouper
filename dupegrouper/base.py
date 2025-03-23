@@ -1,6 +1,7 @@
 import collections
 import collections.abc
 from functools import singledispatchmethod
+import logging
 from types import NoneType
 import typing
 
@@ -10,6 +11,12 @@ from multipledispatch import dispatch
 
 from dupegrouper.strategies.custom import Custom
 from dupegrouper.strategy import DeduplicationStrategy
+
+
+# LOGGER:
+
+
+logger = logging.getLogger(__name__)
 
 
 # TYPES:

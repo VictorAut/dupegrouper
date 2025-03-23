@@ -1,4 +1,5 @@
 import functools
+import logging
 import typing
 from typing_extensions import override
 
@@ -10,6 +11,12 @@ from sklearn.feature_extraction.text import TfidfVectorizer  # type: ignore
 from sparse_dot_topn import sp_matmul_topn  # type: ignore
 
 from dupegrouper.strategy import DeduplicationStrategy, TMP_ATTR_LABEL
+
+
+# LOGGER:
+
+
+logger = logging.getLogger(__name__)
 
 
 # TFIDF:
@@ -110,16 +117,27 @@ class TfIdf(DeduplicationStrategy):
 
     @override
     def dedupe(self, df: pd.DataFrame, attr: str, /) -> pd.DataFrame:
-        print(f"evaluating {self.__class__.__name__}")
+        logger.debug(
+            f'Deduping attribute "{attr}" with {self.__class__.__name__}('
+            f"ngram={self._ngram}, "
+            f"tolerance={self._tolerance}, "
+            f"topn={self._topn}"
+            ")"
+        )
 
-        tmp_attr: str = TMP_ATTR_LABEL
+        tmp_attr: str = attr + TMP_ATTR_LABEL
 
         vectorizer = self._get_vectorizer()
 
-        similarities = self._get_similarities_matrix(vectorizer, self._get_col(df, attr))
+        similarities = self._get_similarities_matrix(
+            vectorizer, self._get_col(df, attr)
+        )
 
-        matches = self._get_matches_array(similarities, np.array(self._get_col(df, attr)))
+        matches = self._get_matches_array(
+            similarities, np.array(self._get_col(df, attr))
+        )
 
+        logger.debug(f"Assigning duplicated {attr} instances to attribute {tmp_attr}")
         for tfidf_map in self._gen_map(matches):
 
             attr_map = self._map_dict(df, attr, tfidf_map)
@@ -128,4 +146,7 @@ class TfIdf(DeduplicationStrategy):
 
             df = self._put_col(df, tmp_attr, new_attr)
 
-        return self._drop_col(self._assign_group_id(df, tmp_attr), tmp_attr)
+        df = self._drop_col(self._assign_group_id(df, tmp_attr), tmp_attr)
+
+        logger.debug(f"Finished grouping dupes of attribute {attr}")
+        return df

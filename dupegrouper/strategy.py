@@ -1,10 +1,17 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from functools import singledispatchmethod
+import logging
 
 import numpy as np
 import pandas as pd
 import polars as pl
+
+
+# LOGGER:
+
+
+logger = logging.getLogger(__name__)
 
 
 # CONSTANTS
@@ -16,7 +23,7 @@ TMP_ATTR_LABEL = "__tmp_attr"
 # TYPES:
 
 
-Frames = pd.DataFrame | pl.DataFrame  # | ... TODO: implement
+Frames = pd.DataFrame | pl.DataFrame  # | ...
 
 
 # STRATEGY:
@@ -42,7 +49,9 @@ class DeduplicationStrategy(ABC):
     @singledispatchmethod
     def _put_col(self, df: Frames, column: str, array):
         del column, array  # Unused
-        raise NotImplementedError(f"No create column series method supported for {type(df)}")
+        raise NotImplementedError(
+            f"No create column series method supported for {type(df)}"
+        )
 
     @_put_col.register(pd.DataFrame)
     def _(self, df, column, array):
@@ -55,7 +64,9 @@ class DeduplicationStrategy(ABC):
     @singledispatchmethod
     def _get_col(self, df: Frames, column: str):
         del column  # Unused
-        raise NotImplementedError(f"No create column series method supported for {type(df)}")
+        raise NotImplementedError(
+            f"No create column series method supported for {type(df)}"
+        )
 
     @_get_col.register(pd.DataFrame | pl.DataFrame)
     def _(self, df, column):
@@ -64,7 +75,9 @@ class DeduplicationStrategy(ABC):
     @singledispatchmethod
     def _map_dict(self, df: Frames, column: str, mapping: dict):
         del column, mapping  # Unused
-        raise NotImplementedError(f"No create column series method supported for {type(df)}")
+        raise NotImplementedError(
+            f"No create column series method supported for {type(df)}"
+        )
 
     @_map_dict.register(pd.DataFrame)
     def _(self, df, column, mapping) -> pd.Series:
@@ -77,7 +90,9 @@ class DeduplicationStrategy(ABC):
     @singledispatchmethod
     def _drop_col(self, df: Frames, column: str):
         del column  # Unused
-        raise NotImplementedError(f"No create column series method supported for {type(df)}")
+        raise NotImplementedError(
+            f"No create column series method supported for {type(df)}"
+        )
 
     @_drop_col.register(pd.DataFrame)
     def _(self, df, column):
@@ -90,7 +105,9 @@ class DeduplicationStrategy(ABC):
     @singledispatchmethod
     def _fill_na(self, series, array):
         del array  # Unused
-        raise NotImplementedError(f"No create column series method supported for {type(series)}")
+        raise NotImplementedError(
+            f"No create column series method supported for {type(series)}"
+        )
 
     @_fill_na.register(pd.Series)
     def _(self, series, array):
@@ -103,6 +120,9 @@ class DeduplicationStrategy(ABC):
     # DEDUPLICATION METHODS
 
     def _assign_group_id(self, df, attr: str):
+        logger.debug(
+            f'Re-assigning new group_id per duped instance of attribute "{attr}"'
+        )
         ids = np.asarray(self._get_col(df, "id"))
         attrs = np.asarray(self._get_col(df, attr))
         groups = np.asarray(self._get_col(df, "group_id"))

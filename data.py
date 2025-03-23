@@ -7,7 +7,18 @@ mock["address_number"] = mock["address_number"].astype("Int64").astype("string")
 
 df1 = pd.DataFrame(
     {
-        "id": {44: 1, 55: 2, 31: 3, 9: 4, 6: 5, 12: 6, 89: 7, 19: 8, 76: 9, 7: 10},
+        "id": {
+            44: 1,
+            55: 2,
+            31: 3,
+            9: 4,
+            6: 5,
+            12: 6,
+            89: 7,
+            19: 8,
+            76: 9,
+            7: 10,
+        },
         "group_id": {
             44: 1,
             55: 2,
