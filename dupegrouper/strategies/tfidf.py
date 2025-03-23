@@ -6,10 +6,10 @@ import numpy as np
 import pandas as pd
 
 from scipy.sparse import csr_matrix
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sparse_dot_topn import sp_matmul_topn
+from sklearn.feature_extraction.text import TfidfVectorizer  # type: ignore
+from sparse_dot_topn import sp_matmul_topn  # type: ignore
 
-from strategy import DeduplicationStrategy, TMP_ATTR_LABEL
+from dupegrouper.strategy import DeduplicationStrategy, TMP_ATTR_LABEL
 
 
 # TFIDF:
@@ -98,7 +98,7 @@ class TfIdf(DeduplicationStrategy):
     def _gen_map(
         matches: tuple[np.ndarray, np.ndarray, np.ndarray],
     ) -> typing.Iterator[dict[str, str]]:
-        seen = set()
+        seen: set[tuple[int, int]] = set()
 
         # iter: reorder to similarities score ascending
         for i, j, _ in zip(*map(np.flip, matches)):
@@ -128,4 +128,4 @@ class TfIdf(DeduplicationStrategy):
 
             df = self._put_col(df, tmp_attr, new_attr)
 
-            return self._drop_col(self._assign_group_id(df, tmp_attr), tmp_attr)
+        return self._drop_col(self._assign_group_id(df, tmp_attr), tmp_attr)

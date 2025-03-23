@@ -2,7 +2,7 @@ from typing_extensions import override
 
 import pandas as pd
 
-from strategy import DeduplicationStrategy
+from dupegrouper.strategy import DeduplicationStrategy
 
 
 # EXACT:

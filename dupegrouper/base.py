@@ -8,9 +8,8 @@ import pandas as pd
 import polars as pl
 from multipledispatch import dispatch
 
-from deduplication import Custom
-from strategy import DeduplicationStrategy
-
+from dupegrouper.strategies.custom import Custom
+from dupegrouper.strategy import DeduplicationStrategy
 
 
 # TYPES:
@@ -25,20 +24,22 @@ strategies_map = collections.abc.Mapping[
 ]
 
 
-
 class _InitDataFrame:
 
-    @singledispatchmethod    
     def __init__(self, df):
-        raise NotImplementedError(f"Unsupported data frame: {type(df)}")
-    
-    @__init__.register(pd.DataFrame)
-    def _(self, df):
-        self._df = df.assign(group_id = range(1, len(df) + 1))
+        self._df = self._init_dispatch(df)
 
-    @__init__.register(pl.DataFrame)
+    @singledispatchmethod
+    def _init_dispatch(df):
+        raise NotImplementedError(f"Unsupported data frame: {type(df)}")
+
+    @_init_dispatch.register(pd.DataFrame)
     def _(self, df):
-        self._df = df.with_columns(group_id = range(1, len(df) + 1))
+        return df.assign(group_id=range(1, len(df) + 1))
+
+    @_init_dispatch.register(pl.DataFrame)
+    def _(self, df):
+        return df.with_columns(group_id=range(1, len(df) + 1))
 
     @property
     def choose(self):
@@ -81,9 +82,9 @@ class DupeGrouper:
             for strategy in strategies:
                 self._df = self._call_strategy_deduper(strategy, attr)
         self._tally: dict = DeduplicationStrategy._tally
-    
+
     def _report(self):
-        return {k:v for k,v in self._tally.items() if len(v) > 1} 
+        return {k: v for k, v in self._tally.items() if len(v) > 1}
 
     # PUBLIC API:
 
@@ -93,7 +94,16 @@ class DupeGrouper:
 
     @property
     def strategies(self) -> list[DeduplicationStrategy] | strategies_map:
-        return self._strategy_collection
+        return {
+            k: tuple(
+                [
+                    (vx[0].__name__ if isinstance(vx, tuple) else vx.__class__.__name__)
+                    #
+                    for vx in v
+                ]
+            )
+            for k, v in self._strategy_collection.items()
+        }
 
     @singledispatchmethod
     def add_strategy(self, strategy: DeduplicationStrategy | tuple | strategies_map):
@@ -110,9 +120,6 @@ class DupeGrouper:
     def dedupe(self, attr: str | None = None):
         self._dedupe(self._strategy_collection, attr)
 
-    # TODO: implement public `report`
     @property
     def report(self) -> dict:
-        pass 
-        # print(self._report())
-        
+        raise NotImplementedError

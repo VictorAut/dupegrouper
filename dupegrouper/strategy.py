@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from functools import singledispatchmethod
-import typing
 
 import numpy as np
 import pandas as pd
@@ -25,8 +24,6 @@ Frames = pd.DataFrame | pl.DataFrame  # | ... TODO: implement
 
 class DeduplicationStrategy(ABC):
 
-    # TODO: tally and report
-
     _tally = defaultdict(list)
 
     def _update_tally(
@@ -45,9 +42,7 @@ class DeduplicationStrategy(ABC):
     @singledispatchmethod
     def _put_col(self, df: Frames, column: str, array):
         del column, array  # Unused
-        raise NotImplementedError(
-            f"No create column series method supported for {type(df)}"
-        )
+        raise NotImplementedError(f"No create column series method supported for {type(df)}")
 
     @_put_col.register(pd.DataFrame)
     def _(self, df, column, array):
@@ -58,11 +53,9 @@ class DeduplicationStrategy(ABC):
         return df.with_columns(**{column: array})
 
     @singledispatchmethod
-    def _get_col(self, df:Frames, column: str):
+    def _get_col(self, df: Frames, column: str):
         del column  # Unused
-        raise NotImplementedError(
-            f"No create column series method supported for {type(df)}"
-        )
+        raise NotImplementedError(f"No create column series method supported for {type(df)}")
 
     @_get_col.register(pd.DataFrame | pl.DataFrame)
     def _(self, df, column):
@@ -71,9 +64,7 @@ class DeduplicationStrategy(ABC):
     @singledispatchmethod
     def _map_dict(self, df: Frames, column: str, mapping: dict):
         del column, mapping  # Unused
-        raise NotImplementedError(
-            f"No create column series method supported for {type(df)}"
-        )
+        raise NotImplementedError(f"No create column series method supported for {type(df)}")
 
     @_map_dict.register(pd.DataFrame)
     def _(self, df, column, mapping) -> pd.Series:
@@ -86,9 +77,7 @@ class DeduplicationStrategy(ABC):
     @singledispatchmethod
     def _drop_col(self, df: Frames, column: str):
         del column  # Unused
-        raise NotImplementedError(
-            f"No create column series method supported for {type(df)}"
-        )
+        raise NotImplementedError(f"No create column series method supported for {type(df)}")
 
     @_drop_col.register(pd.DataFrame)
     def _(self, df, column):
@@ -101,9 +90,7 @@ class DeduplicationStrategy(ABC):
     @singledispatchmethod
     def _fill_na(self, series, array):
         del array  # Unused
-        raise NotImplementedError(
-            f"No create column series method supported for {type(series)}"
-        )
+        raise NotImplementedError(f"No create column series method supported for {type(series)}")
 
     @_fill_na.register(pd.Series)
     def _(self, series, array):

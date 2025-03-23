@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from rapidfuzz import fuzz
 
-from strategy import DeduplicationStrategy, TMP_ATTR_LABEL
+from dupegrouper.strategy import DeduplicationStrategy, TMP_ATTR_LABEL
 
 
 # FUZZY:
@@ -26,12 +26,10 @@ class Fuzzy(DeduplicationStrategy):
         print(f"evaluating {self.__class__.__name__}")
 
         tmp_attr: str = TMP_ATTR_LABEL
-        
+
         uattrs = np.unique(self._get_col(df, attr))
 
-        similarity_matrix = np.array(
-            [[self._fuzz_ratio(s1, s2) for s1 in uattrs] for s2 in uattrs]
-        )
+        similarity_matrix = np.array([[self._fuzz_ratio(s1, s2) for s1 in uattrs] for s2 in uattrs])
 
         match_indices = np.where(similarity_matrix >= self._ratio)
 
