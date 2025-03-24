@@ -1,7 +1,7 @@
 import functools
 import logging
-import typing
 from typing_extensions import override
+import typing
 
 import numpy as np
 import pandas as pd
@@ -10,7 +10,8 @@ from scipy.sparse import csr_matrix
 from sklearn.feature_extraction.text import TfidfVectorizer  # type: ignore
 from sparse_dot_topn import sp_matmul_topn  # type: ignore
 
-from dupegrouper.strategy import DeduplicationStrategy, TMP_ATTR_LABEL
+from dupegrouper.definitions import TMP_ATTR_LABEL
+from dupegrouper.strategy import DeduplicationStrategy
 
 
 # LOGGER:

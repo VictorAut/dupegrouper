@@ -29,3 +29,7 @@ scipy-stubs = "^1.15.2.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[[tool.mypy.overrides]]
+module = ["multipledispatch.*"]
+follow_untyped_imports = true

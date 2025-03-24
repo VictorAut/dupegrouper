@@ -6,7 +6,8 @@ import numpy as np
 import pandas as pd
 from rapidfuzz import fuzz
 
-from dupegrouper.strategy import DeduplicationStrategy, TMP_ATTR_LABEL
+from dupegrouper.definitions import TMP_ATTR_LABEL
+from dupegrouper.strategy import DeduplicationStrategy
 
 
 # LOGGER:

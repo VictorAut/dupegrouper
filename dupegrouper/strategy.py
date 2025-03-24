@@ -1,3 +1,4 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from functools import singledispatchmethod
@@ -7,6 +8,8 @@ import numpy as np
 import pandas as pd
 import polars as pl
 
+from dupegrouper.definitions import GROUP_ID, frames
+
 
 # LOGGER:
 
@@ -14,24 +17,12 @@ import polars as pl
 logger = logging.getLogger(__name__)
 
 
-# CONSTANTS
-
-
-TMP_ATTR_LABEL = "__tmp_attr"
-
-
-# TYPES:
-
-
-Frames = pd.DataFrame | pl.DataFrame  # | ...
-
-
 # STRATEGY:
 
 
 class DeduplicationStrategy(ABC):
 
-    _tally = defaultdict(list)
+    _tally: dict[int | str, list[int]] = defaultdict(list)
 
     def _update_tally(
         self,
@@ -47,7 +38,7 @@ class DeduplicationStrategy(ABC):
     # DATAFRAME DISPATCHER
 
     @singledispatchmethod
-    def _put_col(self, df: Frames, column: str, array):
+    def _put_col(self, df: frames, column: str, array):
         del column, array  # Unused
         raise NotImplementedError(
             f"No create column series method supported for {type(df)}"
@@ -62,18 +53,19 @@ class DeduplicationStrategy(ABC):
         return df.with_columns(**{column: array})
 
     @singledispatchmethod
-    def _get_col(self, df: Frames, column: str):
+    def _get_col(self, df: frames, column: str):
         del column  # Unused
         raise NotImplementedError(
             f"No create column series method supported for {type(df)}"
         )
 
-    @_get_col.register(pd.DataFrame | pl.DataFrame)
+    @_get_col.register(pd.DataFrame)
+    @_get_col.register(pl.DataFrame)
     def _(self, df, column):
         return df[column]
 
     @singledispatchmethod
-    def _map_dict(self, df: Frames, column: str, mapping: dict):
+    def _map_dict(self, df: frames, column: str, mapping: dict):
         del column, mapping  # Unused
         raise NotImplementedError(
             f"No create column series method supported for {type(df)}"
@@ -88,7 +80,7 @@ class DeduplicationStrategy(ABC):
         return self._get_col(df, column).replace(mapping)
 
     @singledispatchmethod
-    def _drop_col(self, df: Frames, column: str):
+    def _drop_col(self, df: frames, column: str):
         del column  # Unused
         raise NotImplementedError(
             f"No create column series method supported for {type(df)}"
@@ -123,9 +115,9 @@ class DeduplicationStrategy(ABC):
         logger.debug(
             f'Re-assigning new group_id per duped instance of attribute "{attr}"'
         )
-        ids = np.asarray(self._get_col(df, "id"))
+        # ids = np.asarray(self._get_col(df, "id")) TODO
         attrs = np.asarray(self._get_col(df, attr))
-        groups = np.asarray(self._get_col(df, "group_id"))
+        groups = np.asarray(self._get_col(df, GROUP_ID))
 
         unique_attrs, unique_indices = np.unique(
             attrs,
@@ -147,9 +139,9 @@ class DeduplicationStrategy(ABC):
             groups,
         )
 
-        np.vectorize(self._update_tally)(ids, groups, new_groups)
+        # np.vectorize(self._update_tally)(ids, groups, new_groups) TODO
 
-        return self._put_col(df, "group_id", new_groups)
+        return self._put_col(df, GROUP_ID, new_groups)
 
     @abstractmethod
     def dedupe(self, df: pd.DataFrame, attr: str) -> pd.DataFrame:

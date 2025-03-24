@@ -4,7 +4,8 @@ from typing_extensions import override
 
 import pandas as pd
 
-from dupegrouper.strategy import DeduplicationStrategy, TMP_ATTR_LABEL
+from dupegrouper.definitions import TMP_ATTR_LABEL
+from dupegrouper.strategy import DeduplicationStrategy
 
 
 # LOGGER:
@@ -29,6 +30,7 @@ class Custom(DeduplicationStrategy):
         func: typing.Callable[..., dict[_T, _T]],
         df: pd.DataFrame,
         attr: str,
+        /,
         **kwargs,
     ):
         self._func = func
@@ -37,7 +39,8 @@ class Custom(DeduplicationStrategy):
         self._kwargs = kwargs
 
     @override
-    def dedupe(self) -> pd.DataFrame:
+    def dedupe(self, df=None, attr=None) -> pd.DataFrame:
+        del df, attr # Unused: initialised as private equivalents
         logger.debug(
             f'Deduping attribute "{self._attr}" with {self._func.__name__}'
             f'({", ".join(f"{k}={v}" for k, v in self._kwargs.items())})'

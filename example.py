@@ -22,10 +22,10 @@ logging.basicConfig(
 def my_func(df: pd.DataFrame, attr: str, /, match_str: str) -> dict[str, str]:
     my_map = {}
     for irow, _ in df.iterrows():
-        left = df.loc[irow, attr]
+        left: str = df.at[irow, attr]
         my_map[left] = left
         for jrow, _ in df.iterrows():
-            right = df.loc[jrow, attr]
+            right: str = df.at[jrow, attr]
             if match_str in left.lower() and match_str in right.lower():
                 my_map[left] = right
                 break
@@ -47,7 +47,18 @@ dg.add_strategy((my_func, {"match_str": "london"}))
 
 dg.dedupe("address")
 
-# print(dg.df)
+print(dg.strategies)
+
+print(dg.df)
+
+######################
+
+class Empty:
+    pass
+
+dg.add_strategy(('poo',)) # this should not work
+dg.add_strategy({}) # this should not work
+dg.add_strategy(Empty) # this should not work
 
 ######################
 
@@ -67,7 +78,7 @@ strategies = {
 
 dg.add_strategy(strategies)
 
-dg.strategies
+print(dg.strategies)
 
 dg.dedupe()
 
