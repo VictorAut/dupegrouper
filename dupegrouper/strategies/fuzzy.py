@@ -3,10 +3,9 @@ import logging
 from typing_extensions import override
 
 import numpy as np
-import pandas as pd
 from rapidfuzz import fuzz
 
-from dupegrouper.definitions import TMP_ATTR_LABEL
+from dupegrouper.definitions import TMP_ATTR_LABEL, frames
 from dupegrouper.strategy import DeduplicationStrategy
 
 
@@ -31,15 +30,17 @@ class Fuzzy(DeduplicationStrategy):
         return fuzz.ratio(s1, s2)
 
     @override
-    def dedupe(self, attr: str, /) -> pd.DataFrame:
+    def dedupe(self, attr: str, /) -> frames:
         logger.debug(
             f'Deduping attribute "{attr}" with {self.__class__.__name__}'
             f"(tolerance={self._tolerance})"
         )
 
+        frame_methods = self.frame_methods
+
         tmp_attr: str = attr + TMP_ATTR_LABEL
 
-        uattrs = np.unique(self._df._get_col(attr))
+        uattrs = np.unique(frame_methods.get_col(attr))
 
         similarity_matrix = np.array(
             [[self._fuzz_ratio(s1, s2) for s1 in uattrs] for s2 in uattrs]
@@ -49,14 +50,15 @@ class Fuzzy(DeduplicationStrategy):
 
         fuzzy_map = {uattrs[i]: uattrs[j] for i, j in zip(*match_indices)}
 
-        attr_map = self._df._map_dict(attr, fuzzy_map)
+        attr_map = frame_methods.map_dict(attr, fuzzy_map)
 
-        logger.debug(f"Assigning duplicated {attr} instances to attribute {tmp_attr}")
-        self._df._put_col(tmp_attr, attr_map)
+        logger.debug(
+            f'Assigning duplicated "{attr}" instances to attribute "{tmp_attr}"'
+        )
 
-        self._assign_group_id(tmp_attr)._df._drop_col(tmp_attr)
+        frame_methods.put_col(tmp_attr, attr_map)
 
-        return self._df
+        return self._assign_group_id(tmp_attr).drop_col(tmp_attr).frame
 
         # logger.debug(f"Finished grouping dupes of attribute {attr}")
         # return df

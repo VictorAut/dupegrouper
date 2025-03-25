@@ -1,8 +1,7 @@
 import logging
 from typing_extensions import override
 
-import pandas as pd
-
+from dupegrouper.definitions import frames
 from dupegrouper.strategy import DeduplicationStrategy
 
 
@@ -17,11 +16,7 @@ logger = logging.getLogger(__name__)
 
 class Exact(DeduplicationStrategy):
 
-    # TODO type
-
     @override
-    def dedupe(self, attr: str, /) -> pd.DataFrame:
+    def dedupe(self, attr: str, /) -> frames:
         logger.debug(f'Deduping attribute "{attr}" with {self.__class__.__name__}()')
-        return self._assign_group_id(attr)
-        # logger.debug(f"Finished grouping dupes of attribute {attr}")
-        # return df
+        return self._assign_group_id(attr).frame

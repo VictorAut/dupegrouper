@@ -1,3 +1,5 @@
+import typing
+
 import polars as pl
 
 
@@ -6,18 +8,24 @@ class PolarsMethods:
     def __init__(self, df: pl.DataFrame):
         self._df = df
 
-    def _put_column(self, column: str, array):
-        return self._df.with_columns(**{column: array})
+    def put_col(self, column: str, array) -> typing.Self:
+        self._df = self._df.with_columns(**{column: array})
+        return self
 
-    def _get_col(self, column: str):
+    def get_col(self, column: str) -> pl.Series:
         return self._df[column]
 
-    def _map_dict(self, column: str, mapping: dict) -> pl.Series:
-        self._get_col(self._df, column).replace(mapping)
+    def map_dict(self, column: str, mapping: dict) -> pl.Series:
+        return self.get_col(column).replace(mapping)
 
-    def _drop_col(self, column: str):
-        return self._df.drop(column)  # i.e. positional only
+    def drop_col(self, column: str) -> typing.Self:
+        self._df = self._df.drop(column)  # i.e. positional only
+        return self
 
     @staticmethod
-    def _fill_na(series: pl.Series, array):
+    def fill_na(series: pl.Series, array) -> pl.Series:
         return series.fill_null(array)
+
+    @property
+    def frame(self):
+        return self._df

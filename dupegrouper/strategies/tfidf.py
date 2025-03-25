@@ -4,13 +4,12 @@ from typing_extensions import override
 import typing
 
 import numpy as np
-import pandas as pd
 
 from scipy.sparse import csr_matrix
 from sklearn.feature_extraction.text import TfidfVectorizer  # type: ignore
 from sparse_dot_topn import sp_matmul_topn  # type: ignore
 
-from dupegrouper.definitions import TMP_ATTR_LABEL
+from dupegrouper.definitions import TMP_ATTR_LABEL, frames
 from dupegrouper.strategy import DeduplicationStrategy
 
 
@@ -117,7 +116,7 @@ class TfIdf(DeduplicationStrategy):
                 yield {i: j}
 
     @override
-    def dedupe(self, df: pd.DataFrame, attr: str, /) -> pd.DataFrame:
+    def dedupe(self, attr: str, /) -> frames:
         logger.debug(
             f'Deduping attribute "{attr}" with {self.__class__.__name__}('
             f"ngram={self._ngram}, "
@@ -126,28 +125,31 @@ class TfIdf(DeduplicationStrategy):
             ")"
         )
 
+        frame_methods = self.frame_methods
+
         tmp_attr: str = attr + TMP_ATTR_LABEL
 
         vectorizer = self._get_vectorizer()
 
         similarities = self._get_similarities_matrix(
-            vectorizer, self._get_col(df, attr)
+            vectorizer, frame_methods.get_col(attr)
         )
 
         matches = self._get_matches_array(
-            similarities, np.array(self._get_col(df, attr))
+            similarities, np.array(frame_methods.get_col(attr))
         )
 
-        logger.debug(f"Assigning duplicated {attr} instances to attribute {tmp_attr}")
+        logger.debug(
+            f'Assigning duplicated "{attr}" instances to attribute "{tmp_attr}"'
+        )
         for tfidf_map in self._gen_map(matches):
 
-            attr_map = self._map_dict(df, attr, tfidf_map)
+            attr_map = frame_methods.map_dict(attr, tfidf_map)
 
-            new_attr = self._fill_na(attr_map, self._get_col(df, attr))
+            new_attr = frame_methods.fill_na(attr_map, frame_methods.get_col(attr))
 
-            df = self._put_col(df, tmp_attr, new_attr)
+            frame_methods.put_col(tmp_attr, new_attr)
 
-        df = self._drop_col(self._assign_group_id(df, tmp_attr), tmp_attr)
+            self._assign_group_id(tmp_attr).drop_col(tmp_attr)
 
-        logger.debug(f"Finished grouping dupes of attribute {attr}")
-        return df
+        return frame_methods.frame

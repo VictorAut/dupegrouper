@@ -108,7 +108,6 @@ class DupeGrouper:
     def __init__(self, df: pd.DataFrame):
         self._df = _InitDataFrame(df).choose
         self._strategy_manager = _StrategyManager()
-        DeduplicationStrategy._tally = collections.defaultdict(list)  # i.e. reset
 
     @singledispatchmethod
     def _call_strategy_deduper(
@@ -121,14 +120,12 @@ class DupeGrouper:
 
     @_call_strategy_deduper.register(DeduplicationStrategy)
     def _(self, strategy, attr):
-        # return strategy.dedupe(self._df, attr)
-        print(dir(strategy.set_df(self._df)))
         return strategy.set_df(self._df).dedupe(attr)
 
     @_call_strategy_deduper.register(tuple)
     def _(self, strategy: tuple[typing.Callable, typing.Any], attr):
         func, kwargs = strategy
-        return Custom(func, self._df, attr, **kwargs).dedupe()
+        return Custom(func, attr, **kwargs).set_df(self._df).dedupe()
 
     @singledispatchmethod
     def _dedupe(
@@ -143,18 +140,14 @@ class DupeGrouper:
     def _(self, attr, strategy_collection):
         for strategy in strategy_collection["default"]:
             self._df = self._call_strategy_deduper(strategy, attr)
-        self._tally: dict = DeduplicationStrategy._tally
 
     @_dedupe.register(NoneType)
     def _(self, attr, strategy_collection):
         del attr  # Unused
         for attr, strategies in strategy_collection.items():
+            print(strategies)
             for strategy in strategies:
                 self._df = self._call_strategy_deduper(strategy, attr)
-        self._tally: dict = DeduplicationStrategy._tally
-
-    def _report(self):
-        return {k: v for k, v in self._tally.items() if len(v) > 1}
 
     # PUBLIC API:
 
@@ -200,7 +193,3 @@ class DupeGrouper:
     def dedupe(self, attr: str | None = None):
         self._dedupe(attr, self._strategy_manager.get())
         self._strategy_manager.reset()
-
-    @property
-    def report(self) -> dict:
-        raise NotImplementedError
