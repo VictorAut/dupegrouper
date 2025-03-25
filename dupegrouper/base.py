@@ -51,7 +51,9 @@ class _InitDataFrame:
 
 class _StrategyManager:
     def __init__(self):
-        self._strategies: strategy_map_collection | strategy_list_collection = {}
+        self._strategies: strategy_map_collection | strategy_list_collection = []
+    
+
 
     
 
@@ -63,6 +65,7 @@ class DupeGrouper:
 
     def __init__(self, df: pd.DataFrame):
         self._df = _InitDataFrame(df).choose
+        # self._strategy_manager = _StrategyManager()
         DeduplicationStrategy._tally = collections.defaultdict(list) # i.e. reset
 
     @singledispatchmethod
@@ -138,7 +141,7 @@ class DupeGrouper:
 
     def dedupe(self, attr: str | None = None):
         self._dedupe(self._strategy_collection, attr)
-        delattr(self, "_strategy_collection") # i.e. reset
+        del self._strategy_collection # i.e. reset
 
     @property
     def report(self) -> dict:
