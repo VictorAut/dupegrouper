@@ -55,6 +55,6 @@ class Fuzzy(DeduplicationStrategy):
         df = self._put_col(df, tmp_attr, attr_map)
 
         df = self._drop_col(self._assign_group_id(df, tmp_attr), tmp_attr)
-        
+
         logger.debug(f"Finished grouping dupes of attribute {attr}")
         return df

@@ -40,7 +40,7 @@ class Custom(DeduplicationStrategy):
 
     @override
     def dedupe(self, df=None, attr=None) -> pd.DataFrame:
-        del df, attr # Unused: initialised as private equivalents
+        del df, attr  # Unused: initialised as private equivalents
         logger.debug(
             f'Deduping attribute "{self._attr}" with {self._func.__name__}'
             f'({", ".join(f"{k}={v}" for k, v in self._kwargs.items())})'
@@ -58,7 +58,9 @@ class Custom(DeduplicationStrategy):
             ),
         )
 
-        logger.debug(f"Assigning duplicated {self._attr} instances to attribute {tmp_attr}")
+        logger.debug(
+            f"Assigning duplicated {self._attr} instances to attribute {tmp_attr}"
+        )
         self._df = self._put_col(self._df, tmp_attr, attr_map)
 
         df = self._drop_col(self._assign_group_id(self._df, tmp_attr), tmp_attr)
