@@ -121,7 +121,9 @@ class DupeGrouper:
 
     @_call_strategy_deduper.register(DeduplicationStrategy)
     def _(self, strategy, attr):
-        return strategy.dedupe(self._df, attr)
+        # return strategy.dedupe(self._df, attr)
+        print(dir(strategy.set_df(self._df)))
+        return strategy.set_df(self._df).dedupe(attr)
 
     @_call_strategy_deduper.register(tuple)
     def _(self, strategy: tuple[typing.Callable, typing.Any], attr):

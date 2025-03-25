@@ -42,47 +42,44 @@ dg = dupegrouper.DupeGrouper(df)
 
 
 dg.add_strategy(dupegrouper.strategies.Exact())
-dg.add_strategy(dupegrouper.strategies.Fuzzy(tolerance=0.3))
-dg.add_strategy(dupegrouper.strategies.TfIdf(tolerance=0.6))
-dg.add_strategy((my_func, {"match_str": "london"}))
+# dg.add_strategy(dupegrouper.strategies.Fuzzy(tolerance=0.3))
+# dg.add_strategy(dupegrouper.strategies.TfIdf(tolerance=0.6))
+# dg.add_strategy((my_func, {"match_str": "london"}))
 
 
 dg.dedupe("address")
 
-print(dg._strategy_manager.get())
+# print(dg._strategy_manager.get())
 
-dg.strategies
+# dg.strategies
 
-# print(dg.df)
+# # print(dg.df)
 
-######################
+# ######################
 
 
-# dg.add_strategy(('poo',)) # this should not work
-# dg.add_strategy({}) # this should not work
+# ######################
 
-######################
+# df = pd.read_csv("multi_df.csv")
 
-df = pd.read_csv("multi_df.csv")
+# dg = dupegrouper.DupeGrouper(df)
 
-dg = dupegrouper.DupeGrouper(df)
+# strategies = {
+#     "address": [
+#         dupegrouper.strategies.Exact(),
+#         dupegrouper.strategies.Fuzzy(tolerance=0.2),
+#         (my_func, {"match_str": "london"}),
+#     ],
+#     "email": [
+#         dupegrouper.strategies.Exact(),
+#         dupegrouper.strategies.TfIdf(tolerance=0.7, ngram=3, topn=4),
+#     ],
+# }
 
-strategies = {
-    "address": [
-        dupegrouper.strategies.Exact(),
-        dupegrouper.strategies.Fuzzy(tolerance=0.2),
-        (my_func, {"match_str": "london"}),
-    ],
-    "email": [
-        dupegrouper.strategies.Exact(),
-        dupegrouper.strategies.TfIdf(tolerance=0.7, ngram=3, topn=4),
-    ],
-}
+# dg.add_strategy(strategies)
 
-dg.add_strategy(strategies)
+# print(dg.strategies)
 
-print(dg.strategies)
+# dg.dedupe()
 
-dg.dedupe()
-
-# print(dg.df)
+# # print(dg.df)

@@ -31,7 +31,7 @@ class Fuzzy(DeduplicationStrategy):
         return fuzz.ratio(s1, s2)
 
     @override
-    def dedupe(self, df: pd.DataFrame, attr: str, /) -> pd.DataFrame:
+    def dedupe(self, attr: str, /) -> pd.DataFrame:
         logger.debug(
             f'Deduping attribute "{attr}" with {self.__class__.__name__}'
             f"(tolerance={self._tolerance})"
@@ -39,7 +39,7 @@ class Fuzzy(DeduplicationStrategy):
 
         tmp_attr: str = attr + TMP_ATTR_LABEL
 
-        uattrs = np.unique(self._get_col(df, attr))
+        uattrs = np.unique(self._df._get_col(attr))
 
         similarity_matrix = np.array(
             [[self._fuzz_ratio(s1, s2) for s1 in uattrs] for s2 in uattrs]
@@ -49,12 +49,14 @@ class Fuzzy(DeduplicationStrategy):
 
         fuzzy_map = {uattrs[i]: uattrs[j] for i, j in zip(*match_indices)}
 
-        attr_map = self._map_dict(df, attr, fuzzy_map)
+        attr_map = self._df._map_dict(attr, fuzzy_map)
 
         logger.debug(f"Assigning duplicated {attr} instances to attribute {tmp_attr}")
-        df = self._put_col(df, tmp_attr, attr_map)
+        self._df._put_col(tmp_attr, attr_map)
 
-        df = self._drop_col(self._assign_group_id(df, tmp_attr), tmp_attr)
+        self._assign_group_id(tmp_attr)._df._drop_col(tmp_attr)
 
-        logger.debug(f"Finished grouping dupes of attribute {attr}")
-        return df
+        return self._df
+
+        # logger.debug(f"Finished grouping dupes of attribute {attr}")
+        # return df

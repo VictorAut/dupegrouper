@@ -17,9 +17,11 @@ logger = logging.getLogger(__name__)
 
 class Exact(DeduplicationStrategy):
 
+    # TODO type
+
     @override
-    def dedupe(self, df: pd.DataFrame, attr: str, /) -> pd.DataFrame:
+    def dedupe(self, attr: str, /) -> pd.DataFrame:
         logger.debug(f'Deduping attribute "{attr}" with {self.__class__.__name__}()')
-        df = self._assign_group_id(df, attr)
-        logger.debug(f"Finished grouping dupes of attribute {attr}")
-        return df
+        return self._assign_group_id(attr)
+        # logger.debug(f"Finished grouping dupes of attribute {attr}")
+        # return df
