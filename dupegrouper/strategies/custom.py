@@ -3,6 +3,7 @@ import typing
 from typing_extensions import override
 
 from dupegrouper.definitions import TMP_ATTR_LABEL, frames
+from dupegrouper.frame import DFMethods
 from dupegrouper.strategy import DeduplicationStrategy
 
 
@@ -42,7 +43,7 @@ class Custom(DeduplicationStrategy):
             f'({", ".join(f"{k}={v}" for k, v in self._kwargs.items())})'
         )
 
-        frame_methods = self.frame_methods
+        frame_methods: DFMethods = self.frame_methods
 
         tmp_attr: str = self._attr + TMP_ATTR_LABEL
 

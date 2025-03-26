@@ -10,6 +10,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer  # type: ignore
 from sparse_dot_topn import sp_matmul_topn  # type: ignore
 
 from dupegrouper.definitions import TMP_ATTR_LABEL, frames
+from dupegrouper.frame import DFMethods
 from dupegrouper.strategy import DeduplicationStrategy
 
 
@@ -125,7 +126,7 @@ class TfIdf(DeduplicationStrategy):
             ")"
         )
 
-        frame_methods = self.frame_methods
+        frame_methods: DFMethods = self.frame_methods
 
         tmp_attr: str = attr + TMP_ATTR_LABEL
 
@@ -144,12 +145,17 @@ class TfIdf(DeduplicationStrategy):
         )
         for tfidf_map in self._gen_map(matches):
 
-            attr_map = frame_methods.map_dict(attr, tfidf_map)
+            attr_map = frame_methods.map_dict(attr, tfidf_map)  # i.e. "Series" like
 
-            new_attr = frame_methods.fill_na(attr_map, frame_methods.get_col(attr))
+            new_attr = frame_methods.fill_na(
+                attr_map, frame_methods.get_col(attr)
+            )  # i.e. "Series" like
 
-            frame_methods.put_col(tmp_attr, new_attr)
+            frame_methods: DFMethods = frame_methods.put_col(tmp_attr, new_attr)  # type: ignore[no-redef]
 
-            self._assign_group_id(tmp_attr).drop_col(tmp_attr)
+            frame_methods: DFMethods = self._assign_group_id(tmp_attr).drop_col(  # type: ignore[no-redef]
+                tmp_attr
+            )
 
-        return frame_methods.frame
+        df: frames = frame_methods.frame
+        return df

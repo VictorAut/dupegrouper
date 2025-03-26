@@ -10,7 +10,7 @@ import dupegrouper
 
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     datefmt="%Y-%m-%d %H:%M:%S",
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
@@ -49,7 +49,7 @@ dg = dupegrouper.DupeGrouper(df)
 dg.add_strategy(dupegrouper.strategies.Exact())
 dg.add_strategy(dupegrouper.strategies.Fuzzy(tolerance=0.3))
 dg.add_strategy(dupegrouper.strategies.TfIdf(tolerance=0.4, ngram=3, topn=3))
-dg.add_strategy((my_func, {"match_str": "london"}))
+# dg.add_strategy((my_func, {"match_str": "london"}))
 
 print(dg.strategies)
 
@@ -74,8 +74,8 @@ dg = dupegrouper.DupeGrouper(df)
 strategies = {
     "address": [
         dupegrouper.strategies.Exact(),
-        dupegrouper.strategies.Fuzzy(tolerance=0.2),
-        (my_func, {"match_str": "london"}),
+        dupegrouper.strategies.Fuzzy(tolerance=0.3),
+        # (my_func, {"match_str": "london"}),
     ],
     "email": [
         dupegrouper.strategies.Exact(),
@@ -119,7 +119,7 @@ dg.dedupe("address")
 
 print(dg.strategies)
 
-print(dg.df)
+print(pd.DataFrame(dg.df))
 
 ######################
 
@@ -149,8 +149,8 @@ dg.add_strategy(strategies)
 
 print(dg.strategies)
 
-dg.dedupe("address")
+dg.dedupe()
 
 print(dg.strategies)
 
-print(dg.df)
+print(pd.DataFrame(dg.df))

@@ -2,6 +2,7 @@ import logging
 from typing_extensions import override
 
 from dupegrouper.definitions import frames
+from dupegrouper.frame import DFMethods
 from dupegrouper.strategy import DeduplicationStrategy
 
 
@@ -19,4 +20,6 @@ class Exact(DeduplicationStrategy):
     @override
     def dedupe(self, attr: str, /) -> frames:
         logger.debug(f'Deduping attribute "{attr}" with {self.__class__.__name__}()')
-        return self._assign_group_id(attr).frame
+        frame_methods: DFMethods = self._assign_group_id(attr)
+        df: frames = frame_methods.frame
+        return df

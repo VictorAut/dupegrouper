@@ -145,7 +145,6 @@ class DupeGrouper:
     def _(self, attr, strategy_collection):
         del attr  # Unused
         for attr, strategies in strategy_collection.items():
-            print(strategies)
             for strategy in strategies:
                 self._df = self._call_strategy_deduper(strategy, attr)
 

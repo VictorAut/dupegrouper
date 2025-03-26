@@ -6,6 +6,7 @@ import numpy as np
 from rapidfuzz import fuzz
 
 from dupegrouper.definitions import TMP_ATTR_LABEL, frames
+from dupegrouper.frame import DFMethods
 from dupegrouper.strategy import DeduplicationStrategy
 
 
@@ -36,7 +37,7 @@ class Fuzzy(DeduplicationStrategy):
             f"(tolerance={self._tolerance})"
         )
 
-        frame_methods = self.frame_methods
+        frame_methods: DFMethods = self.frame_methods
 
         tmp_attr: str = attr + TMP_ATTR_LABEL
 
@@ -50,15 +51,16 @@ class Fuzzy(DeduplicationStrategy):
 
         fuzzy_map = {uattrs[i]: uattrs[j] for i, j in zip(*match_indices)}
 
-        attr_map = frame_methods.map_dict(attr, fuzzy_map)
+        attr_map = frame_methods.map_dict(attr, fuzzy_map)  # i.e. a "Series"
 
         logger.debug(
             f'Assigning duplicated "{attr}" instances to attribute "{tmp_attr}"'
         )
 
-        frame_methods.put_col(tmp_attr, attr_map)
+        frame_methods: DFMethods = frame_methods.put_col(tmp_attr, attr_map)  # type: ignore[no-redef]
 
-        return self._assign_group_id(tmp_attr).drop_col(tmp_attr).frame
+        frame_methods: DFMethods = self._assign_group_id(tmp_attr).drop_col(tmp_attr)  # type: ignore[no-redef]
 
-        # logger.debug(f"Finished grouping dupes of attribute {attr}")
-        # return df
+        df: frames = frame_methods.frame
+
+        return df
