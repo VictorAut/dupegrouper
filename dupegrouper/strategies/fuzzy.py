@@ -1,3 +1,5 @@
+"""Perform near deduplication with fuzzywuzzy string matching"""
+
 import functools
 import logging
 from typing_extensions import override
@@ -32,6 +34,12 @@ class Fuzzy(DeduplicationStrategy):
 
     @override
     def dedupe(self, attr: str, /) -> frames:
+        """dedupe with string match using fuzzy wuzzy
+        
+        string matches are applied on only _unique_ instances of the attribute,
+        for optimization. fuzzy wuzzy matches are cached optimising instances
+        of frequent dupes. Best scored are selected as defined by `_ratio`
+        """
         logger.debug(
             f'Deduping attribute "{attr}" with {self.__class__.__name__}'
             f"(tolerance={self._tolerance})"
@@ -59,7 +67,7 @@ class Fuzzy(DeduplicationStrategy):
 
         frame_methods: DFMethods = frame_methods.put_col(tmp_attr, attr_map)  # type: ignore[no-redef]
 
-        frame_methods: DFMethods = self._assign_group_id(tmp_attr).drop_col(tmp_attr)  # type: ignore[no-redef]
+        frame_methods: DFMethods = self.assign_group_id(tmp_attr).drop_col(tmp_attr)  # type: ignore[no-redef]
 
         df: frames = frame_methods.frame
 

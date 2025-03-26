@@ -1,3 +1,4 @@
+"""Defines methods after Pandas API"""
 from typing_extensions import override
 import typing
 

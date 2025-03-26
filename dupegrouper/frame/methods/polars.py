@@ -1,3 +1,4 @@
+"""Defines methods after Polars API"""
 from typing_extensions import override
 import typing
 

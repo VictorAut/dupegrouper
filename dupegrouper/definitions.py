@@ -1,3 +1,5 @@
+"""constants and types"""
+
 from __future__ import annotations
 import os
 import typing

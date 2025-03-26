@@ -1,3 +1,5 @@
+"""Perform near deduplication with TF-IDF"""
+
 import functools
 import logging
 from typing_extensions import override
@@ -39,6 +41,16 @@ class TfIdf(DeduplicationStrategy):
 
     @functools.singledispatchmethod
     def _vectorize(self, ngram) -> TfidfVectorizer:
+        """Parametriser tf-idf vectorizer
+
+        Dispatches the n-gram ranging allowing for passing as an integer i.e.
+        3 -> (3, 3) or over via a tuple i.e. (2, 5). Additional keywords
+        arguments can be passed to parametrise the vectorizer, as listed in the
+        documentation:
+        https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
+        
+        Args:
+            ngram: the n-gram range"""
         del ngram  # Unused by generic
         return TypeError("ngram must be of type int or a length 2 tuple of integers")
 
@@ -58,15 +70,13 @@ class TfIdf(DeduplicationStrategy):
             **self._kwargs,
         )
 
-    def _get_vectorizer(self):
-        return self._vectorize(self._ngram)
-
     def _get_similarities_matrix(
         self,
         vectorizer: TfidfVectorizer,
         array: np.ndarray,
         /,
     ) -> csr_matrix:
+        """sparse matrix of similarities, given the "top N" _best_ matches"""
         return sp_matmul_topn(
             (mat := vectorizer.fit_transform(array)),
             mat.T,
@@ -81,6 +91,10 @@ class TfIdf(DeduplicationStrategy):
         array: np.ndarray,
         /,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+        """Extract arrays based on similarity scores
+        
+        Filter's out _approximate_ perfect scores (i.e. decimal handling) and
+        loads up results into a tuple of arrays"""
         sparse_coo = sparse.tocoo()
 
         # floating point precision handling of perfect match filter
@@ -106,6 +120,27 @@ class TfIdf(DeduplicationStrategy):
     def _gen_map(
         matches: tuple[np.ndarray, np.ndarray, np.ndarray],
     ) -> typing.Iterator[dict[str, str]]:
+        """Generate unique matches as a map
+        
+        Given a "top N" > 1 get similarity matches in ascending order, thus
+        guaranteeing that the _best_ match will be the last match, as retrived
+        by the public API.
+        
+        Args:
+            matches: a tuple array of "original" values, as well as a matched
+            value for the equivalent index of that array.
+
+        Yields:
+            A map, e.g. {"example_address_1": "example_address_2"}, will be
+            yielded IF it has not been yielded before *or*, the prior seen
+            instance of the map match is not the "inverse" map.
+
+            i.e. the mapping
+                {"example_address_1": "example_address_2"}
+            will *not* be yielded if
+                {"example_address_2": "example_address_2"}
+            has already been yielded.
+        """
         seen: set[tuple[int, int]] = set()
 
         # iter: reorder to similarities score ascending
@@ -118,6 +153,16 @@ class TfIdf(DeduplicationStrategy):
 
     @override
     def dedupe(self, attr: str, /) -> frames:
+        """dedupe with tf-df
+        
+        1-to-1 maps are identified using the procedure, _not_ a map across the
+        whole array as identified by `attr` this is because this deduper
+        implements `top N` functionality and a non-iterative approach would
+        produce a mapping object that > len(array)
+
+        TODO: given above is it necessary to iterate or can individual "1-to-1"
+        maps suffice?
+        """
         logger.debug(
             f'Deduping attribute "{attr}" with {self.__class__.__name__}('
             f"ngram={self._ngram}, "
@@ -130,7 +175,7 @@ class TfIdf(DeduplicationStrategy):
 
         tmp_attr: str = attr + TMP_ATTR_LABEL
 
-        vectorizer = self._get_vectorizer()
+        vectorizer = self._vectorize(self._ngram)
 
         similarities = self._get_similarities_matrix(
             vectorizer, frame_methods.get_col(attr)
@@ -153,7 +198,7 @@ class TfIdf(DeduplicationStrategy):
 
             frame_methods: DFMethods = frame_methods.put_col(tmp_attr, new_attr)  # type: ignore[no-redef]
 
-            frame_methods: DFMethods = self._assign_group_id(tmp_attr).drop_col(  # type: ignore[no-redef]
+            frame_methods: DFMethods = self.assign_group_id(tmp_attr).drop_col(  # type: ignore[no-redef]
                 tmp_attr
             )
 
