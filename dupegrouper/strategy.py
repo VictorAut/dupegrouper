@@ -68,7 +68,7 @@ class DeduplicationStrategy(ABC):
     """Abstract base class for defining deduplication strategies.
 
     This class provides the structure and methods for implementing different
-    deduplication strategies. _Any_ deduplication strategy must inherit from 
+    deduplication strategies. _Any_ deduplication strategy must inherit from
     here.
     """
 
@@ -102,13 +102,13 @@ class DeduplicationStrategy(ABC):
         iterative application of this function, or, when the function is
         applied to an attribute `attr` that contains only matches, i.e., a
         partial map of matches.
-        
+
         Args:
             attr: the dataframe label of the attribute
 
         Returns:
             frame_methods; i.e. an instance `DFMethods` i.e. container of data
-            **and** linked dataframe methods; ready for further downstream 
+            **and** linked dataframe methods; ready for further downstream
             processing.
         """
         logger.debug(

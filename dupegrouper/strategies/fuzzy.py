@@ -35,7 +35,7 @@ class Fuzzy(DeduplicationStrategy):
     @override
     def dedupe(self, attr: str, /) -> frames:
         """dedupe with string match using fuzzy wuzzy
-        
+
         string matches are applied on only _unique_ instances of the attribute,
         for optimization. fuzzy wuzzy matches are cached optimising instances
         of frequent dupes. Best scored are selected as defined by `_ratio`

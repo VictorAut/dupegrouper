@@ -2,6 +2,7 @@
 
 Applies if the end user chooses to create their own function for deduplication
 """
+
 import logging
 import typing
 from typing_extensions import override
@@ -42,12 +43,12 @@ class Custom(DeduplicationStrategy):
     @override
     def dedupe(self, attr=None) -> frames:
         """dedupe with custom defined callable
-        
+
         Implements deduplication using a function defined _outside_ of the
         scope of this library i.e. by the end user.
-        
+
         The function signature must be of the following style:
-        
+
         `my_func(df, attr, /, **kwargs)`
 
         Where `df` is the dataframe, `attr` is a string identifying the label

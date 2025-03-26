@@ -9,7 +9,7 @@ import pandas as pd
 
 class DFMethods(ABC):
     """Implements needed methodsgiven any instance of a dataframe
-    
+
     At runtime any instance of this class will also be a data container of the
     dataframe. The abstractmethods defined here are all the required
     implementations needed
@@ -21,7 +21,7 @@ class DFMethods(ABC):
     @abstractmethod
     def put_col(self, column: str, array) -> typing.Self:
         """assign i.e. write a column with array-like data
-        
+
         No return: `_df` is updated
         """
         pass
@@ -39,7 +39,7 @@ class DFMethods(ABC):
     @abstractmethod
     def drop_col(self, column: str) -> typing.Self:
         """delete a column with array-like data
-        
+
         No return: `_df` is updated
         """
         pass

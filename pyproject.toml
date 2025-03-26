@@ -25,6 +25,7 @@ ruff = "^0.11.2"
 mypy = "^1.15.0"
 pandas-stubs = "^2.2.3.250308"
 scipy-stubs = "^1.15.2.1"
+pdoc = "^15.0.1"
 
 [build-system]
 requires = ["poetry-core"]

@@ -48,7 +48,7 @@ class TfIdf(DeduplicationStrategy):
         arguments can be passed to parametrise the vectorizer, as listed in the
         documentation:
         https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
-        
+
         Args:
             ngram: the n-gram range"""
         del ngram  # Unused by generic
@@ -92,7 +92,7 @@ class TfIdf(DeduplicationStrategy):
         /,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Extract arrays based on similarity scores
-        
+
         Filter's out _approximate_ perfect scores (i.e. decimal handling) and
         loads up results into a tuple of arrays"""
         sparse_coo = sparse.tocoo()
@@ -121,11 +121,11 @@ class TfIdf(DeduplicationStrategy):
         matches: tuple[np.ndarray, np.ndarray, np.ndarray],
     ) -> typing.Iterator[dict[str, str]]:
         """Generate unique matches as a map
-        
+
         Given a "top N" > 1 get similarity matches in ascending order, thus
         guaranteeing that the _best_ match will be the last match, as retrived
         by the public API.
-        
+
         Args:
             matches: a tuple array of "original" values, as well as a matched
             value for the equivalent index of that array.
@@ -154,7 +154,7 @@ class TfIdf(DeduplicationStrategy):
     @override
     def dedupe(self, attr: str, /) -> frames:
         """dedupe with tf-df
-        
+
         1-to-1 maps are identified using the procedure, _not_ a map across the
         whole array as identified by `attr` this is because this deduper
         implements `top N` functionality and a non-iterative approach would
