@@ -24,6 +24,7 @@ from types import NoneType
 import typing
 
 import pandas as pd
+import pdoc
 import polars as pl
 
 from dupegrouper.definitions import (
@@ -182,7 +183,7 @@ class _StrategyManager:
         return False
 
     def reset(self):
-        """Cleans the slate for fresh input of strategies"""
+        """Reset strategy collection to empty default dictionary"""
         self.__init__()
 
 

@@ -46,10 +46,10 @@ df = pd.read_csv("multi_df.csv")
 dg = dupegrouper.DupeGrouper(df)
 
 
-dg.add_strategy(dupegrouper.strategies.Exact())
-dg.add_strategy(dupegrouper.strategies.Fuzzy(tolerance=0.3))
-dg.add_strategy(dupegrouper.strategies.TfIdf(tolerance=0.4, ngram=3, topn=3))
-# dg.add_strategy((my_func, {"match_str": "london"}))
+# dg.add_strategy(dupegrouper.strategies.Exact())
+# dg.add_strategy(dupegrouper.strategies.Fuzzy(tolerance=0.3))
+# dg.add_strategy(dupegrouper.strategies.TfIdf(tolerance=0.4, ngram=3, topn=3))
+dg.add_strategy((my_func, {"match_str": "london"}))
 
 print(dg.strategies)
 

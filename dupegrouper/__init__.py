@@ -1,3 +1,8 @@
-from dupegrouper.base import DupeGrouper
+"""
+.. include:: ../README.md
+"""
 
-__all__ = ["DupeGrouper"]
+from dupegrouper.base import DupeGrouper
+from dupegrouper.strategy import DeduplicationStrategy
+
+# __all__ = ["DupeGrouper"]
