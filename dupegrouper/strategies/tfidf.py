@@ -12,7 +12,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer  # type: ignore
 from sparse_dot_topn import sp_matmul_topn  # type: ignore
 
 from dupegrouper.definitions import TMP_ATTR_LABEL, frames
-from dupegrouper.frame import DFMethods
+from dupegrouper.frames import DFMethods
 from dupegrouper.strategy import DeduplicationStrategy
 
 
@@ -26,6 +26,16 @@ logger = logging.getLogger(__name__)
 
 
 class TfIdf(DeduplicationStrategy):
+    """TF-IDF deduper.
+    
+    Note: high "top N" numbers at initialisation may cause spurious results.
+    Use with care!
+
+    Note: Whilst powerful, this is computationally intensive: ~*O(n^2)*
+
+    Additional keywords arguments can be passed to parametrise the vectorizer,
+    as listed in the [TF-IDF vectorizer documentation](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html)
+    """
 
     def __init__(
         self,
@@ -44,10 +54,7 @@ class TfIdf(DeduplicationStrategy):
         """Parametriser tf-idf vectorizer
 
         Dispatches the n-gram ranging allowing for passing as an integer i.e.
-        3 -> (3, 3) or over via a tuple i.e. (2, 5). Additional keywords
-        arguments can be passed to parametrise the vectorizer, as listed in the
-        documentation:
-        https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
+        3 -> (3, 3) or over via a tuple i.e. (2, 5).
 
         Args:
             ngram: the n-gram range"""
@@ -153,15 +160,16 @@ class TfIdf(DeduplicationStrategy):
 
     @override
     def dedupe(self, attr: str, /) -> frames:
-        """dedupe with tf-df
+        """Deduplicate with term frequency, inverse document frequency.
 
-        1-to-1 maps are identified using the procedure, _not_ a map across the
-        whole array as identified by `attr` this is because this deduper
-        implements `top N` functionality and a non-iterative approach would
-        produce a mapping object that > len(array)
+        Here, 1-to-1 maps are identified using the procedure i.e. for *each*
+        row, *not* a map across the whole array as identified by `attr`. This
+        is because this deduper implements "top N" matches functionality and a
+        non-iterative approach would produce a mapping object that > len(array)
 
-        TODO: given above is it necessary to iterate or can individual "1-to-1"
-        maps suffice?
+        Therefore, for instances of "top N" matches where > 1, 1-to-1 match
+        maps are iteratively applied from worst to best, guarnateeing the best
+        end match.
         """
         logger.debug(
             f'Deduping attribute "{attr}" with {self.__class__.__name__}('

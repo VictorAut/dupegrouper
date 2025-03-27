@@ -3,6 +3,11 @@
 """
 
 from dupegrouper.base import DupeGrouper
-from dupegrouper.strategy import DeduplicationStrategy
+from dupegrouper import strategy, strategies  # submodules
 
-# __all__ = ["DupeGrouper"]
+
+__all__ = [
+    "DupeGrouper",
+    "strategy",
+    "strategies",
+]

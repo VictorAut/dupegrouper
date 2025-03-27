@@ -5,7 +5,7 @@ import typing
 
 import pandas as pd
 
-from dupegrouper.frame.dataframe import DFMethods
+from dupegrouper.frames.dataframe import DFMethods
 
 
 class PandasMethods(DFMethods):

@@ -8,7 +8,7 @@ import numpy as np
 from rapidfuzz import fuzz
 
 from dupegrouper.definitions import TMP_ATTR_LABEL, frames
-from dupegrouper.frame import DFMethods
+from dupegrouper.frames import DFMethods
 from dupegrouper.strategy import DeduplicationStrategy
 
 
@@ -34,11 +34,11 @@ class Fuzzy(DeduplicationStrategy):
 
     @override
     def dedupe(self, attr: str, /) -> frames:
-        """dedupe with string match using fuzzy wuzzy
+        """Deduplicate with string match using fuzzy wuzzy
 
-        string matches are applied on only _unique_ instances of the attribute,
-        for optimization. fuzzy wuzzy matches are cached optimising instances
-        of frequent dupes. Best scored are selected as defined by `_ratio`
+        String matches are applied on only *unique* instances of the attribute,
+        for optimization. fuzzy wuzzy matches are cached, optimising
+        computation of matches for instances of frequent duplication.
         """
         logger.debug(
             f'Deduping attribute "{attr}" with {self.__class__.__name__}'

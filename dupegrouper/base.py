@@ -1,30 +1,17 @@
-"""dupegrouper base implementation and public API
+"""dupegrouper main entrypoint
 
 This module contains `DupeGrouper`, at the core of all 'dupe and group'
 functionality provided by dupegrouper.
-
-Typical usage example:
-
-    dg = dupegrouper.DupeGrouper(df) # input dataframe
-
-    dg.add_strategy(dupegrouper.strategies.Exact())
-    dg.add_strategy(dupegrouper.strategies.Fuzzy(tolerance=0.3))
-
-    dg.dedupe("address")
-
-    dg.df # retrieve dataframe
 """
 
 import collections.abc
 import collections
 from functools import singledispatchmethod
 import inspect
-import logging
 from types import NoneType
 import typing
 
 import pandas as pd
-import pdoc
 import polars as pl
 
 from dupegrouper.definitions import (
@@ -34,12 +21,6 @@ from dupegrouper.definitions import (
 )
 from dupegrouper.strategies.custom import Custom
 from dupegrouper.strategy import DeduplicationStrategy
-
-
-# LOGGER:
-
-
-logger = logging.getLogger(__name__)
 
 
 # DATAFRAME CONSTRUCTOR:
@@ -90,20 +71,6 @@ class _InitDataFrame:
 
 
 # STRATEGY MANAGMENT:
-
-
-class StrategyTypeError(Exception):
-    """Strategy type not valid errors"""
-
-    def __init__(self, strategy: DeduplicationStrategy | tuple):
-        msg = "Input is not valid"  # i.e. default
-        if inspect.isclass(strategy):
-            msg = f"Input class must be an instance of `DeduplicationStrategy`, not: {type(strategy())}"
-        if isinstance(strategy, tuple):
-            msg = f"Input tuple is not valid: must be a length 2 [callable, dict], not {strategy}"
-        if isinstance(strategy, dict):
-            msg = "Input dict is not valid: items must be a list of `DeduplicationStrategy` or tuples"
-        super().__init__(msg)
 
 
 class _StrategyManager:
@@ -191,15 +158,17 @@ class _StrategyManager:
 
 
 class DupeGrouper:
-    """Top-level public class for grouping duplicates
+    """Top-level entrypoint for grouping duplicates
 
     This class handles initialisation of a dataframe, dispatching appropriately
     given the supported dataframe libraries (e.g. Pandas). An instance of this
     class can then accept a variety of strategies for deduplication and
-    grouping. Addition strategies is off-loaded to the helper
-    `_StrategyManager` class. The class provides dispatched functionality to
-    handle multiplicity of strategy inputs, as well as the _type_ of that
-    strategy.
+    grouping. 
+    
+    Upon initialisation, `DupeGrouper` sets a new column, usually `"group_id"`
+    — but you can control this by setting an environment variable `GROUP_ID` at
+    runtime. The group_id is linearly increasing, numeric id column starting at
+    1 to the length of the dataframe provided.
     """
 
     def __init__(self, df: pd.DataFrame):
@@ -220,7 +189,7 @@ class DupeGrouper:
         pass this *directly* to the `Custom` class and initialise that.
 
         Args:
-            strategy: A `dupergrouper` deduplication strategy or a tuple
+            strategy: A `dupegrouper` deduplication strategy or a tuple
                 containing a (customer) callable and its parameters.
             attr: The attribute used for deduplication.
 
@@ -235,12 +204,12 @@ class DupeGrouper:
 
     @_call_strategy_deduper.register(DeduplicationStrategy)
     def _(self, strategy, attr):
-        return strategy.set_df(self._df).dedupe(attr)
+        return strategy._set_df(self._df).dedupe(attr)
 
     @_call_strategy_deduper.register(tuple)
     def _(self, strategy: tuple[typing.Callable, typing.Any], attr):
         func, kwargs = strategy
-        return Custom(func, attr, **kwargs).set_df(self._df).dedupe()
+        return Custom(func, attr, **kwargs)._set_df(self._df).dedupe()
 
     @singledispatchmethod
     def _dedupe(
@@ -287,16 +256,55 @@ class DupeGrouper:
 
     # PUBLIC API:
 
-    @property
-    def df(self) -> pd.DataFrame:
-        return self._df
+    @singledispatchmethod
+    def add_strategy(
+        self, strategy: DeduplicationStrategy | tuple | strategy_map_collection
+    ):
+        """
+        Add a strategy to the strategy manager.
+
+        Instances of `DeduplicationStrategy` or tuple are added to the
+        "default" key. Mapping objects update the manager directly
+
+        Args:
+            strategy: A deduplication strategy, tuple, or strategy collection
+                (mapping) to add.
+
+        Returns:
+            self is updated
+
+        Raises:
+            NotImplementedError
+        """
+        return NotImplementedError(f"Unsupported strategy: {type(strategy)}")
+
+    @add_strategy.register(DeduplicationStrategy)
+    @add_strategy.register(tuple)
+    def _(self, strategy):
+        self._strategy_manager.add("default", strategy)
+
+    @add_strategy.register(dict)
+    def _(self, strategy: strategy_map_collection):
+        for attr, strat_list in strategy.items():
+            for strat in strat_list:
+                self._strategy_manager.add(attr, strat)
+
+    def dedupe(self, attr: str | None = None):
+        """dedupe, and group, the data based on the provided attribute
+        
+        Args:
+            attr: The attribute to deduplicate. If stratgies have been added as
+                a mapping object, this must not passed, as the keys of the
+                mapping object will be used instead
+        """
+        self._dedupe(attr, self._strategy_manager.get())
 
     @property
     def strategies(self) -> None | tuple[str, ...] | dict[str, tuple[str, ...]]:
         """
         Returns the strategies currently stored in the strategy manager.
 
-        If no strategies are stored, returns None. Otherwise, returns a tuple
+        If no strategies are stored, returns `None`. Otherwise, returns a tuple
         of strategy names or a dictionary mapping attributes to their
         respective strategies.
 
@@ -319,38 +327,23 @@ class DupeGrouper:
             return tuple([parse_strategies(v) for _, v in strategies.items()])[0]
         return {k: parse_strategies(v) for k, v in strategies.items()}
 
-    @singledispatchmethod
-    def add_strategy(
-        self, strategy: DeduplicationStrategy | tuple | strategy_map_collection
-    ):
-        """
-        Add a strategy to the strategy manager.
+    @property
+    def df(self) -> pd.DataFrame:
+        return self._df
 
-        Instances of `DeduplicationStrategy` or tuple are added to the
-        "default" key. Mapping objects update the manager directly
 
-        Args:
-            strategy: A deduplication strategy, tuple, or strategy collection
-                to add.
+# EXCEPTION CLASS
 
-        Returns:
-            None; `_strategy_manager` is updated
 
-        Raises:
-            NotImplementedError
-        """
-        return NotImplementedError(f"Unsupported strategy: {type(strategy)}")
+class StrategyTypeError(Exception):
+    """Strategy type not valid errors"""
 
-    @add_strategy.register(DeduplicationStrategy)
-    @add_strategy.register(tuple)
-    def _(self, strategy):
-        self._strategy_manager.add("default", strategy)
-
-    @add_strategy.register(dict)
-    def _(self, strategy: strategy_map_collection):
-        for attr, strat_list in strategy.items():
-            for strat in strat_list:
-                self._strategy_manager.add(attr, strat)
-
-    def dedupe(self, attr: str | None = None):
-        self._dedupe(attr, self._strategy_manager.get())
+    def __init__(self, strategy: DeduplicationStrategy | tuple):
+        msg = "Input is not valid"  # i.e. default
+        if inspect.isclass(strategy):
+            msg = f"Input class must be an instance of `DeduplicationStrategy`, not: {type(strategy())}"
+        if isinstance(strategy, tuple):
+            msg = f"Input tuple is not valid: must be a length 2 [callable, dict], not {strategy}"
+        if isinstance(strategy, dict):
+            msg = "Input dict is not valid: items must be a list of `DeduplicationStrategy` or tuples"
+        super().__init__(msg)

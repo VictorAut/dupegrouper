@@ -1,9 +1,10 @@
-"""Abstract base class for any deduplication atrategy
+"""Abstract base class for derived deduplication atrategies
 
-This module contains `DeduplicationStrategy` which provides `assign_group_id`,
-which is at the core functionality of `dupegrouper` and is used for any
-deduplication that requires _grouping_. Additionally, the overrideable `dedupe`
-is defined."""
+This module contains `DeduplicationStrategy` which provides 
+`assign_group_id()`, which is at the core functionality of `dupegrouper` and is
+used for any deduplication that requires *grouping*. Additionally, the
+overrideable `dedupe()` is defined.
+"""
 
 from __future__ import annotations
 from abc import ABC, abstractmethod
@@ -15,14 +16,14 @@ import pandas as pd
 import polars as pl
 
 from dupegrouper.definitions import GROUP_ID, frames
-from dupegrouper.frame.methods import PandasMethods, PolarsMethods
-from dupegrouper.frame import DFMethods
+from dupegrouper.frames.methods import PandasMethods, PolarsMethods
+from dupegrouper.frames import DFMethods
 
 
 # LOGGER:
 
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 # DATAFRAME DISPATCHER
@@ -65,15 +66,11 @@ class _DataFrameDispatcher:
 
 
 class DeduplicationStrategy(ABC):
-    """Abstract base class for defining deduplication strategies.
+    """Defines a deduplication strategy."""
 
-    This class provides the structure and methods for implementing different
-    deduplication strategies. _Any_ deduplication strategy must inherit from
-    here.
-    """
-
-    def set_df(self, df):
-        """assign the dataframe data and initializes the corresponding methods.
+    def _set_df(self, df):
+        """Inject dataframe data and load dataframe methods corresponding
+        to the type of the dataframe the corresponding methods.
 
         Args:
             df: The dataframe to set
@@ -85,11 +82,11 @@ class DeduplicationStrategy(ABC):
         return self
 
     def assign_group_id(self, attr: str):
-        """assign new group ids according to duplicated instances of attribute.
+        """Assign new group ids according to duplicated instances of attribute.
 
         Array-like contents of the dataframe's attributes are collected as a
         numpy array, along with the group id. unique instances are found, and
-        the __first__ group id of that attribute is identified. This allows to
+        the *first* group id of that attribute is identified. This allows to
         then assign this "first" group id to all subsequent instances of a
         given unique attribute thus "flooring" the group ids.
 
@@ -107,11 +104,11 @@ class DeduplicationStrategy(ABC):
             attr: the dataframe label of the attribute
 
         Returns:
-            frame_methods; i.e. an instance `DFMethods` i.e. container of data
-            **and** linked dataframe methods; ready for further downstream
+            frame_methods; i.e. an instance "DFMethods" i.e. container of data
+            and linked dataframe methods; ready for further downstream
             processing.
         """
-        logger.debug(
+        _logger.debug(
             f'Re-assigning new "group_id" per duped instance of attribute "{attr}"'
         )
 
@@ -146,11 +143,7 @@ class DeduplicationStrategy(ABC):
 
     @abstractmethod
     def dedupe(self, attr: str) -> frames:
-        """Method to define the deduplication logic for a specific strategy.
-
-        This method must be implemented by subclasses to perform deduplication
-        based on a specific attribute — and has been designed such that it will
-        _always_ be a wrapper of `assign_group_id`
+        """Use `assign_group_id` to implement deduplication logic
 
         Args:
             attr: The attribute to use for deduplication.

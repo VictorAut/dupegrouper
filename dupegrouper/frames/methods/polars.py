@@ -5,7 +5,7 @@ import typing
 
 import polars as pl
 
-from dupegrouper.frame.dataframe import DFMethods
+from dupegrouper.frames.dataframe import DFMethods
 
 
 class PolarsMethods(DFMethods):

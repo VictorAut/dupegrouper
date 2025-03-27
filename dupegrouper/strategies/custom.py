@@ -8,7 +8,7 @@ import typing
 from typing_extensions import override
 
 from dupegrouper.definitions import TMP_ATTR_LABEL, frames
-from dupegrouper.frame import DFMethods
+from dupegrouper.frames import DFMethods
 from dupegrouper.strategy import DeduplicationStrategy
 
 
