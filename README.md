@@ -1,3 +1,8 @@
+<!-- <p align="center">
+<a href="https://pypi.python.org/pypi/dupegrouper"><img height="20" alt="PyPI Version" src="https://shields.mitmproxy.org/pypi/v/pdoc.svg"></a>
+<img height="20" alt="Supported Python Versions" src="https://shields.mitmproxy.org/pypi/pyversions/pdoc.svg">
+</p> -->
+
 A Python library for grouping duplicate data efficiently.
 
 # Introduction
