@@ -48,8 +48,23 @@ dg = dupegrouper.DupeGrouper(df)
 
 dg.add_strategy(dupegrouper.strategies.Exact())
 dg.add_strategy(dupegrouper.strategies.Fuzzy(tolerance=0.3))
-dg.add_strategy(dupegrouper.strategies.TfIdf(tolerance=0.4, ngram=3, topn=3))
-dg.add_strategy((my_func, {"match_str": "london"}))
+dg.add_strategy(dupegrouper.strategies.TfIdf(tolerance=0.7, ngram=3, topn=3))
+# dg.add_strategy((my_func, {"match_str": "london"}))
+
+dg.dedupe("address")
+
+dg.df
+
+dg.add_strategy(dupegrouper.strategies.Exact())
+# dg.add_strategy(dupegrouper.strategies.Fuzzy(tolerance=0.1))
+# dg.add_strategy((my_func, {"match_str": "london"}))
+
+dg.dedupe("email")
+
+list(dg.df.group_id)
+
+
+list(dg.df.group_id)
 
 print(dg.strategies)
 

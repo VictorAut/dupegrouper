@@ -163,8 +163,8 @@ class DupeGrouper:
     This class handles initialisation of a dataframe, dispatching appropriately
     given the supported dataframe libraries (e.g. Pandas). An instance of this
     class can then accept a variety of strategies for deduplication and
-    grouping. 
-    
+    grouping.
+
     Upon initialisation, `DupeGrouper` sets a new column, usually `"group_id"`
     — but you can control this by setting an environment variable `GROUP_ID` at
     runtime. The group_id is linearly increasing, numeric id column starting at
@@ -291,7 +291,7 @@ class DupeGrouper:
 
     def dedupe(self, attr: str | None = None):
         """dedupe, and group, the data based on the provided attribute
-        
+
         Args:
             attr: The attribute to deduplicate. If stratgies have been added as
                 a mapping object, this must not passed, as the keys of the
@@ -339,11 +339,15 @@ class StrategyTypeError(Exception):
     """Strategy type not valid errors"""
 
     def __init__(self, strategy: DeduplicationStrategy | tuple):
-        msg = "Input is not valid"  # i.e. default
+        base_msg = "Input is not valid"  # i.e. default; allow for easier testing
+        context = ""
         if inspect.isclass(strategy):
-            msg = f"Input class must be an instance of `DeduplicationStrategy`, not: {type(strategy())}"
+            base_msg = "Input class is not valid: must be an instance of `DeduplicationStrategy`"
+            context = f"not: {type(strategy())}"
         if isinstance(strategy, tuple):
-            msg = f"Input tuple is not valid: must be a length 2 [callable, dict], not {strategy}"
+            base_msg = "Input tuple is not valid: must be a length 2 [callable, dict]" 
+            context = f"not: {strategy}"
         if isinstance(strategy, dict):
-            msg = "Input dict is not valid: items must be a list of `DeduplicationStrategy` or tuples"
-        super().__init__(msg)
+            base_msg = "Input dict is not valid: items must be a list of `DeduplicationStrategy` or tuples"
+            context=""
+        super().__init__(base_msg + context) 
