@@ -76,9 +76,7 @@ class Custom(DeduplicationStrategy):
             ),
         )
 
-        logger.debug(
-            f"Assigning duplicated {self._attr} instances to attribute {tmp_attr}"
-        )
+        logger.debug(f"Assigning duplicated {self._attr} instances to attribute {tmp_attr}")
 
         frame_methods.put_col(tmp_attr, attr_map)
 

@@ -40,10 +40,7 @@ class Fuzzy(DeduplicationStrategy):
         for optimization. fuzzy wuzzy matches are cached, optimising
         computation of matches for instances of frequent duplication.
         """
-        logger.debug(
-            f'Deduping attribute "{attr}" with {self.__class__.__name__}'
-            f"(tolerance={self._tolerance})"
-        )
+        logger.debug(f'Deduping attribute "{attr}" with {self.__class__.__name__}' f"(tolerance={self._tolerance})")
 
         frame_methods: DFMethods = self.frame_methods
 
@@ -51,19 +48,15 @@ class Fuzzy(DeduplicationStrategy):
 
         uattrs = np.unique(frame_methods.get_col(attr))
 
-        similarity_matrix = np.array(
-            [[self._fuzz_ratio(s1, s2) for s1 in uattrs] for s2 in uattrs]
-        )
+        similarity_matrix = np.array([[self._fuzz_ratio(s1, s2) for s1 in uattrs] for s2 in uattrs])
 
-        match_indices = np.where(similarity_matrix >= self._ratio)
+        match_indices = np.where(similarity_matrix > self._ratio)
 
         fuzzy_map = {uattrs[i]: uattrs[j] for i, j in zip(*match_indices)}
 
         attr_map = frame_methods.map_dict(attr, fuzzy_map)  # i.e. a "Series"
 
-        logger.debug(
-            f'Assigning duplicated "{attr}" instances to attribute "{tmp_attr}"'
-        )
+        logger.debug(f'Assigning duplicated "{attr}" instances to attribute "{tmp_attr}"')
 
         frame_methods: DFMethods = frame_methods.put_col(tmp_attr, attr_map)  # type: ignore[no-redef]
 

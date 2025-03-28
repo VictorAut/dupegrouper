@@ -257,9 +257,7 @@ class DupeGrouper:
     # PUBLIC API:
 
     @singledispatchmethod
-    def add_strategy(
-        self, strategy: DeduplicationStrategy | tuple | strategy_map_collection
-    ):
+    def add_strategy(self, strategy: DeduplicationStrategy | tuple | strategy_map_collection):
         """
         Add a strategy to the strategy manager.
 
@@ -316,12 +314,7 @@ class DupeGrouper:
             return None
 
         def parse_strategies(dict_values):
-            return tuple(
-                [
-                    (vx[0].__name__ if isinstance(vx, tuple) else vx.__class__.__name__)
-                    for vx in dict_values
-                ]
-            )
+            return tuple([(vx[0].__name__ if isinstance(vx, tuple) else vx.__class__.__name__) for vx in dict_values])
 
         if "default" in strategies:
             return tuple([parse_strategies(v) for _, v in strategies.items()])[0]
@@ -345,9 +338,9 @@ class StrategyTypeError(Exception):
             base_msg = "Input class is not valid: must be an instance of `DeduplicationStrategy`"
             context = f"not: {type(strategy())}"
         if isinstance(strategy, tuple):
-            base_msg = "Input tuple is not valid: must be a length 2 [callable, dict]" 
+            base_msg = "Input tuple is not valid: must be a length 2 [callable, dict]"
             context = f"not: {strategy}"
         if isinstance(strategy, dict):
             base_msg = "Input dict is not valid: items must be a list of `DeduplicationStrategy` or tuples"
-            context=""
-        super().__init__(base_msg + context) 
+            context = ""
+        super().__init__(base_msg + context)

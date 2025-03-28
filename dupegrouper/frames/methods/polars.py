@@ -21,7 +21,7 @@ class PolarsMethods(DFMethods):
 
     @override
     def map_dict(self, column: str, mapping: dict) -> pl.Series:
-        return self.get_col(column).replace(mapping)
+        return self.get_col(column).replace_strict(mapping, default=None)
 
     @override
     def drop_col(self, column: str) -> typing.Self:

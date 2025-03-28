@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 class TfIdf(DeduplicationStrategy):
     """TF-IDF deduper.
-    
+
     Note: high "top N" numbers at initialisation may cause spurious results.
     Use with care!
 
@@ -185,30 +185,20 @@ class TfIdf(DeduplicationStrategy):
 
         vectorizer = self._vectorize(self._ngram)
 
-        similarities = self._get_similarities_matrix(
-            vectorizer, frame_methods.get_col(attr)
-        )
+        similarities = self._get_similarities_matrix(vectorizer, frame_methods.get_col(attr))
 
-        matches = self._get_matches_array(
-            similarities, np.array(frame_methods.get_col(attr))
-        )
+        matches = self._get_matches_array(similarities, np.array(frame_methods.get_col(attr)))
 
-        logger.debug(
-            f'Assigning duplicated "{attr}" instances to attribute "{tmp_attr}"'
-        )
+        logger.debug(f'Assigning duplicated "{attr}" instances to attribute "{tmp_attr}"')
         for tfidf_map in self._gen_map(matches):
 
             attr_map = frame_methods.map_dict(attr, tfidf_map)  # i.e. "Series" like
 
-            new_attr = frame_methods.fill_na(
-                attr_map, frame_methods.get_col(attr)
-            )  # i.e. "Series" like
+            new_attr = frame_methods.fill_na(attr_map, frame_methods.get_col(attr))  # i.e. "Series" like
 
             frame_methods: DFMethods = frame_methods.put_col(tmp_attr, new_attr)  # type: ignore[no-redef]
 
-            frame_methods: DFMethods = self.assign_group_id(tmp_attr).drop_col(  # type: ignore[no-redef]
-                tmp_attr
-            )
+            frame_methods: DFMethods = self.assign_group_id(tmp_attr).drop_col(tmp_attr)  # type: ignore[no-redef]
 
         df: frames = frame_methods.frame
         return df

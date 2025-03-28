@@ -1,6 +1,6 @@
 """Abstract base class for derived deduplication atrategies
 
-This module contains `DeduplicationStrategy` which provides 
+This module contains `DeduplicationStrategy` which provides
 `assign_group_id()`, which is at the core functionality of `dupegrouper` and is
 used for any deduplication that requires *grouping*. Additionally, the
 overrideable `dedupe()` is defined.
@@ -108,9 +108,7 @@ class DeduplicationStrategy(ABC):
             and linked dataframe methods; ready for further downstream
             processing.
         """
-        _logger.debug(
-            f'Re-assigning new "group_id" per duped instance of attribute "{attr}"'
-        )
+        _logger.debug(f'Re-assigning new "group_id" per duped instance of attribute "{attr}"')
 
         frame_methods: DFMethods = self.frame_methods  # type according to future ABC
 

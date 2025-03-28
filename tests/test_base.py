@@ -1,8 +1,10 @@
+"""Tests for dupegrouper.base"""
+
 from unittest.mock import ANY, Mock, patch
 
-import pytest
 import pandas as pd
 import polars as pl
+import pytest
 
 from dupegrouper.base import (
     _InitDataFrame,
@@ -14,53 +16,18 @@ from dupegrouper.strategies import Exact, Fuzzy, TfIdf
 from dupegrouper.strategy import DeduplicationStrategy
 
 
-dataframe_data = [
-    [1, "123ab, OL5 9PL, UK", "bbab@example.com"],
-    [
-        2,
-        "99 Ambleside avenue park Road, ED3 3RT, Edinburgh, United Kingdom",
-        "bb@example.com",
-    ],
-    [3, "Calle Ancho, 12, 05688, Rioja, Navarra, Espana", "a@example.com"],
-    [
-        4,
-        "Calle Sueco, 56, 05688, Rioja, Navarra",
-        "hellothere@example.com",
-    ],
-    [5, "4 Brinkworth Way, GH9 5KL, Edinburgh, United Kingdom", "b@example.com"],
-    [6, "66b Porters street, OL5 9PL, Newark, United Kingdom", "bab@example.com"],
-    [7, "C. Ancho 49, 05687, Navarra", "b@example.com"],
-    [8, "Ambleside avenue Park Road ED3, UK", "hellthere@example.com"],
-    [9, "123ab, OL5 9PL, UK", "hellathere@example.com"],
-    [10, "123ab, OL5 9PL, UK", "irrelevant@hotmail.com"],
-    [11, "37 Lincolnshire lane, GH9 5DF, Edinburgh, UK", "yet.another.email@msn.com"],
-    [12, "37 GH9, UK", "awesome_surfer_77@yahoo.com"],
-    [13, "totally random non existant address", "fictitious@never.co.uk"],
-]
-
-# fictitious addresses.
-df_pandas = pd.DataFrame(
-    columns=["id", "address", "email"],
-    data=dataframe_data,
-)
-
-df_polars = pl.DataFrame(
-    schema=["id", "address", "email"], data=dataframe_data, orient="row"
-)
-
-
 ########################
 #  TEST _InitDataFrame #
 ########################
 
 
-def test_init_dataframe_pandas():
+def test_init_dataframe_pandas(df_pandas):
     df_init = _InitDataFrame(df_pandas).choose
     assert "group_id" in df_init.columns
     assert df_init["group_id"].tolist() == [i for i in range(1, 14)]
 
 
-def test_init_dataframe_polars():
+def test_init_dataframe_polars(df_polars):
     df_init = _InitDataFrame(df_polars).choose
     assert "group_id" in df_init.columns
     assert df_init["group_id"].to_list() == [i for i in range(1, 14)]
@@ -76,13 +43,9 @@ class DummyClass:
 
 
 DEFAULT_ERROR_MSG = "Input is not valid"
-CLASS_ERROR_MSG = (
-    "Input class is not valid: must be an instance of `DeduplicationStrategy`"
-)
+CLASS_ERROR_MSG = "Input class is not valid: must be an instance of `DeduplicationStrategy`"
 TUPLE_ERROR_MSG = "Input tuple is not valid: must be a length 2 [callable, dict]"
-DICT_ERROR_MSG = (
-    "Input dict is not valid: items must be a list of `DeduplicationStrategy` or tuples"
-)
+DICT_ERROR_MSG = "Input dict is not valid: items must be a list of `DeduplicationStrategy` or tuples"
 
 
 @pytest.mark.parametrize(
@@ -125,9 +88,7 @@ DICT_ERROR_MSG = (
         ),
     ],
 )
-def test_strategy_manager_validate_addition_strategy(
-    test_input, expected_to_pass, base_msg
-):
+def test_strategy_manager_validate_addition_strategy(test_input, expected_to_pass, base_msg):
     """validates that the input 'strtagey' is legit, against `StrategyTypeError`"""
     manager = _StrategyManager()
     mock_strategy = test_input
@@ -159,19 +120,19 @@ def test_strategy_manager_reset():
 ##################################
 
 
-def test_dupegrouper_df_attribute_pandas():
+def test_dupegrouper_df_attribute_pandas(df_pandas):
     grouper = DupeGrouper(df_pandas)
     assert isinstance(grouper.df, pd.DataFrame)
     assert "group_id" in grouper.df.columns
 
 
-def test_dupegrouper_df_attribute_polars():
+def test_dupegrouper_df_attribute_polars(df_polars):
     grouper = DupeGrouper(df_polars)
     assert isinstance(grouper.df, pl.DataFrame)
     assert "group_id" in grouper.df.columns
 
 
-def test_dupegrouper_add_strategy():
+def test_dupegrouper_add_strategy(df_pandas):
     grouper = DupeGrouper(df_pandas)
     mock_strategy = Mock(spec=DeduplicationStrategy)
     grouper.add_strategy(mock_strategy)
@@ -200,7 +161,7 @@ def patch_helper_reset(grouper: DupeGrouper):
     assert not grouper.strategies
 
 
-def test_dupegrouper_strategies_attribute_inline():
+def test_dupegrouper_strategies_attribute_inline(df_pandas):
     grouper = DupeGrouper(df_pandas)
 
     grouper.add_strategy(Mock(spec=Exact))
@@ -212,7 +173,7 @@ def test_dupegrouper_strategies_attribute_inline():
     patch_helper_reset(grouper)
 
 
-def test_dupegrouper_strategies_attribute_dict():
+def test_dupegrouper_strategies_attribute_dict(df_pandas):
     grouper = DupeGrouper(df_pandas)
 
     grouper.add_strategy(
@@ -228,14 +189,12 @@ def test_dupegrouper_strategies_attribute_dict():
         }
     )
 
-    assert grouper.strategies == dict(
-        {"address": ("Exact", "my_dummy_func"), "email": ("Exact", "Fuzzy")}
-    )
+    assert grouper.strategies == dict({"address": ("Exact", "my_dummy_func"), "email": ("Exact", "Fuzzy")})
 
     patch_helper_reset(grouper)
 
 
-def test_dupegrouper_add_strategy_equal_execution():
+def test_dupegrouper_add_strategy_equal_execution(df_pandas):
     """strategies can be added in various ways
 
     This tests that given the differing addition mechanisms, the output is the
