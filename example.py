@@ -41,7 +41,7 @@ print(
 
 ######################
 
-df = pd.read_csv("multi_df.csv")
+df = pd.read_csv("multi_df2.csv")
 
 dg = dupegrouper.DupeGrouper(df)
 
@@ -61,18 +61,8 @@ dg.add_strategy(dupegrouper.strategies.Exact())
 
 dg.dedupe("email")
 
-list(dg.df.group_id)
+dg.df
 
-
-list(dg.df.group_id)
-
-print(dg.strategies)
-
-dg.dedupe("address")
-
-print(dg.strategies)
-
-print(dg.df)
 
 ######################
 
@@ -82,7 +72,7 @@ print(
 
 ######################
 
-df = pd.read_csv("multi_df.csv")
+df = pd.read_csv("multi_df2.csv")
 
 dg = dupegrouper.DupeGrouper(df)
 
@@ -90,23 +80,20 @@ strategies = {
     "address": [
         dupegrouper.strategies.Exact(),
         dupegrouper.strategies.Fuzzy(tolerance=0.3),
-        # (my_func, {"match_str": "london"}),
+        dupegrouper.strategies.TfIdf(tolerance=0.7, ngram=3, topn=3),
     ],
     "email": [
         dupegrouper.strategies.Exact(),
-        dupegrouper.strategies.TfIdf(tolerance=0.7, ngram=3, topn=4),
     ],
 }
 
 dg.add_strategy(strategies)
 
-print(dg.strategies)
-
 dg.dedupe()
 
-print(dg.strategies)
+dg.df
 
-print(dg.df)
+
 
 ######################
 
@@ -116,7 +103,7 @@ print(
 
 ######################
 
-df = pl.read_csv("multi_df.csv")
+df = pl.read_csv("multi_df2.csv")
 
 df
 
@@ -144,7 +131,7 @@ print(
 
 ######################
 
-df = pl.read_csv("multi_df.csv")
+df = pl.read_csv("multi_df2.csv")
 
 dg = dupegrouper.DupeGrouper(df)
 

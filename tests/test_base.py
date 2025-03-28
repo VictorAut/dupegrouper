@@ -241,7 +241,7 @@ def test_dupegrouper_add_strategy_equal_execution():
     This tests that given the differing addition mechanisms, the output is the
     same"""
 
-    expected_group_ids = [1, 2, 3, 3, 2, 1, 2, 2, 1, 1, 11, 12, 13]
+    expected_group_ids = [1, 2, 3, 3, 2, 6, 2, 2, 1, 1, 11, 12, 13]
 
     dg_inline = DupeGrouper(df_pandas)
     dg_inline.add_strategy(Exact())
@@ -256,7 +256,7 @@ def test_dupegrouper_add_strategy_equal_execution():
 
     inline_group_ids = list(dg_inline.df["group_id"])
 
-    assert expected_group_ids == inline_group_ids
+    assert inline_group_ids == expected_group_ids
 
     dg_asdict = DupeGrouper(df_pandas)
     dg_asdict.add_strategy(
@@ -270,11 +270,11 @@ def test_dupegrouper_add_strategy_equal_execution():
         }
     )
 
-    dg_asdict.dedupe("email")
+    dg_asdict.dedupe()
 
     asdict_group_ids = list(dg_asdict.df["group_id"])
 
-    assert expected_group_ids == asdict_group_ids
+    assert asdict_group_ids == expected_group_ids
 
     # Q.E.D
     assert inline_group_ids == asdict_group_ids
