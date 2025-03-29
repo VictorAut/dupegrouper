@@ -22,7 +22,7 @@ def my_func(df: pd.DataFrame, attr: str, /, match_str: str) -> dict[str, str]:
 
 def test_custom_dedupe(df_pandas):
 
-    deduper = Custom(my_func, "address", match_str="Navarra")
+    deduper = Custom(my_func, "address", match_str="navarra")
     deduper._set_df(df_pandas)
 
     updated_df = deduper.dedupe()
