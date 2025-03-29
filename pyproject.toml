@@ -26,6 +26,7 @@ rapidfuzz = "^3.12.2"
 scikit-learn = "^1.6.1"
 sparse-dot-topn = "^1.1.5"
 multipledispatch = "^1.0.0"
+typing-extensions = "^4.13.0"
 
 
 [tool.poetry.group.dev.dependencies]
