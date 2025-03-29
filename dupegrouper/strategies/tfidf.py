@@ -196,9 +196,8 @@ class TfIdf(DeduplicationStrategy):
 
             new_attr = frame_methods.fill_na(attr_map, frame_methods.get_col(attr))  # i.e. "Series" like
 
-            frame_methods: DFMethods = frame_methods.put_col(tmp_attr, new_attr)  # type: ignore[no-redef]
+            frame_methods.put_col(tmp_attr, new_attr)  # inplace create column
 
-            frame_methods: DFMethods = self.assign_group_id(tmp_attr).drop_col(tmp_attr)  # type: ignore[no-redef]
+            self.assign_group_id(tmp_attr).drop_col(tmp_attr)  # updates `framemethods`
 
-        df: frames = frame_methods.frame
-        return df
+        return frame_methods.frame

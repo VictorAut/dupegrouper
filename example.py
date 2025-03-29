@@ -44,7 +44,9 @@ print(
 # df = pd.read_csv("multi_df2.csv")
 
 
-df = pd.DataFrame(columns=["id", "address", "email", "group_id"], data=[
+df = pd.DataFrame(
+    columns=["id", "address", "email", "group_id"],
+    data=[
         [1, "123ab, OL5 9PL, UK", "bbab@example.com", 1],
         [2, "99 Ambleside avenue park Road, ED3 3RT, Edinburgh, United Kingdom", "bb@example.com", 2],
         [3, "Calle Ancho, 12, 05688, Rioja, Navarra, Espana", "a@example.com", 3],
@@ -58,7 +60,8 @@ df = pd.DataFrame(columns=["id", "address", "email", "group_id"], data=[
         [11, "37 Lincolnshire lane, GH9 5DF, Edinburgh, UK", "yet.another.email@msn.com", 11],
         [12, "37 GH9, UK", "awesome_surfer_77@yahoo.com", 12],
         [13, "totally random non existant address", "fictitious@never.co.uk", 13],
-    ])
+    ],
+)
 
 # my_func(df, "address", match_str="navarra")
 

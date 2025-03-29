@@ -58,10 +58,6 @@ class Fuzzy(DeduplicationStrategy):
 
         logger.debug(f'Assigning duplicated "{attr}" instances to attribute "{tmp_attr}"')
 
-        frame_methods: DFMethods = frame_methods.put_col(tmp_attr, attr_map)  # type: ignore[no-redef]
+        frame_methods.put_col(tmp_attr, attr_map)  # inplace create column
 
-        frame_methods: DFMethods = self.assign_group_id(tmp_attr).drop_col(tmp_attr)  # type: ignore[no-redef]
-
-        df: frames = frame_methods.frame
-
-        return df
+        return self.assign_group_id(tmp_attr).drop_col(tmp_attr).frame

@@ -60,18 +60,6 @@
                 </ul>
 
             </li>
-            <li>
-                    <a class="class" href="#Custom">Custom</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#Custom.__init__">Custom</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Custom.dedupe">dedupe</a>
-                        </li>
-                </ul>
-
-            </li>
     </ul>
 
 
@@ -94,17 +82,15 @@
 
                         <label class="view-source-button" for="mod-strategies-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.exact</span><span class="w"> </span><span class="kn">import</span> <span class="n">Exact</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.fuzzy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fuzzy</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.tfidf</span><span class="w"> </span><span class="kn">import</span> <span class="n">TfIdf</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.custom</span><span class="w"> </span><span class="kn">import</span> <span class="n">Custom</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>    <span class="s2">&quot;Exact&quot;</span><span class="p">,</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>    <span class="s2">&quot;Fuzzy&quot;</span><span class="p">,</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>    <span class="s2">&quot;TfIdf&quot;</span><span class="p">,</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>    <span class="s2">&quot;Custom&quot;</span><span class="p">,</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="p">]</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.exact</span><span class="w"> </span><span class="kn">import</span> <span class="n">Exact</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.fuzzy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fuzzy</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.tfidf</span><span class="w"> </span><span class="kn">import</span> <span class="n">TfIdf</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">4</span></a>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">5</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">6</span></a>    <span class="s2">&quot;Exact&quot;</span><span class="p">,</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">7</span></a>    <span class="s2">&quot;Fuzzy&quot;</span><span class="p">,</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">8</span></a>    <span class="s2">&quot;TfIdf&quot;</span><span class="p">,</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">9</span></a><span class="p">]</span>
 </span></pre></div>
 
 
@@ -126,16 +112,11 @@
 </span><span id="Exact-24"><a href="#Exact-24"><span class="linenos">24</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dedupe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">frames</span><span class="p">:</span>
 </span><span id="Exact-25"><a href="#Exact-25"><span class="linenos">25</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Deduping attribute &quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&quot; with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">()&#39;</span><span class="p">)</span>
 </span><span id="Exact-26"><a href="#Exact-26"><span class="linenos">26</span></a>        <span class="n">frame_methods</span><span class="p">:</span> <span class="n">DFMethods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_group_id</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-</span><span id="Exact-27"><a href="#Exact-27"><span class="linenos">27</span></a>        <span class="n">df</span><span class="p">:</span> <span class="n">frames</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">frame</span>
-</span><span id="Exact-28"><a href="#Exact-28"><span class="linenos">28</span></a>        <span class="k">return</span> <span class="n">df</span>
+</span><span id="Exact-27"><a href="#Exact-27"><span class="linenos">27</span></a>        <span class="k">return</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">frame</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Abstract base class for defining deduplication strategies.</p>
-
-<p>This class provides the structure and methods for implementing different
-deduplication strategies. _Any_ deduplication strategy must inherit from
-here.</p>
+            <div class="docstring"><p>Defines a deduplication strategy.</p>
 </div>
 
 
@@ -155,16 +136,11 @@ here.</p>
 </span><span id="Exact.dedupe-24"><a href="#Exact.dedupe-24"><span class="linenos">24</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dedupe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">frames</span><span class="p">:</span>
 </span><span id="Exact.dedupe-25"><a href="#Exact.dedupe-25"><span class="linenos">25</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Deduping attribute &quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&quot; with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">()&#39;</span><span class="p">)</span>
 </span><span id="Exact.dedupe-26"><a href="#Exact.dedupe-26"><span class="linenos">26</span></a>        <span class="n">frame_methods</span><span class="p">:</span> <span class="n">DFMethods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_group_id</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-</span><span id="Exact.dedupe-27"><a href="#Exact.dedupe-27"><span class="linenos">27</span></a>        <span class="n">df</span><span class="p">:</span> <span class="n">frames</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">frame</span>
-</span><span id="Exact.dedupe-28"><a href="#Exact.dedupe-28"><span class="linenos">28</span></a>        <span class="k">return</span> <span class="n">df</span>
+</span><span id="Exact.dedupe-27"><a href="#Exact.dedupe-27"><span class="linenos">27</span></a>        <span class="k">return</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">frame</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Method to define the deduplication logic for a specific strategy.</p>
-
-<p>This method must be implemented by subclasses to perform deduplication
-based on a specific attribute — and has been designed such that it will
-_always_ be a wrapper of <code><a href="#Exact.assign_group_id">assign_group_id</a></code></p>
+            <div class="docstring"><p>Use <code><a href="#Exact.assign_group_id">assign_group_id</a></code> to implement deduplication logic</p>
 
 <h6 id="arguments">Arguments:</h6>
 
@@ -185,8 +161,7 @@ _always_ be a wrapper of <code><a href="#Exact.assign_group_id">assign_group_id<
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt><a href="strategy.html#DeduplicationStrategy">dupegrouper.strategy.DeduplicationStrategy</a></dt>
-                                <dd id="Exact.set_df" class="function"><a href="strategy.html#DeduplicationStrategy.set_df">set_df</a></dd>
-                <dd id="Exact.assign_group_id" class="function"><a href="strategy.html#DeduplicationStrategy.assign_group_id">assign_group_id</a></dd>
+                                <dd id="Exact.assign_group_id" class="function"><a href="strategy.html#DeduplicationStrategy.assign_group_id">assign_group_id</a></dd>
 
             </div>
                                 </dl>
@@ -216,52 +191,37 @@ _always_ be a wrapper of <code><a href="#Exact.assign_group_id">assign_group_id<
 </span><span id="Fuzzy-35"><a href="#Fuzzy-35"><span class="linenos">35</span></a>
 </span><span id="Fuzzy-36"><a href="#Fuzzy-36"><span class="linenos">36</span></a>    <span class="nd">@override</span>
 </span><span id="Fuzzy-37"><a href="#Fuzzy-37"><span class="linenos">37</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dedupe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">frames</span><span class="p">:</span>
-</span><span id="Fuzzy-38"><a href="#Fuzzy-38"><span class="linenos">38</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;dedupe with string match using fuzzy wuzzy</span>
+</span><span id="Fuzzy-38"><a href="#Fuzzy-38"><span class="linenos">38</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Deduplicate with string match using fuzzy wuzzy</span>
 </span><span id="Fuzzy-39"><a href="#Fuzzy-39"><span class="linenos">39</span></a>
-</span><span id="Fuzzy-40"><a href="#Fuzzy-40"><span class="linenos">40</span></a><span class="sd">        string matches are applied on only _unique_ instances of the attribute,</span>
-</span><span id="Fuzzy-41"><a href="#Fuzzy-41"><span class="linenos">41</span></a><span class="sd">        for optimization. fuzzy wuzzy matches are cached optimising instances</span>
-</span><span id="Fuzzy-42"><a href="#Fuzzy-42"><span class="linenos">42</span></a><span class="sd">        of frequent dupes. Best scored are selected as defined by `_ratio`</span>
+</span><span id="Fuzzy-40"><a href="#Fuzzy-40"><span class="linenos">40</span></a><span class="sd">        String matches are applied on only *unique* instances of the attribute,</span>
+</span><span id="Fuzzy-41"><a href="#Fuzzy-41"><span class="linenos">41</span></a><span class="sd">        for optimization. fuzzy wuzzy matches are cached, optimising</span>
+</span><span id="Fuzzy-42"><a href="#Fuzzy-42"><span class="linenos">42</span></a><span class="sd">        computation of matches for instances of frequent duplication.</span>
 </span><span id="Fuzzy-43"><a href="#Fuzzy-43"><span class="linenos">43</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Fuzzy-44"><a href="#Fuzzy-44"><span class="linenos">44</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-</span><span id="Fuzzy-45"><a href="#Fuzzy-45"><span class="linenos">45</span></a>            <span class="sa">f</span><span class="s1">&#39;Deduping attribute &quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&quot; with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&#39;</span>
-</span><span id="Fuzzy-46"><a href="#Fuzzy-46"><span class="linenos">46</span></a>            <span class="sa">f</span><span class="s2">&quot;(tolerance=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_tolerance</span><span class="si">}</span><span class="s2">)&quot;</span>
-</span><span id="Fuzzy-47"><a href="#Fuzzy-47"><span class="linenos">47</span></a>        <span class="p">)</span>
-</span><span id="Fuzzy-48"><a href="#Fuzzy-48"><span class="linenos">48</span></a>
-</span><span id="Fuzzy-49"><a href="#Fuzzy-49"><span class="linenos">49</span></a>        <span class="n">frame_methods</span><span class="p">:</span> <span class="n">DFMethods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_methods</span>
-</span><span id="Fuzzy-50"><a href="#Fuzzy-50"><span class="linenos">50</span></a>
-</span><span id="Fuzzy-51"><a href="#Fuzzy-51"><span class="linenos">51</span></a>        <span class="n">tmp_attr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">attr</span> <span class="o">+</span> <span class="n">TMP_ATTR_LABEL</span>
-</span><span id="Fuzzy-52"><a href="#Fuzzy-52"><span class="linenos">52</span></a>
-</span><span id="Fuzzy-53"><a href="#Fuzzy-53"><span class="linenos">53</span></a>        <span class="n">uattrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">frame_methods</span><span class="o">.</span><span class="n">get_col</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
-</span><span id="Fuzzy-54"><a href="#Fuzzy-54"><span class="linenos">54</span></a>
-</span><span id="Fuzzy-55"><a href="#Fuzzy-55"><span class="linenos">55</span></a>        <span class="n">similarity_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-</span><span id="Fuzzy-56"><a href="#Fuzzy-56"><span class="linenos">56</span></a>            <span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">_fuzz_ratio</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span> <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">uattrs</span><span class="p">]</span> <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">uattrs</span><span class="p">]</span>
-</span><span id="Fuzzy-57"><a href="#Fuzzy-57"><span class="linenos">57</span></a>        <span class="p">)</span>
-</span><span id="Fuzzy-58"><a href="#Fuzzy-58"><span class="linenos">58</span></a>
-</span><span id="Fuzzy-59"><a href="#Fuzzy-59"><span class="linenos">59</span></a>        <span class="n">match_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">similarity_matrix</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ratio</span><span class="p">)</span>
-</span><span id="Fuzzy-60"><a href="#Fuzzy-60"><span class="linenos">60</span></a>
-</span><span id="Fuzzy-61"><a href="#Fuzzy-61"><span class="linenos">61</span></a>        <span class="n">fuzzy_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">uattrs</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span> <span class="n">uattrs</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">match_indices</span><span class="p">)}</span>
-</span><span id="Fuzzy-62"><a href="#Fuzzy-62"><span class="linenos">62</span></a>
-</span><span id="Fuzzy-63"><a href="#Fuzzy-63"><span class="linenos">63</span></a>        <span class="n">attr_map</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">map_dict</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">fuzzy_map</span><span class="p">)</span>  <span class="c1"># i.e. a &quot;Series&quot;</span>
-</span><span id="Fuzzy-64"><a href="#Fuzzy-64"><span class="linenos">64</span></a>
-</span><span id="Fuzzy-65"><a href="#Fuzzy-65"><span class="linenos">65</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-</span><span id="Fuzzy-66"><a href="#Fuzzy-66"><span class="linenos">66</span></a>            <span class="sa">f</span><span class="s1">&#39;Assigning duplicated &quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&quot; instances to attribute &quot;</span><span class="si">{</span><span class="n">tmp_attr</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
-</span><span id="Fuzzy-67"><a href="#Fuzzy-67"><span class="linenos">67</span></a>        <span class="p">)</span>
-</span><span id="Fuzzy-68"><a href="#Fuzzy-68"><span class="linenos">68</span></a>
-</span><span id="Fuzzy-69"><a href="#Fuzzy-69"><span class="linenos">69</span></a>        <span class="n">frame_methods</span><span class="p">:</span> <span class="n">DFMethods</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">put_col</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">,</span> <span class="n">attr_map</span><span class="p">)</span>  <span class="c1"># type: ignore[no-redef]</span>
-</span><span id="Fuzzy-70"><a href="#Fuzzy-70"><span class="linenos">70</span></a>
-</span><span id="Fuzzy-71"><a href="#Fuzzy-71"><span class="linenos">71</span></a>        <span class="n">frame_methods</span><span class="p">:</span> <span class="n">DFMethods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_group_id</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">)</span><span class="o">.</span><span class="n">drop_col</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">)</span>  <span class="c1"># type: ignore[no-redef]</span>
-</span><span id="Fuzzy-72"><a href="#Fuzzy-72"><span class="linenos">72</span></a>
-</span><span id="Fuzzy-73"><a href="#Fuzzy-73"><span class="linenos">73</span></a>        <span class="n">df</span><span class="p">:</span> <span class="n">frames</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">frame</span>
-</span><span id="Fuzzy-74"><a href="#Fuzzy-74"><span class="linenos">74</span></a>
-</span><span id="Fuzzy-75"><a href="#Fuzzy-75"><span class="linenos">75</span></a>        <span class="k">return</span> <span class="n">df</span>
+</span><span id="Fuzzy-44"><a href="#Fuzzy-44"><span class="linenos">44</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Deduping attribute &quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&quot; with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&#39;</span> <span class="sa">f</span><span class="s2">&quot;(tolerance=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_tolerance</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</span><span id="Fuzzy-45"><a href="#Fuzzy-45"><span class="linenos">45</span></a>
+</span><span id="Fuzzy-46"><a href="#Fuzzy-46"><span class="linenos">46</span></a>        <span class="n">frame_methods</span><span class="p">:</span> <span class="n">DFMethods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_methods</span>
+</span><span id="Fuzzy-47"><a href="#Fuzzy-47"><span class="linenos">47</span></a>
+</span><span id="Fuzzy-48"><a href="#Fuzzy-48"><span class="linenos">48</span></a>        <span class="n">tmp_attr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">attr</span> <span class="o">+</span> <span class="n">TMP_ATTR_LABEL</span>
+</span><span id="Fuzzy-49"><a href="#Fuzzy-49"><span class="linenos">49</span></a>
+</span><span id="Fuzzy-50"><a href="#Fuzzy-50"><span class="linenos">50</span></a>        <span class="n">uattrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">frame_methods</span><span class="o">.</span><span class="n">get_col</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
+</span><span id="Fuzzy-51"><a href="#Fuzzy-51"><span class="linenos">51</span></a>
+</span><span id="Fuzzy-52"><a href="#Fuzzy-52"><span class="linenos">52</span></a>        <span class="n">similarity_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="bp">self</span><span class="o">.</span><span class="n">_fuzz_ratio</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span> <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">uattrs</span><span class="p">]</span> <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">uattrs</span><span class="p">])</span>
+</span><span id="Fuzzy-53"><a href="#Fuzzy-53"><span class="linenos">53</span></a>
+</span><span id="Fuzzy-54"><a href="#Fuzzy-54"><span class="linenos">54</span></a>        <span class="n">match_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">similarity_matrix</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ratio</span><span class="p">)</span>
+</span><span id="Fuzzy-55"><a href="#Fuzzy-55"><span class="linenos">55</span></a>
+</span><span id="Fuzzy-56"><a href="#Fuzzy-56"><span class="linenos">56</span></a>        <span class="n">fuzzy_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">uattrs</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span> <span class="n">uattrs</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">match_indices</span><span class="p">)}</span>
+</span><span id="Fuzzy-57"><a href="#Fuzzy-57"><span class="linenos">57</span></a>
+</span><span id="Fuzzy-58"><a href="#Fuzzy-58"><span class="linenos">58</span></a>        <span class="n">attr_map</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">map_dict</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">fuzzy_map</span><span class="p">)</span>  <span class="c1"># i.e. a &quot;Series&quot;</span>
+</span><span id="Fuzzy-59"><a href="#Fuzzy-59"><span class="linenos">59</span></a>
+</span><span id="Fuzzy-60"><a href="#Fuzzy-60"><span class="linenos">60</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Assigning duplicated &quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&quot; instances to attribute &quot;</span><span class="si">{</span><span class="n">tmp_attr</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+</span><span id="Fuzzy-61"><a href="#Fuzzy-61"><span class="linenos">61</span></a>
+</span><span id="Fuzzy-62"><a href="#Fuzzy-62"><span class="linenos">62</span></a>        <span class="n">frame_methods</span><span class="o">.</span><span class="n">put_col</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">,</span> <span class="n">attr_map</span><span class="p">)</span>  <span class="c1"># inplace create column</span>
+</span><span id="Fuzzy-63"><a href="#Fuzzy-63"><span class="linenos">63</span></a>
+</span><span id="Fuzzy-64"><a href="#Fuzzy-64"><span class="linenos">64</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_group_id</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">)</span><span class="o">.</span><span class="n">drop_col</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">)</span><span class="o">.</span><span class="n">frame</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Abstract base class for defining deduplication strategies.</p>
-
-<p>This class provides the structure and methods for implementing different
-deduplication strategies. _Any_ deduplication strategy must inherit from
-here.</p>
+            <div class="docstring"><p>Defines a deduplication strategy.</p>
 </div>
 
 
@@ -298,52 +258,41 @@ here.</p>
     <a class="headerlink" href="#Fuzzy.dedupe"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Fuzzy.dedupe-36"><a href="#Fuzzy.dedupe-36"><span class="linenos">36</span></a>    <span class="nd">@override</span>
 </span><span id="Fuzzy.dedupe-37"><a href="#Fuzzy.dedupe-37"><span class="linenos">37</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dedupe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">frames</span><span class="p">:</span>
-</span><span id="Fuzzy.dedupe-38"><a href="#Fuzzy.dedupe-38"><span class="linenos">38</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;dedupe with string match using fuzzy wuzzy</span>
+</span><span id="Fuzzy.dedupe-38"><a href="#Fuzzy.dedupe-38"><span class="linenos">38</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Deduplicate with string match using fuzzy wuzzy</span>
 </span><span id="Fuzzy.dedupe-39"><a href="#Fuzzy.dedupe-39"><span class="linenos">39</span></a>
-</span><span id="Fuzzy.dedupe-40"><a href="#Fuzzy.dedupe-40"><span class="linenos">40</span></a><span class="sd">        string matches are applied on only _unique_ instances of the attribute,</span>
-</span><span id="Fuzzy.dedupe-41"><a href="#Fuzzy.dedupe-41"><span class="linenos">41</span></a><span class="sd">        for optimization. fuzzy wuzzy matches are cached optimising instances</span>
-</span><span id="Fuzzy.dedupe-42"><a href="#Fuzzy.dedupe-42"><span class="linenos">42</span></a><span class="sd">        of frequent dupes. Best scored are selected as defined by `_ratio`</span>
+</span><span id="Fuzzy.dedupe-40"><a href="#Fuzzy.dedupe-40"><span class="linenos">40</span></a><span class="sd">        String matches are applied on only *unique* instances of the attribute,</span>
+</span><span id="Fuzzy.dedupe-41"><a href="#Fuzzy.dedupe-41"><span class="linenos">41</span></a><span class="sd">        for optimization. fuzzy wuzzy matches are cached, optimising</span>
+</span><span id="Fuzzy.dedupe-42"><a href="#Fuzzy.dedupe-42"><span class="linenos">42</span></a><span class="sd">        computation of matches for instances of frequent duplication.</span>
 </span><span id="Fuzzy.dedupe-43"><a href="#Fuzzy.dedupe-43"><span class="linenos">43</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Fuzzy.dedupe-44"><a href="#Fuzzy.dedupe-44"><span class="linenos">44</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-</span><span id="Fuzzy.dedupe-45"><a href="#Fuzzy.dedupe-45"><span class="linenos">45</span></a>            <span class="sa">f</span><span class="s1">&#39;Deduping attribute &quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&quot; with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&#39;</span>
-</span><span id="Fuzzy.dedupe-46"><a href="#Fuzzy.dedupe-46"><span class="linenos">46</span></a>            <span class="sa">f</span><span class="s2">&quot;(tolerance=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_tolerance</span><span class="si">}</span><span class="s2">)&quot;</span>
-</span><span id="Fuzzy.dedupe-47"><a href="#Fuzzy.dedupe-47"><span class="linenos">47</span></a>        <span class="p">)</span>
-</span><span id="Fuzzy.dedupe-48"><a href="#Fuzzy.dedupe-48"><span class="linenos">48</span></a>
-</span><span id="Fuzzy.dedupe-49"><a href="#Fuzzy.dedupe-49"><span class="linenos">49</span></a>        <span class="n">frame_methods</span><span class="p">:</span> <span class="n">DFMethods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_methods</span>
-</span><span id="Fuzzy.dedupe-50"><a href="#Fuzzy.dedupe-50"><span class="linenos">50</span></a>
-</span><span id="Fuzzy.dedupe-51"><a href="#Fuzzy.dedupe-51"><span class="linenos">51</span></a>        <span class="n">tmp_attr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">attr</span> <span class="o">+</span> <span class="n">TMP_ATTR_LABEL</span>
-</span><span id="Fuzzy.dedupe-52"><a href="#Fuzzy.dedupe-52"><span class="linenos">52</span></a>
-</span><span id="Fuzzy.dedupe-53"><a href="#Fuzzy.dedupe-53"><span class="linenos">53</span></a>        <span class="n">uattrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">frame_methods</span><span class="o">.</span><span class="n">get_col</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
-</span><span id="Fuzzy.dedupe-54"><a href="#Fuzzy.dedupe-54"><span class="linenos">54</span></a>
-</span><span id="Fuzzy.dedupe-55"><a href="#Fuzzy.dedupe-55"><span class="linenos">55</span></a>        <span class="n">similarity_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-</span><span id="Fuzzy.dedupe-56"><a href="#Fuzzy.dedupe-56"><span class="linenos">56</span></a>            <span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">_fuzz_ratio</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span> <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">uattrs</span><span class="p">]</span> <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">uattrs</span><span class="p">]</span>
-</span><span id="Fuzzy.dedupe-57"><a href="#Fuzzy.dedupe-57"><span class="linenos">57</span></a>        <span class="p">)</span>
-</span><span id="Fuzzy.dedupe-58"><a href="#Fuzzy.dedupe-58"><span class="linenos">58</span></a>
-</span><span id="Fuzzy.dedupe-59"><a href="#Fuzzy.dedupe-59"><span class="linenos">59</span></a>        <span class="n">match_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">similarity_matrix</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ratio</span><span class="p">)</span>
-</span><span id="Fuzzy.dedupe-60"><a href="#Fuzzy.dedupe-60"><span class="linenos">60</span></a>
-</span><span id="Fuzzy.dedupe-61"><a href="#Fuzzy.dedupe-61"><span class="linenos">61</span></a>        <span class="n">fuzzy_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">uattrs</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span> <span class="n">uattrs</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">match_indices</span><span class="p">)}</span>
-</span><span id="Fuzzy.dedupe-62"><a href="#Fuzzy.dedupe-62"><span class="linenos">62</span></a>
-</span><span id="Fuzzy.dedupe-63"><a href="#Fuzzy.dedupe-63"><span class="linenos">63</span></a>        <span class="n">attr_map</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">map_dict</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">fuzzy_map</span><span class="p">)</span>  <span class="c1"># i.e. a &quot;Series&quot;</span>
-</span><span id="Fuzzy.dedupe-64"><a href="#Fuzzy.dedupe-64"><span class="linenos">64</span></a>
-</span><span id="Fuzzy.dedupe-65"><a href="#Fuzzy.dedupe-65"><span class="linenos">65</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-</span><span id="Fuzzy.dedupe-66"><a href="#Fuzzy.dedupe-66"><span class="linenos">66</span></a>            <span class="sa">f</span><span class="s1">&#39;Assigning duplicated &quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&quot; instances to attribute &quot;</span><span class="si">{</span><span class="n">tmp_attr</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
-</span><span id="Fuzzy.dedupe-67"><a href="#Fuzzy.dedupe-67"><span class="linenos">67</span></a>        <span class="p">)</span>
-</span><span id="Fuzzy.dedupe-68"><a href="#Fuzzy.dedupe-68"><span class="linenos">68</span></a>
-</span><span id="Fuzzy.dedupe-69"><a href="#Fuzzy.dedupe-69"><span class="linenos">69</span></a>        <span class="n">frame_methods</span><span class="p">:</span> <span class="n">DFMethods</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">put_col</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">,</span> <span class="n">attr_map</span><span class="p">)</span>  <span class="c1"># type: ignore[no-redef]</span>
-</span><span id="Fuzzy.dedupe-70"><a href="#Fuzzy.dedupe-70"><span class="linenos">70</span></a>
-</span><span id="Fuzzy.dedupe-71"><a href="#Fuzzy.dedupe-71"><span class="linenos">71</span></a>        <span class="n">frame_methods</span><span class="p">:</span> <span class="n">DFMethods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_group_id</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">)</span><span class="o">.</span><span class="n">drop_col</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">)</span>  <span class="c1"># type: ignore[no-redef]</span>
-</span><span id="Fuzzy.dedupe-72"><a href="#Fuzzy.dedupe-72"><span class="linenos">72</span></a>
-</span><span id="Fuzzy.dedupe-73"><a href="#Fuzzy.dedupe-73"><span class="linenos">73</span></a>        <span class="n">df</span><span class="p">:</span> <span class="n">frames</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">frame</span>
-</span><span id="Fuzzy.dedupe-74"><a href="#Fuzzy.dedupe-74"><span class="linenos">74</span></a>
-</span><span id="Fuzzy.dedupe-75"><a href="#Fuzzy.dedupe-75"><span class="linenos">75</span></a>        <span class="k">return</span> <span class="n">df</span>
+</span><span id="Fuzzy.dedupe-44"><a href="#Fuzzy.dedupe-44"><span class="linenos">44</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Deduping attribute &quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&quot; with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&#39;</span> <span class="sa">f</span><span class="s2">&quot;(tolerance=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_tolerance</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</span><span id="Fuzzy.dedupe-45"><a href="#Fuzzy.dedupe-45"><span class="linenos">45</span></a>
+</span><span id="Fuzzy.dedupe-46"><a href="#Fuzzy.dedupe-46"><span class="linenos">46</span></a>        <span class="n">frame_methods</span><span class="p">:</span> <span class="n">DFMethods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_methods</span>
+</span><span id="Fuzzy.dedupe-47"><a href="#Fuzzy.dedupe-47"><span class="linenos">47</span></a>
+</span><span id="Fuzzy.dedupe-48"><a href="#Fuzzy.dedupe-48"><span class="linenos">48</span></a>        <span class="n">tmp_attr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">attr</span> <span class="o">+</span> <span class="n">TMP_ATTR_LABEL</span>
+</span><span id="Fuzzy.dedupe-49"><a href="#Fuzzy.dedupe-49"><span class="linenos">49</span></a>
+</span><span id="Fuzzy.dedupe-50"><a href="#Fuzzy.dedupe-50"><span class="linenos">50</span></a>        <span class="n">uattrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">frame_methods</span><span class="o">.</span><span class="n">get_col</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
+</span><span id="Fuzzy.dedupe-51"><a href="#Fuzzy.dedupe-51"><span class="linenos">51</span></a>
+</span><span id="Fuzzy.dedupe-52"><a href="#Fuzzy.dedupe-52"><span class="linenos">52</span></a>        <span class="n">similarity_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="bp">self</span><span class="o">.</span><span class="n">_fuzz_ratio</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span> <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">uattrs</span><span class="p">]</span> <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">uattrs</span><span class="p">])</span>
+</span><span id="Fuzzy.dedupe-53"><a href="#Fuzzy.dedupe-53"><span class="linenos">53</span></a>
+</span><span id="Fuzzy.dedupe-54"><a href="#Fuzzy.dedupe-54"><span class="linenos">54</span></a>        <span class="n">match_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">similarity_matrix</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ratio</span><span class="p">)</span>
+</span><span id="Fuzzy.dedupe-55"><a href="#Fuzzy.dedupe-55"><span class="linenos">55</span></a>
+</span><span id="Fuzzy.dedupe-56"><a href="#Fuzzy.dedupe-56"><span class="linenos">56</span></a>        <span class="n">fuzzy_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">uattrs</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span> <span class="n">uattrs</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">match_indices</span><span class="p">)}</span>
+</span><span id="Fuzzy.dedupe-57"><a href="#Fuzzy.dedupe-57"><span class="linenos">57</span></a>
+</span><span id="Fuzzy.dedupe-58"><a href="#Fuzzy.dedupe-58"><span class="linenos">58</span></a>        <span class="n">attr_map</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">map_dict</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">fuzzy_map</span><span class="p">)</span>  <span class="c1"># i.e. a &quot;Series&quot;</span>
+</span><span id="Fuzzy.dedupe-59"><a href="#Fuzzy.dedupe-59"><span class="linenos">59</span></a>
+</span><span id="Fuzzy.dedupe-60"><a href="#Fuzzy.dedupe-60"><span class="linenos">60</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Assigning duplicated &quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&quot; instances to attribute &quot;</span><span class="si">{</span><span class="n">tmp_attr</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+</span><span id="Fuzzy.dedupe-61"><a href="#Fuzzy.dedupe-61"><span class="linenos">61</span></a>
+</span><span id="Fuzzy.dedupe-62"><a href="#Fuzzy.dedupe-62"><span class="linenos">62</span></a>        <span class="n">frame_methods</span><span class="o">.</span><span class="n">put_col</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">,</span> <span class="n">attr_map</span><span class="p">)</span>  <span class="c1"># inplace create column</span>
+</span><span id="Fuzzy.dedupe-63"><a href="#Fuzzy.dedupe-63"><span class="linenos">63</span></a>
+</span><span id="Fuzzy.dedupe-64"><a href="#Fuzzy.dedupe-64"><span class="linenos">64</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_group_id</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">)</span><span class="o">.</span><span class="n">drop_col</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">)</span><span class="o">.</span><span class="n">frame</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>dedupe with string match using fuzzy wuzzy</p>
+            <div class="docstring"><p>Deduplicate with string match using fuzzy wuzzy</p>
 
-<p>string matches are applied on only _unique_ instances of the attribute,
-for optimization. fuzzy wuzzy matches are cached optimising instances
-of frequent dupes. Best scored are selected as defined by <code>_ratio</code></p>
+<p>String matches are applied on only <em>unique</em> instances of the attribute,
+for optimization. fuzzy wuzzy matches are cached, optimising
+computation of matches for instances of frequent duplication.</p>
 </div>
 
 
@@ -352,8 +301,7 @@ of frequent dupes. Best scored are selected as defined by <code>_ratio</code></p
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt><a href="strategy.html#DeduplicationStrategy">dupegrouper.strategy.DeduplicationStrategy</a></dt>
-                                <dd id="Fuzzy.set_df" class="function"><a href="strategy.html#DeduplicationStrategy.set_df">set_df</a></dd>
-                <dd id="Fuzzy.assign_group_id" class="function"><a href="strategy.html#DeduplicationStrategy.assign_group_id">assign_group_id</a></dd>
+                                <dd id="Fuzzy.assign_group_id" class="function"><a href="strategy.html#DeduplicationStrategy.assign_group_id">assign_group_id</a></dd>
 
             </div>
                                 </dl>
@@ -371,192 +319,193 @@ of frequent dupes. Best scored are selected as defined by <code>_ratio</code></p
     </div>
     <a class="headerlink" href="#TfIdf"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="TfIdf-29"><a href="#TfIdf-29"><span class="linenos"> 29</span></a><span class="k">class</span><span class="w"> </span><span class="nc">TfIdf</span><span class="p">(</span><span class="n">DeduplicationStrategy</span><span class="p">):</span>
-</span><span id="TfIdf-30"><a href="#TfIdf-30"><span class="linenos"> 30</span></a>
-</span><span id="TfIdf-31"><a href="#TfIdf-31"><span class="linenos"> 31</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-</span><span id="TfIdf-32"><a href="#TfIdf-32"><span class="linenos"> 32</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="TfIdf-33"><a href="#TfIdf-33"><span class="linenos"> 33</span></a>        <span class="n">ngram</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
-</span><span id="TfIdf-34"><a href="#TfIdf-34"><span class="linenos"> 34</span></a>        <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
-</span><span id="TfIdf-35"><a href="#TfIdf-35"><span class="linenos"> 35</span></a>        <span class="n">topn</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
-</span><span id="TfIdf-36"><a href="#TfIdf-36"><span class="linenos"> 36</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span id="TfIdf-37"><a href="#TfIdf-37"><span class="linenos"> 37</span></a>    <span class="p">):</span>
-</span><span id="TfIdf-38"><a href="#TfIdf-38"><span class="linenos"> 38</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_ngram</span> <span class="o">=</span> <span class="n">ngram</span>
-</span><span id="TfIdf-39"><a href="#TfIdf-39"><span class="linenos"> 39</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_tolerance</span> <span class="o">=</span> <span class="n">tolerance</span>
-</span><span id="TfIdf-40"><a href="#TfIdf-40"><span class="linenos"> 40</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_topn</span> <span class="o">=</span> <span class="n">topn</span>
-</span><span id="TfIdf-41"><a href="#TfIdf-41"><span class="linenos"> 41</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
-</span><span id="TfIdf-42"><a href="#TfIdf-42"><span class="linenos"> 42</span></a>
-</span><span id="TfIdf-43"><a href="#TfIdf-43"><span class="linenos"> 43</span></a>    <span class="nd">@functools</span><span class="o">.</span><span class="n">singledispatchmethod</span>
-</span><span id="TfIdf-44"><a href="#TfIdf-44"><span class="linenos"> 44</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_vectorize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ngram</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfidfVectorizer</span><span class="p">:</span>
-</span><span id="TfIdf-45"><a href="#TfIdf-45"><span class="linenos"> 45</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Parametriser tf-idf vectorizer</span>
-</span><span id="TfIdf-46"><a href="#TfIdf-46"><span class="linenos"> 46</span></a>
-</span><span id="TfIdf-47"><a href="#TfIdf-47"><span class="linenos"> 47</span></a><span class="sd">        Dispatches the n-gram ranging allowing for passing as an integer i.e.</span>
-</span><span id="TfIdf-48"><a href="#TfIdf-48"><span class="linenos"> 48</span></a><span class="sd">        3 -&gt; (3, 3) or over via a tuple i.e. (2, 5). Additional keywords</span>
-</span><span id="TfIdf-49"><a href="#TfIdf-49"><span class="linenos"> 49</span></a><span class="sd">        arguments can be passed to parametrise the vectorizer, as listed in the</span>
-</span><span id="TfIdf-50"><a href="#TfIdf-50"><span class="linenos"> 50</span></a><span class="sd">        documentation:</span>
-</span><span id="TfIdf-51"><a href="#TfIdf-51"><span class="linenos"> 51</span></a><span class="sd">        https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html</span>
+</span><span id="TfIdf-30"><a href="#TfIdf-30"><span class="linenos"> 30</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;TF-IDF deduper.</span>
+</span><span id="TfIdf-31"><a href="#TfIdf-31"><span class="linenos"> 31</span></a>
+</span><span id="TfIdf-32"><a href="#TfIdf-32"><span class="linenos"> 32</span></a><span class="sd">    Note: high &quot;top N&quot; numbers at initialisation may cause spurious results.</span>
+</span><span id="TfIdf-33"><a href="#TfIdf-33"><span class="linenos"> 33</span></a><span class="sd">    Use with care!</span>
+</span><span id="TfIdf-34"><a href="#TfIdf-34"><span class="linenos"> 34</span></a>
+</span><span id="TfIdf-35"><a href="#TfIdf-35"><span class="linenos"> 35</span></a><span class="sd">    Note: Whilst powerful, this is computationally intensive: ~*O(n^2)*</span>
+</span><span id="TfIdf-36"><a href="#TfIdf-36"><span class="linenos"> 36</span></a>
+</span><span id="TfIdf-37"><a href="#TfIdf-37"><span class="linenos"> 37</span></a><span class="sd">    Additional keywords arguments can be passed to parametrise the vectorizer,</span>
+</span><span id="TfIdf-38"><a href="#TfIdf-38"><span class="linenos"> 38</span></a><span class="sd">    as listed in the [TF-IDF vectorizer documentation](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html)</span>
+</span><span id="TfIdf-39"><a href="#TfIdf-39"><span class="linenos"> 39</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="TfIdf-40"><a href="#TfIdf-40"><span class="linenos"> 40</span></a>
+</span><span id="TfIdf-41"><a href="#TfIdf-41"><span class="linenos"> 41</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+</span><span id="TfIdf-42"><a href="#TfIdf-42"><span class="linenos"> 42</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="TfIdf-43"><a href="#TfIdf-43"><span class="linenos"> 43</span></a>        <span class="n">ngram</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+</span><span id="TfIdf-44"><a href="#TfIdf-44"><span class="linenos"> 44</span></a>        <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+</span><span id="TfIdf-45"><a href="#TfIdf-45"><span class="linenos"> 45</span></a>        <span class="n">topn</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+</span><span id="TfIdf-46"><a href="#TfIdf-46"><span class="linenos"> 46</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span id="TfIdf-47"><a href="#TfIdf-47"><span class="linenos"> 47</span></a>    <span class="p">):</span>
+</span><span id="TfIdf-48"><a href="#TfIdf-48"><span class="linenos"> 48</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_ngram</span> <span class="o">=</span> <span class="n">ngram</span>
+</span><span id="TfIdf-49"><a href="#TfIdf-49"><span class="linenos"> 49</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_tolerance</span> <span class="o">=</span> <span class="n">tolerance</span>
+</span><span id="TfIdf-50"><a href="#TfIdf-50"><span class="linenos"> 50</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_topn</span> <span class="o">=</span> <span class="n">topn</span>
+</span><span id="TfIdf-51"><a href="#TfIdf-51"><span class="linenos"> 51</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
 </span><span id="TfIdf-52"><a href="#TfIdf-52"><span class="linenos"> 52</span></a>
-</span><span id="TfIdf-53"><a href="#TfIdf-53"><span class="linenos"> 53</span></a><span class="sd">        Args:</span>
-</span><span id="TfIdf-54"><a href="#TfIdf-54"><span class="linenos"> 54</span></a><span class="sd">            ngram: the n-gram range&quot;&quot;&quot;</span>
-</span><span id="TfIdf-55"><a href="#TfIdf-55"><span class="linenos"> 55</span></a>        <span class="k">del</span> <span class="n">ngram</span>  <span class="c1"># Unused by generic</span>
-</span><span id="TfIdf-56"><a href="#TfIdf-56"><span class="linenos"> 56</span></a>        <span class="k">return</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;ngram must be of type int or a length 2 tuple of integers&quot;</span><span class="p">)</span>
-</span><span id="TfIdf-57"><a href="#TfIdf-57"><span class="linenos"> 57</span></a>
-</span><span id="TfIdf-58"><a href="#TfIdf-58"><span class="linenos"> 58</span></a>    <span class="nd">@_vectorize</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-</span><span id="TfIdf-59"><a href="#TfIdf-59"><span class="linenos"> 59</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ngram</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfidfVectorizer</span><span class="p">:</span>
-</span><span id="TfIdf-60"><a href="#TfIdf-60"><span class="linenos"> 60</span></a>        <span class="k">return</span> <span class="n">TfidfVectorizer</span><span class="p">(</span>
-</span><span id="TfIdf-61"><a href="#TfIdf-61"><span class="linenos"> 61</span></a>            <span class="n">analyzer</span><span class="o">=</span><span class="s2">&quot;char&quot;</span><span class="p">,</span>
-</span><span id="TfIdf-62"><a href="#TfIdf-62"><span class="linenos"> 62</span></a>            <span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="n">ngram</span><span class="p">,</span> <span class="n">ngram</span><span class="p">),</span>
-</span><span id="TfIdf-63"><a href="#TfIdf-63"><span class="linenos"> 63</span></a>            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">,</span>
-</span><span id="TfIdf-64"><a href="#TfIdf-64"><span class="linenos"> 64</span></a>        <span class="p">)</span>
-</span><span id="TfIdf-65"><a href="#TfIdf-65"><span class="linenos"> 65</span></a>
-</span><span id="TfIdf-66"><a href="#TfIdf-66"><span class="linenos"> 66</span></a>    <span class="nd">@_vectorize</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
-</span><span id="TfIdf-67"><a href="#TfIdf-67"><span class="linenos"> 67</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ngram</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfidfVectorizer</span><span class="p">:</span>
-</span><span id="TfIdf-68"><a href="#TfIdf-68"><span class="linenos"> 68</span></a>        <span class="k">return</span> <span class="n">TfidfVectorizer</span><span class="p">(</span>
-</span><span id="TfIdf-69"><a href="#TfIdf-69"><span class="linenos"> 69</span></a>            <span class="n">analyzer</span><span class="o">=</span><span class="s2">&quot;char&quot;</span><span class="p">,</span>
-</span><span id="TfIdf-70"><a href="#TfIdf-70"><span class="linenos"> 70</span></a>            <span class="n">ngram_range</span><span class="o">=</span><span class="n">ngram</span><span class="p">,</span>
-</span><span id="TfIdf-71"><a href="#TfIdf-71"><span class="linenos"> 71</span></a>            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">,</span>
-</span><span id="TfIdf-72"><a href="#TfIdf-72"><span class="linenos"> 72</span></a>        <span class="p">)</span>
-</span><span id="TfIdf-73"><a href="#TfIdf-73"><span class="linenos"> 73</span></a>
-</span><span id="TfIdf-74"><a href="#TfIdf-74"><span class="linenos"> 74</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_similarities_matrix</span><span class="p">(</span>
-</span><span id="TfIdf-75"><a href="#TfIdf-75"><span class="linenos"> 75</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="TfIdf-76"><a href="#TfIdf-76"><span class="linenos"> 76</span></a>        <span class="n">vectorizer</span><span class="p">:</span> <span class="n">TfidfVectorizer</span><span class="p">,</span>
-</span><span id="TfIdf-77"><a href="#TfIdf-77"><span class="linenos"> 77</span></a>        <span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-</span><span id="TfIdf-78"><a href="#TfIdf-78"><span class="linenos"> 78</span></a>        <span class="o">/</span><span class="p">,</span>
-</span><span id="TfIdf-79"><a href="#TfIdf-79"><span class="linenos"> 79</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">csr_matrix</span><span class="p">:</span>
-</span><span id="TfIdf-80"><a href="#TfIdf-80"><span class="linenos"> 80</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;sparse matrix of similarities, given the &quot;top N&quot; _best_ matches&quot;&quot;&quot;</span>
-</span><span id="TfIdf-81"><a href="#TfIdf-81"><span class="linenos"> 81</span></a>        <span class="k">return</span> <span class="n">sp_matmul_topn</span><span class="p">(</span>
-</span><span id="TfIdf-82"><a href="#TfIdf-82"><span class="linenos"> 82</span></a>            <span class="p">(</span><span class="n">mat</span> <span class="o">:=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">array</span><span class="p">)),</span>
-</span><span id="TfIdf-83"><a href="#TfIdf-83"><span class="linenos"> 83</span></a>            <span class="n">mat</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
-</span><span id="TfIdf-84"><a href="#TfIdf-84"><span class="linenos"> 84</span></a>            <span class="n">top_n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_topn</span><span class="p">,</span>
-</span><span id="TfIdf-85"><a href="#TfIdf-85"><span class="linenos"> 85</span></a>            <span class="n">threshold</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tolerance</span><span class="p">,</span>
-</span><span id="TfIdf-86"><a href="#TfIdf-86"><span class="linenos"> 86</span></a>            <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="TfIdf-87"><a href="#TfIdf-87"><span class="linenos"> 87</span></a>        <span class="p">)</span>
-</span><span id="TfIdf-88"><a href="#TfIdf-88"><span class="linenos"> 88</span></a>
-</span><span id="TfIdf-89"><a href="#TfIdf-89"><span class="linenos"> 89</span></a>    <span class="nd">@staticmethod</span>
-</span><span id="TfIdf-90"><a href="#TfIdf-90"><span class="linenos"> 90</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_matches_array</span><span class="p">(</span>
-</span><span id="TfIdf-91"><a href="#TfIdf-91"><span class="linenos"> 91</span></a>        <span class="n">sparse</span><span class="p">:</span> <span class="n">csr_matrix</span><span class="p">,</span>
-</span><span id="TfIdf-92"><a href="#TfIdf-92"><span class="linenos"> 92</span></a>        <span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-</span><span id="TfIdf-93"><a href="#TfIdf-93"><span class="linenos"> 93</span></a>        <span class="o">/</span><span class="p">,</span>
-</span><span id="TfIdf-94"><a href="#TfIdf-94"><span class="linenos"> 94</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-</span><span id="TfIdf-95"><a href="#TfIdf-95"><span class="linenos"> 95</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract arrays based on similarity scores</span>
-</span><span id="TfIdf-96"><a href="#TfIdf-96"><span class="linenos"> 96</span></a>
-</span><span id="TfIdf-97"><a href="#TfIdf-97"><span class="linenos"> 97</span></a><span class="sd">        Filter&#39;s out _approximate_ perfect scores (i.e. decimal handling) and</span>
-</span><span id="TfIdf-98"><a href="#TfIdf-98"><span class="linenos"> 98</span></a><span class="sd">        loads up results into a tuple of arrays&quot;&quot;&quot;</span>
-</span><span id="TfIdf-99"><a href="#TfIdf-99"><span class="linenos"> 99</span></a>        <span class="n">sparse_coo</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">tocoo</span><span class="p">()</span>
-</span><span id="TfIdf-100"><a href="#TfIdf-100"><span class="linenos">100</span></a>
-</span><span id="TfIdf-101"><a href="#TfIdf-101"><span class="linenos">101</span></a>        <span class="c1"># floating point precision handling of perfect match filter</span>
-</span><span id="TfIdf-102"><a href="#TfIdf-102"><span class="linenos">102</span></a>        <span class="n">mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sparse_coo</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+</span><span id="TfIdf-53"><a href="#TfIdf-53"><span class="linenos"> 53</span></a>    <span class="nd">@functools</span><span class="o">.</span><span class="n">singledispatchmethod</span>
+</span><span id="TfIdf-54"><a href="#TfIdf-54"><span class="linenos"> 54</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_vectorize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ngram</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfidfVectorizer</span><span class="p">:</span>
+</span><span id="TfIdf-55"><a href="#TfIdf-55"><span class="linenos"> 55</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Parametriser tf-idf vectorizer</span>
+</span><span id="TfIdf-56"><a href="#TfIdf-56"><span class="linenos"> 56</span></a>
+</span><span id="TfIdf-57"><a href="#TfIdf-57"><span class="linenos"> 57</span></a><span class="sd">        Dispatches the n-gram ranging allowing for passing as an integer i.e.</span>
+</span><span id="TfIdf-58"><a href="#TfIdf-58"><span class="linenos"> 58</span></a><span class="sd">        3 -&gt; (3, 3) or over via a tuple i.e. (2, 5).</span>
+</span><span id="TfIdf-59"><a href="#TfIdf-59"><span class="linenos"> 59</span></a>
+</span><span id="TfIdf-60"><a href="#TfIdf-60"><span class="linenos"> 60</span></a><span class="sd">        Args:</span>
+</span><span id="TfIdf-61"><a href="#TfIdf-61"><span class="linenos"> 61</span></a><span class="sd">            ngram: the n-gram range&quot;&quot;&quot;</span>
+</span><span id="TfIdf-62"><a href="#TfIdf-62"><span class="linenos"> 62</span></a>        <span class="k">del</span> <span class="n">ngram</span>  <span class="c1"># Unused by generic</span>
+</span><span id="TfIdf-63"><a href="#TfIdf-63"><span class="linenos"> 63</span></a>        <span class="k">return</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;ngram must be of type int or a length 2 tuple of integers&quot;</span><span class="p">)</span>
+</span><span id="TfIdf-64"><a href="#TfIdf-64"><span class="linenos"> 64</span></a>
+</span><span id="TfIdf-65"><a href="#TfIdf-65"><span class="linenos"> 65</span></a>    <span class="nd">@_vectorize</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+</span><span id="TfIdf-66"><a href="#TfIdf-66"><span class="linenos"> 66</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ngram</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfidfVectorizer</span><span class="p">:</span>
+</span><span id="TfIdf-67"><a href="#TfIdf-67"><span class="linenos"> 67</span></a>        <span class="k">return</span> <span class="n">TfidfVectorizer</span><span class="p">(</span>
+</span><span id="TfIdf-68"><a href="#TfIdf-68"><span class="linenos"> 68</span></a>            <span class="n">analyzer</span><span class="o">=</span><span class="s2">&quot;char&quot;</span><span class="p">,</span>
+</span><span id="TfIdf-69"><a href="#TfIdf-69"><span class="linenos"> 69</span></a>            <span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="n">ngram</span><span class="p">,</span> <span class="n">ngram</span><span class="p">),</span>
+</span><span id="TfIdf-70"><a href="#TfIdf-70"><span class="linenos"> 70</span></a>            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">,</span>
+</span><span id="TfIdf-71"><a href="#TfIdf-71"><span class="linenos"> 71</span></a>        <span class="p">)</span>
+</span><span id="TfIdf-72"><a href="#TfIdf-72"><span class="linenos"> 72</span></a>
+</span><span id="TfIdf-73"><a href="#TfIdf-73"><span class="linenos"> 73</span></a>    <span class="nd">@_vectorize</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
+</span><span id="TfIdf-74"><a href="#TfIdf-74"><span class="linenos"> 74</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ngram</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfidfVectorizer</span><span class="p">:</span>
+</span><span id="TfIdf-75"><a href="#TfIdf-75"><span class="linenos"> 75</span></a>        <span class="k">return</span> <span class="n">TfidfVectorizer</span><span class="p">(</span>
+</span><span id="TfIdf-76"><a href="#TfIdf-76"><span class="linenos"> 76</span></a>            <span class="n">analyzer</span><span class="o">=</span><span class="s2">&quot;char&quot;</span><span class="p">,</span>
+</span><span id="TfIdf-77"><a href="#TfIdf-77"><span class="linenos"> 77</span></a>            <span class="n">ngram_range</span><span class="o">=</span><span class="n">ngram</span><span class="p">,</span>
+</span><span id="TfIdf-78"><a href="#TfIdf-78"><span class="linenos"> 78</span></a>            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">,</span>
+</span><span id="TfIdf-79"><a href="#TfIdf-79"><span class="linenos"> 79</span></a>        <span class="p">)</span>
+</span><span id="TfIdf-80"><a href="#TfIdf-80"><span class="linenos"> 80</span></a>
+</span><span id="TfIdf-81"><a href="#TfIdf-81"><span class="linenos"> 81</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_similarities_matrix</span><span class="p">(</span>
+</span><span id="TfIdf-82"><a href="#TfIdf-82"><span class="linenos"> 82</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="TfIdf-83"><a href="#TfIdf-83"><span class="linenos"> 83</span></a>        <span class="n">vectorizer</span><span class="p">:</span> <span class="n">TfidfVectorizer</span><span class="p">,</span>
+</span><span id="TfIdf-84"><a href="#TfIdf-84"><span class="linenos"> 84</span></a>        <span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+</span><span id="TfIdf-85"><a href="#TfIdf-85"><span class="linenos"> 85</span></a>        <span class="o">/</span><span class="p">,</span>
+</span><span id="TfIdf-86"><a href="#TfIdf-86"><span class="linenos"> 86</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">csr_matrix</span><span class="p">:</span>
+</span><span id="TfIdf-87"><a href="#TfIdf-87"><span class="linenos"> 87</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;sparse matrix of similarities, given the &quot;top N&quot; _best_ matches&quot;&quot;&quot;</span>
+</span><span id="TfIdf-88"><a href="#TfIdf-88"><span class="linenos"> 88</span></a>        <span class="k">return</span> <span class="n">sp_matmul_topn</span><span class="p">(</span>
+</span><span id="TfIdf-89"><a href="#TfIdf-89"><span class="linenos"> 89</span></a>            <span class="p">(</span><span class="n">mat</span> <span class="o">:=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">array</span><span class="p">)),</span>
+</span><span id="TfIdf-90"><a href="#TfIdf-90"><span class="linenos"> 90</span></a>            <span class="n">mat</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+</span><span id="TfIdf-91"><a href="#TfIdf-91"><span class="linenos"> 91</span></a>            <span class="n">top_n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_topn</span><span class="p">,</span>
+</span><span id="TfIdf-92"><a href="#TfIdf-92"><span class="linenos"> 92</span></a>            <span class="n">threshold</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tolerance</span><span class="p">,</span>
+</span><span id="TfIdf-93"><a href="#TfIdf-93"><span class="linenos"> 93</span></a>            <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="TfIdf-94"><a href="#TfIdf-94"><span class="linenos"> 94</span></a>        <span class="p">)</span>
+</span><span id="TfIdf-95"><a href="#TfIdf-95"><span class="linenos"> 95</span></a>
+</span><span id="TfIdf-96"><a href="#TfIdf-96"><span class="linenos"> 96</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="TfIdf-97"><a href="#TfIdf-97"><span class="linenos"> 97</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_matches_array</span><span class="p">(</span>
+</span><span id="TfIdf-98"><a href="#TfIdf-98"><span class="linenos"> 98</span></a>        <span class="n">sparse</span><span class="p">:</span> <span class="n">csr_matrix</span><span class="p">,</span>
+</span><span id="TfIdf-99"><a href="#TfIdf-99"><span class="linenos"> 99</span></a>        <span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+</span><span id="TfIdf-100"><a href="#TfIdf-100"><span class="linenos">100</span></a>        <span class="o">/</span><span class="p">,</span>
+</span><span id="TfIdf-101"><a href="#TfIdf-101"><span class="linenos">101</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+</span><span id="TfIdf-102"><a href="#TfIdf-102"><span class="linenos">102</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract arrays based on similarity scores</span>
 </span><span id="TfIdf-103"><a href="#TfIdf-103"><span class="linenos">103</span></a>
-</span><span id="TfIdf-104"><a href="#TfIdf-104"><span class="linenos">104</span></a>        <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="n">sparse_coo</span><span class="o">.</span><span class="n">row</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="n">sparse_coo</span><span class="o">.</span><span class="n">col</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
-</span><span id="TfIdf-105"><a href="#TfIdf-105"><span class="linenos">105</span></a>
-</span><span id="TfIdf-106"><a href="#TfIdf-106"><span class="linenos">106</span></a>        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+</span><span id="TfIdf-104"><a href="#TfIdf-104"><span class="linenos">104</span></a><span class="sd">        Filter&#39;s out _approximate_ perfect scores (i.e. decimal handling) and</span>
+</span><span id="TfIdf-105"><a href="#TfIdf-105"><span class="linenos">105</span></a><span class="sd">        loads up results into a tuple of arrays&quot;&quot;&quot;</span>
+</span><span id="TfIdf-106"><a href="#TfIdf-106"><span class="linenos">106</span></a>        <span class="n">sparse_coo</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">tocoo</span><span class="p">()</span>
 </span><span id="TfIdf-107"><a href="#TfIdf-107"><span class="linenos">107</span></a>
-</span><span id="TfIdf-108"><a href="#TfIdf-108"><span class="linenos">108</span></a>        <span class="n">lookup</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
-</span><span id="TfIdf-109"><a href="#TfIdf-109"><span class="linenos">109</span></a>        <span class="n">match</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
-</span><span id="TfIdf-110"><a href="#TfIdf-110"><span class="linenos">110</span></a>        <span class="n">similarity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-</span><span id="TfIdf-111"><a href="#TfIdf-111"><span class="linenos">111</span></a>
-</span><span id="TfIdf-112"><a href="#TfIdf-112"><span class="linenos">112</span></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-</span><span id="TfIdf-113"><a href="#TfIdf-113"><span class="linenos">113</span></a>
-</span><span id="TfIdf-114"><a href="#TfIdf-114"><span class="linenos">114</span></a>            <span class="n">lookup</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
-</span><span id="TfIdf-115"><a href="#TfIdf-115"><span class="linenos">115</span></a>            <span class="k">match</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
-</span><span id="TfIdf-116"><a href="#TfIdf-116"><span class="linenos">116</span></a>            <span class="n">similarity</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">sparse</span><span class="p">[</span><span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">cols</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
-</span><span id="TfIdf-117"><a href="#TfIdf-117"><span class="linenos">117</span></a>
-</span><span id="TfIdf-118"><a href="#TfIdf-118"><span class="linenos">118</span></a>        <span class="k">return</span> <span class="n">lookup</span><span class="p">,</span> <span class="n">match</span><span class="p">,</span> <span class="n">similarity</span>
-</span><span id="TfIdf-119"><a href="#TfIdf-119"><span class="linenos">119</span></a>
-</span><span id="TfIdf-120"><a href="#TfIdf-120"><span class="linenos">120</span></a>    <span class="nd">@staticmethod</span>
-</span><span id="TfIdf-121"><a href="#TfIdf-121"><span class="linenos">121</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_gen_map</span><span class="p">(</span>
-</span><span id="TfIdf-122"><a href="#TfIdf-122"><span class="linenos">122</span></a>        <span class="n">matches</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-</span><span id="TfIdf-123"><a href="#TfIdf-123"><span class="linenos">123</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterator</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
-</span><span id="TfIdf-124"><a href="#TfIdf-124"><span class="linenos">124</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate unique matches as a map</span>
-</span><span id="TfIdf-125"><a href="#TfIdf-125"><span class="linenos">125</span></a>
-</span><span id="TfIdf-126"><a href="#TfIdf-126"><span class="linenos">126</span></a><span class="sd">        Given a &quot;top N&quot; &gt; 1 get similarity matches in ascending order, thus</span>
-</span><span id="TfIdf-127"><a href="#TfIdf-127"><span class="linenos">127</span></a><span class="sd">        guaranteeing that the _best_ match will be the last match, as retrived</span>
-</span><span id="TfIdf-128"><a href="#TfIdf-128"><span class="linenos">128</span></a><span class="sd">        by the public API.</span>
-</span><span id="TfIdf-129"><a href="#TfIdf-129"><span class="linenos">129</span></a>
-</span><span id="TfIdf-130"><a href="#TfIdf-130"><span class="linenos">130</span></a><span class="sd">        Args:</span>
-</span><span id="TfIdf-131"><a href="#TfIdf-131"><span class="linenos">131</span></a><span class="sd">            matches: a tuple array of &quot;original&quot; values, as well as a matched</span>
-</span><span id="TfIdf-132"><a href="#TfIdf-132"><span class="linenos">132</span></a><span class="sd">            value for the equivalent index of that array.</span>
-</span><span id="TfIdf-133"><a href="#TfIdf-133"><span class="linenos">133</span></a>
-</span><span id="TfIdf-134"><a href="#TfIdf-134"><span class="linenos">134</span></a><span class="sd">        Yields:</span>
-</span><span id="TfIdf-135"><a href="#TfIdf-135"><span class="linenos">135</span></a><span class="sd">            A map, e.g. {&quot;example_address_1&quot;: &quot;example_address_2&quot;}, will be</span>
-</span><span id="TfIdf-136"><a href="#TfIdf-136"><span class="linenos">136</span></a><span class="sd">            yielded IF it has not been yielded before *or*, the prior seen</span>
-</span><span id="TfIdf-137"><a href="#TfIdf-137"><span class="linenos">137</span></a><span class="sd">            instance of the map match is not the &quot;inverse&quot; map.</span>
-</span><span id="TfIdf-138"><a href="#TfIdf-138"><span class="linenos">138</span></a>
-</span><span id="TfIdf-139"><a href="#TfIdf-139"><span class="linenos">139</span></a><span class="sd">            i.e. the mapping</span>
-</span><span id="TfIdf-140"><a href="#TfIdf-140"><span class="linenos">140</span></a><span class="sd">                {&quot;example_address_1&quot;: &quot;example_address_2&quot;}</span>
-</span><span id="TfIdf-141"><a href="#TfIdf-141"><span class="linenos">141</span></a><span class="sd">            will *not* be yielded if</span>
-</span><span id="TfIdf-142"><a href="#TfIdf-142"><span class="linenos">142</span></a><span class="sd">                {&quot;example_address_2&quot;: &quot;example_address_2&quot;}</span>
-</span><span id="TfIdf-143"><a href="#TfIdf-143"><span class="linenos">143</span></a><span class="sd">            has already been yielded.</span>
-</span><span id="TfIdf-144"><a href="#TfIdf-144"><span class="linenos">144</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="TfIdf-145"><a href="#TfIdf-145"><span class="linenos">145</span></a>        <span class="n">seen</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-</span><span id="TfIdf-146"><a href="#TfIdf-146"><span class="linenos">146</span></a>
-</span><span id="TfIdf-147"><a href="#TfIdf-147"><span class="linenos">147</span></a>        <span class="c1"># iter: reorder to similarities score ascending</span>
-</span><span id="TfIdf-148"><a href="#TfIdf-148"><span class="linenos">148</span></a>        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">,</span> <span class="n">matches</span><span class="p">)):</span>
-</span><span id="TfIdf-149"><a href="#TfIdf-149"><span class="linenos">149</span></a>
-</span><span id="TfIdf-150"><a href="#TfIdf-150"><span class="linenos">150</span></a>            <span class="c1"># not inversed; not repeated</span>
-</span><span id="TfIdf-151"><a href="#TfIdf-151"><span class="linenos">151</span></a>            <span class="k">if</span> <span class="p">{(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span> <span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)}</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="n">seen</span><span class="p">):</span>
-</span><span id="TfIdf-152"><a href="#TfIdf-152"><span class="linenos">152</span></a>                <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
-</span><span id="TfIdf-153"><a href="#TfIdf-153"><span class="linenos">153</span></a>                <span class="k">yield</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">j</span><span class="p">}</span>
-</span><span id="TfIdf-154"><a href="#TfIdf-154"><span class="linenos">154</span></a>
-</span><span id="TfIdf-155"><a href="#TfIdf-155"><span class="linenos">155</span></a>    <span class="nd">@override</span>
-</span><span id="TfIdf-156"><a href="#TfIdf-156"><span class="linenos">156</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dedupe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">frames</span><span class="p">:</span>
-</span><span id="TfIdf-157"><a href="#TfIdf-157"><span class="linenos">157</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;dedupe with tf-df</span>
-</span><span id="TfIdf-158"><a href="#TfIdf-158"><span class="linenos">158</span></a>
-</span><span id="TfIdf-159"><a href="#TfIdf-159"><span class="linenos">159</span></a><span class="sd">        1-to-1 maps are identified using the procedure, _not_ a map across the</span>
-</span><span id="TfIdf-160"><a href="#TfIdf-160"><span class="linenos">160</span></a><span class="sd">        whole array as identified by `attr` this is because this deduper</span>
-</span><span id="TfIdf-161"><a href="#TfIdf-161"><span class="linenos">161</span></a><span class="sd">        implements `top N` functionality and a non-iterative approach would</span>
-</span><span id="TfIdf-162"><a href="#TfIdf-162"><span class="linenos">162</span></a><span class="sd">        produce a mapping object that &gt; len(array)</span>
-</span><span id="TfIdf-163"><a href="#TfIdf-163"><span class="linenos">163</span></a>
-</span><span id="TfIdf-164"><a href="#TfIdf-164"><span class="linenos">164</span></a><span class="sd">        TODO: given above is it necessary to iterate or can individual &quot;1-to-1&quot;</span>
-</span><span id="TfIdf-165"><a href="#TfIdf-165"><span class="linenos">165</span></a><span class="sd">        maps suffice?</span>
-</span><span id="TfIdf-166"><a href="#TfIdf-166"><span class="linenos">166</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="TfIdf-167"><a href="#TfIdf-167"><span class="linenos">167</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-</span><span id="TfIdf-168"><a href="#TfIdf-168"><span class="linenos">168</span></a>            <span class="sa">f</span><span class="s1">&#39;Deduping attribute &quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&quot; with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">(&#39;</span>
-</span><span id="TfIdf-169"><a href="#TfIdf-169"><span class="linenos">169</span></a>            <span class="sa">f</span><span class="s2">&quot;ngram=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_ngram</span><span class="si">}</span><span class="s2">, &quot;</span>
-</span><span id="TfIdf-170"><a href="#TfIdf-170"><span class="linenos">170</span></a>            <span class="sa">f</span><span class="s2">&quot;tolerance=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_tolerance</span><span class="si">}</span><span class="s2">, &quot;</span>
-</span><span id="TfIdf-171"><a href="#TfIdf-171"><span class="linenos">171</span></a>            <span class="sa">f</span><span class="s2">&quot;topn=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_topn</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="TfIdf-172"><a href="#TfIdf-172"><span class="linenos">172</span></a>            <span class="s2">&quot;)&quot;</span>
-</span><span id="TfIdf-173"><a href="#TfIdf-173"><span class="linenos">173</span></a>        <span class="p">)</span>
-</span><span id="TfIdf-174"><a href="#TfIdf-174"><span class="linenos">174</span></a>
-</span><span id="TfIdf-175"><a href="#TfIdf-175"><span class="linenos">175</span></a>        <span class="n">frame_methods</span><span class="p">:</span> <span class="n">DFMethods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_methods</span>
-</span><span id="TfIdf-176"><a href="#TfIdf-176"><span class="linenos">176</span></a>
-</span><span id="TfIdf-177"><a href="#TfIdf-177"><span class="linenos">177</span></a>        <span class="n">tmp_attr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">attr</span> <span class="o">+</span> <span class="n">TMP_ATTR_LABEL</span>
-</span><span id="TfIdf-178"><a href="#TfIdf-178"><span class="linenos">178</span></a>
-</span><span id="TfIdf-179"><a href="#TfIdf-179"><span class="linenos">179</span></a>        <span class="n">vectorizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ngram</span><span class="p">)</span>
-</span><span id="TfIdf-180"><a href="#TfIdf-180"><span class="linenos">180</span></a>
-</span><span id="TfIdf-181"><a href="#TfIdf-181"><span class="linenos">181</span></a>        <span class="n">similarities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_similarities_matrix</span><span class="p">(</span>
-</span><span id="TfIdf-182"><a href="#TfIdf-182"><span class="linenos">182</span></a>            <span class="n">vectorizer</span><span class="p">,</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">get_col</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-</span><span id="TfIdf-183"><a href="#TfIdf-183"><span class="linenos">183</span></a>        <span class="p">)</span>
+</span><span id="TfIdf-108"><a href="#TfIdf-108"><span class="linenos">108</span></a>        <span class="c1"># floating point precision handling of perfect match filter</span>
+</span><span id="TfIdf-109"><a href="#TfIdf-109"><span class="linenos">109</span></a>        <span class="n">mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sparse_coo</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+</span><span id="TfIdf-110"><a href="#TfIdf-110"><span class="linenos">110</span></a>
+</span><span id="TfIdf-111"><a href="#TfIdf-111"><span class="linenos">111</span></a>        <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="n">sparse_coo</span><span class="o">.</span><span class="n">row</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="n">sparse_coo</span><span class="o">.</span><span class="n">col</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+</span><span id="TfIdf-112"><a href="#TfIdf-112"><span class="linenos">112</span></a>
+</span><span id="TfIdf-113"><a href="#TfIdf-113"><span class="linenos">113</span></a>        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+</span><span id="TfIdf-114"><a href="#TfIdf-114"><span class="linenos">114</span></a>
+</span><span id="TfIdf-115"><a href="#TfIdf-115"><span class="linenos">115</span></a>        <span class="n">lookup</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+</span><span id="TfIdf-116"><a href="#TfIdf-116"><span class="linenos">116</span></a>        <span class="n">match</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+</span><span id="TfIdf-117"><a href="#TfIdf-117"><span class="linenos">117</span></a>        <span class="n">similarity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</span><span id="TfIdf-118"><a href="#TfIdf-118"><span class="linenos">118</span></a>
+</span><span id="TfIdf-119"><a href="#TfIdf-119"><span class="linenos">119</span></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+</span><span id="TfIdf-120"><a href="#TfIdf-120"><span class="linenos">120</span></a>
+</span><span id="TfIdf-121"><a href="#TfIdf-121"><span class="linenos">121</span></a>            <span class="n">lookup</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+</span><span id="TfIdf-122"><a href="#TfIdf-122"><span class="linenos">122</span></a>            <span class="k">match</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+</span><span id="TfIdf-123"><a href="#TfIdf-123"><span class="linenos">123</span></a>            <span class="n">similarity</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">sparse</span><span class="p">[</span><span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">cols</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+</span><span id="TfIdf-124"><a href="#TfIdf-124"><span class="linenos">124</span></a>
+</span><span id="TfIdf-125"><a href="#TfIdf-125"><span class="linenos">125</span></a>        <span class="k">return</span> <span class="n">lookup</span><span class="p">,</span> <span class="n">match</span><span class="p">,</span> <span class="n">similarity</span>
+</span><span id="TfIdf-126"><a href="#TfIdf-126"><span class="linenos">126</span></a>
+</span><span id="TfIdf-127"><a href="#TfIdf-127"><span class="linenos">127</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="TfIdf-128"><a href="#TfIdf-128"><span class="linenos">128</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_gen_map</span><span class="p">(</span>
+</span><span id="TfIdf-129"><a href="#TfIdf-129"><span class="linenos">129</span></a>        <span class="n">matches</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+</span><span id="TfIdf-130"><a href="#TfIdf-130"><span class="linenos">130</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterator</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+</span><span id="TfIdf-131"><a href="#TfIdf-131"><span class="linenos">131</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate unique matches as a map</span>
+</span><span id="TfIdf-132"><a href="#TfIdf-132"><span class="linenos">132</span></a>
+</span><span id="TfIdf-133"><a href="#TfIdf-133"><span class="linenos">133</span></a><span class="sd">        Given a &quot;top N&quot; &gt; 1 get similarity matches in ascending order, thus</span>
+</span><span id="TfIdf-134"><a href="#TfIdf-134"><span class="linenos">134</span></a><span class="sd">        guaranteeing that the _best_ match will be the last match, as retrived</span>
+</span><span id="TfIdf-135"><a href="#TfIdf-135"><span class="linenos">135</span></a><span class="sd">        by the public API.</span>
+</span><span id="TfIdf-136"><a href="#TfIdf-136"><span class="linenos">136</span></a>
+</span><span id="TfIdf-137"><a href="#TfIdf-137"><span class="linenos">137</span></a><span class="sd">        Args:</span>
+</span><span id="TfIdf-138"><a href="#TfIdf-138"><span class="linenos">138</span></a><span class="sd">            matches: a tuple array of &quot;original&quot; values, as well as a matched</span>
+</span><span id="TfIdf-139"><a href="#TfIdf-139"><span class="linenos">139</span></a><span class="sd">            value for the equivalent index of that array.</span>
+</span><span id="TfIdf-140"><a href="#TfIdf-140"><span class="linenos">140</span></a>
+</span><span id="TfIdf-141"><a href="#TfIdf-141"><span class="linenos">141</span></a><span class="sd">        Yields:</span>
+</span><span id="TfIdf-142"><a href="#TfIdf-142"><span class="linenos">142</span></a><span class="sd">            A map, e.g. {&quot;example_address_1&quot;: &quot;example_address_2&quot;}, will be</span>
+</span><span id="TfIdf-143"><a href="#TfIdf-143"><span class="linenos">143</span></a><span class="sd">            yielded IF it has not been yielded before *or*, the prior seen</span>
+</span><span id="TfIdf-144"><a href="#TfIdf-144"><span class="linenos">144</span></a><span class="sd">            instance of the map match is not the &quot;inverse&quot; map.</span>
+</span><span id="TfIdf-145"><a href="#TfIdf-145"><span class="linenos">145</span></a>
+</span><span id="TfIdf-146"><a href="#TfIdf-146"><span class="linenos">146</span></a><span class="sd">            i.e. the mapping</span>
+</span><span id="TfIdf-147"><a href="#TfIdf-147"><span class="linenos">147</span></a><span class="sd">                {&quot;example_address_1&quot;: &quot;example_address_2&quot;}</span>
+</span><span id="TfIdf-148"><a href="#TfIdf-148"><span class="linenos">148</span></a><span class="sd">            will *not* be yielded if</span>
+</span><span id="TfIdf-149"><a href="#TfIdf-149"><span class="linenos">149</span></a><span class="sd">                {&quot;example_address_2&quot;: &quot;example_address_2&quot;}</span>
+</span><span id="TfIdf-150"><a href="#TfIdf-150"><span class="linenos">150</span></a><span class="sd">            has already been yielded.</span>
+</span><span id="TfIdf-151"><a href="#TfIdf-151"><span class="linenos">151</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="TfIdf-152"><a href="#TfIdf-152"><span class="linenos">152</span></a>        <span class="n">seen</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+</span><span id="TfIdf-153"><a href="#TfIdf-153"><span class="linenos">153</span></a>
+</span><span id="TfIdf-154"><a href="#TfIdf-154"><span class="linenos">154</span></a>        <span class="c1"># iter: reorder to similarities score ascending</span>
+</span><span id="TfIdf-155"><a href="#TfIdf-155"><span class="linenos">155</span></a>        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">,</span> <span class="n">matches</span><span class="p">)):</span>
+</span><span id="TfIdf-156"><a href="#TfIdf-156"><span class="linenos">156</span></a>
+</span><span id="TfIdf-157"><a href="#TfIdf-157"><span class="linenos">157</span></a>            <span class="c1"># not inversed; not repeated</span>
+</span><span id="TfIdf-158"><a href="#TfIdf-158"><span class="linenos">158</span></a>            <span class="k">if</span> <span class="p">{(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span> <span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)}</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="n">seen</span><span class="p">):</span>
+</span><span id="TfIdf-159"><a href="#TfIdf-159"><span class="linenos">159</span></a>                <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
+</span><span id="TfIdf-160"><a href="#TfIdf-160"><span class="linenos">160</span></a>                <span class="k">yield</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">j</span><span class="p">}</span>
+</span><span id="TfIdf-161"><a href="#TfIdf-161"><span class="linenos">161</span></a>
+</span><span id="TfIdf-162"><a href="#TfIdf-162"><span class="linenos">162</span></a>    <span class="nd">@override</span>
+</span><span id="TfIdf-163"><a href="#TfIdf-163"><span class="linenos">163</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dedupe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">frames</span><span class="p">:</span>
+</span><span id="TfIdf-164"><a href="#TfIdf-164"><span class="linenos">164</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Deduplicate with term frequency, inverse document frequency.</span>
+</span><span id="TfIdf-165"><a href="#TfIdf-165"><span class="linenos">165</span></a>
+</span><span id="TfIdf-166"><a href="#TfIdf-166"><span class="linenos">166</span></a><span class="sd">        Here, 1-to-1 maps are identified using the procedure i.e. for *each*</span>
+</span><span id="TfIdf-167"><a href="#TfIdf-167"><span class="linenos">167</span></a><span class="sd">        row, *not* a map across the whole array as identified by `attr`. This</span>
+</span><span id="TfIdf-168"><a href="#TfIdf-168"><span class="linenos">168</span></a><span class="sd">        is because this deduper implements &quot;top N&quot; matches functionality and a</span>
+</span><span id="TfIdf-169"><a href="#TfIdf-169"><span class="linenos">169</span></a><span class="sd">        non-iterative approach would produce a mapping object that &gt; len(array)</span>
+</span><span id="TfIdf-170"><a href="#TfIdf-170"><span class="linenos">170</span></a>
+</span><span id="TfIdf-171"><a href="#TfIdf-171"><span class="linenos">171</span></a><span class="sd">        Therefore, for instances of &quot;top N&quot; matches where &gt; 1, 1-to-1 match</span>
+</span><span id="TfIdf-172"><a href="#TfIdf-172"><span class="linenos">172</span></a><span class="sd">        maps are iteratively applied from worst to best, guarnateeing the best</span>
+</span><span id="TfIdf-173"><a href="#TfIdf-173"><span class="linenos">173</span></a><span class="sd">        end match.</span>
+</span><span id="TfIdf-174"><a href="#TfIdf-174"><span class="linenos">174</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="TfIdf-175"><a href="#TfIdf-175"><span class="linenos">175</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+</span><span id="TfIdf-176"><a href="#TfIdf-176"><span class="linenos">176</span></a>            <span class="sa">f</span><span class="s1">&#39;Deduping attribute &quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&quot; with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">(&#39;</span>
+</span><span id="TfIdf-177"><a href="#TfIdf-177"><span class="linenos">177</span></a>            <span class="sa">f</span><span class="s2">&quot;ngram=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_ngram</span><span class="si">}</span><span class="s2">, &quot;</span>
+</span><span id="TfIdf-178"><a href="#TfIdf-178"><span class="linenos">178</span></a>            <span class="sa">f</span><span class="s2">&quot;tolerance=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_tolerance</span><span class="si">}</span><span class="s2">, &quot;</span>
+</span><span id="TfIdf-179"><a href="#TfIdf-179"><span class="linenos">179</span></a>            <span class="sa">f</span><span class="s2">&quot;topn=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_topn</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="TfIdf-180"><a href="#TfIdf-180"><span class="linenos">180</span></a>            <span class="s2">&quot;)&quot;</span>
+</span><span id="TfIdf-181"><a href="#TfIdf-181"><span class="linenos">181</span></a>        <span class="p">)</span>
+</span><span id="TfIdf-182"><a href="#TfIdf-182"><span class="linenos">182</span></a>
+</span><span id="TfIdf-183"><a href="#TfIdf-183"><span class="linenos">183</span></a>        <span class="n">frame_methods</span><span class="p">:</span> <span class="n">DFMethods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_methods</span>
 </span><span id="TfIdf-184"><a href="#TfIdf-184"><span class="linenos">184</span></a>
-</span><span id="TfIdf-185"><a href="#TfIdf-185"><span class="linenos">185</span></a>        <span class="n">matches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_matches_array</span><span class="p">(</span>
-</span><span id="TfIdf-186"><a href="#TfIdf-186"><span class="linenos">186</span></a>            <span class="n">similarities</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">frame_methods</span><span class="o">.</span><span class="n">get_col</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
-</span><span id="TfIdf-187"><a href="#TfIdf-187"><span class="linenos">187</span></a>        <span class="p">)</span>
+</span><span id="TfIdf-185"><a href="#TfIdf-185"><span class="linenos">185</span></a>        <span class="n">tmp_attr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">attr</span> <span class="o">+</span> <span class="n">TMP_ATTR_LABEL</span>
+</span><span id="TfIdf-186"><a href="#TfIdf-186"><span class="linenos">186</span></a>
+</span><span id="TfIdf-187"><a href="#TfIdf-187"><span class="linenos">187</span></a>        <span class="n">vectorizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ngram</span><span class="p">)</span>
 </span><span id="TfIdf-188"><a href="#TfIdf-188"><span class="linenos">188</span></a>
-</span><span id="TfIdf-189"><a href="#TfIdf-189"><span class="linenos">189</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-</span><span id="TfIdf-190"><a href="#TfIdf-190"><span class="linenos">190</span></a>            <span class="sa">f</span><span class="s1">&#39;Assigning duplicated &quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&quot; instances to attribute &quot;</span><span class="si">{</span><span class="n">tmp_attr</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
-</span><span id="TfIdf-191"><a href="#TfIdf-191"><span class="linenos">191</span></a>        <span class="p">)</span>
-</span><span id="TfIdf-192"><a href="#TfIdf-192"><span class="linenos">192</span></a>        <span class="k">for</span> <span class="n">tfidf_map</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gen_map</span><span class="p">(</span><span class="n">matches</span><span class="p">):</span>
-</span><span id="TfIdf-193"><a href="#TfIdf-193"><span class="linenos">193</span></a>
-</span><span id="TfIdf-194"><a href="#TfIdf-194"><span class="linenos">194</span></a>            <span class="n">attr_map</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">map_dict</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">tfidf_map</span><span class="p">)</span>  <span class="c1"># i.e. &quot;Series&quot; like</span>
+</span><span id="TfIdf-189"><a href="#TfIdf-189"><span class="linenos">189</span></a>        <span class="n">similarities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_similarities_matrix</span><span class="p">(</span><span class="n">vectorizer</span><span class="p">,</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">get_col</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
+</span><span id="TfIdf-190"><a href="#TfIdf-190"><span class="linenos">190</span></a>
+</span><span id="TfIdf-191"><a href="#TfIdf-191"><span class="linenos">191</span></a>        <span class="n">matches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_matches_array</span><span class="p">(</span><span class="n">similarities</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">frame_methods</span><span class="o">.</span><span class="n">get_col</span><span class="p">(</span><span class="n">attr</span><span class="p">)))</span>
+</span><span id="TfIdf-192"><a href="#TfIdf-192"><span class="linenos">192</span></a>
+</span><span id="TfIdf-193"><a href="#TfIdf-193"><span class="linenos">193</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Assigning duplicated &quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&quot; instances to attribute &quot;</span><span class="si">{</span><span class="n">tmp_attr</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+</span><span id="TfIdf-194"><a href="#TfIdf-194"><span class="linenos">194</span></a>        <span class="k">for</span> <span class="n">tfidf_map</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gen_map</span><span class="p">(</span><span class="n">matches</span><span class="p">):</span>
 </span><span id="TfIdf-195"><a href="#TfIdf-195"><span class="linenos">195</span></a>
-</span><span id="TfIdf-196"><a href="#TfIdf-196"><span class="linenos">196</span></a>            <span class="n">new_attr</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">fill_na</span><span class="p">(</span>
-</span><span id="TfIdf-197"><a href="#TfIdf-197"><span class="linenos">197</span></a>                <span class="n">attr_map</span><span class="p">,</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">get_col</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-</span><span id="TfIdf-198"><a href="#TfIdf-198"><span class="linenos">198</span></a>            <span class="p">)</span>  <span class="c1"># i.e. &quot;Series&quot; like</span>
+</span><span id="TfIdf-196"><a href="#TfIdf-196"><span class="linenos">196</span></a>            <span class="n">attr_map</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">map_dict</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">tfidf_map</span><span class="p">)</span>  <span class="c1"># i.e. &quot;Series&quot; like</span>
+</span><span id="TfIdf-197"><a href="#TfIdf-197"><span class="linenos">197</span></a>
+</span><span id="TfIdf-198"><a href="#TfIdf-198"><span class="linenos">198</span></a>            <span class="n">new_attr</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">fill_na</span><span class="p">(</span><span class="n">attr_map</span><span class="p">,</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">get_col</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>  <span class="c1"># i.e. &quot;Series&quot; like</span>
 </span><span id="TfIdf-199"><a href="#TfIdf-199"><span class="linenos">199</span></a>
-</span><span id="TfIdf-200"><a href="#TfIdf-200"><span class="linenos">200</span></a>            <span class="n">frame_methods</span><span class="p">:</span> <span class="n">DFMethods</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">put_col</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">,</span> <span class="n">new_attr</span><span class="p">)</span>  <span class="c1"># type: ignore[no-redef]</span>
+</span><span id="TfIdf-200"><a href="#TfIdf-200"><span class="linenos">200</span></a>            <span class="n">frame_methods</span><span class="o">.</span><span class="n">put_col</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">,</span> <span class="n">new_attr</span><span class="p">)</span>  <span class="c1"># inplace create column</span>
 </span><span id="TfIdf-201"><a href="#TfIdf-201"><span class="linenos">201</span></a>
-</span><span id="TfIdf-202"><a href="#TfIdf-202"><span class="linenos">202</span></a>            <span class="n">frame_methods</span><span class="p">:</span> <span class="n">DFMethods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_group_id</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">)</span><span class="o">.</span><span class="n">drop_col</span><span class="p">(</span>  <span class="c1"># type: ignore[no-redef]</span>
-</span><span id="TfIdf-203"><a href="#TfIdf-203"><span class="linenos">203</span></a>                <span class="n">tmp_attr</span>
-</span><span id="TfIdf-204"><a href="#TfIdf-204"><span class="linenos">204</span></a>            <span class="p">)</span>
-</span><span id="TfIdf-205"><a href="#TfIdf-205"><span class="linenos">205</span></a>
-</span><span id="TfIdf-206"><a href="#TfIdf-206"><span class="linenos">206</span></a>        <span class="n">df</span><span class="p">:</span> <span class="n">frames</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">frame</span>
-</span><span id="TfIdf-207"><a href="#TfIdf-207"><span class="linenos">207</span></a>        <span class="k">return</span> <span class="n">df</span>
+</span><span id="TfIdf-202"><a href="#TfIdf-202"><span class="linenos">202</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">assign_group_id</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">)</span><span class="o">.</span><span class="n">drop_col</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">)</span>  <span class="c1"># updates `framemethods`</span>
+</span><span id="TfIdf-203"><a href="#TfIdf-203"><span class="linenos">203</span></a>
+</span><span id="TfIdf-204"><a href="#TfIdf-204"><span class="linenos">204</span></a>        <span class="k">return</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">frame</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Abstract base class for defining deduplication strategies.</p>
+            <div class="docstring"><p>TF-IDF deduper.</p>
 
-<p>This class provides the structure and methods for implementing different
-deduplication strategies. _Any_ deduplication strategy must inherit from
-here.</p>
+<p>Note: high "top N" numbers at initialisation may cause spurious results.
+Use with care!</p>
+
+<p>Note: Whilst powerful, this is computationally intensive: ~<em>O(n^2)</em></p>
+
+<p>Additional keywords arguments can be passed to parametrise the vectorizer,
+as listed in the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html">TF-IDF vectorizer documentation</a></p>
 </div>
 
 
@@ -570,17 +519,17 @@ here.</p>
 
     </div>
     <a class="headerlink" href="#TfIdf.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="TfIdf.__init__-31"><a href="#TfIdf.__init__-31"><span class="linenos">31</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-</span><span id="TfIdf.__init__-32"><a href="#TfIdf.__init__-32"><span class="linenos">32</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="TfIdf.__init__-33"><a href="#TfIdf.__init__-33"><span class="linenos">33</span></a>        <span class="n">ngram</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
-</span><span id="TfIdf.__init__-34"><a href="#TfIdf.__init__-34"><span class="linenos">34</span></a>        <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
-</span><span id="TfIdf.__init__-35"><a href="#TfIdf.__init__-35"><span class="linenos">35</span></a>        <span class="n">topn</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
-</span><span id="TfIdf.__init__-36"><a href="#TfIdf.__init__-36"><span class="linenos">36</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span id="TfIdf.__init__-37"><a href="#TfIdf.__init__-37"><span class="linenos">37</span></a>    <span class="p">):</span>
-</span><span id="TfIdf.__init__-38"><a href="#TfIdf.__init__-38"><span class="linenos">38</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_ngram</span> <span class="o">=</span> <span class="n">ngram</span>
-</span><span id="TfIdf.__init__-39"><a href="#TfIdf.__init__-39"><span class="linenos">39</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_tolerance</span> <span class="o">=</span> <span class="n">tolerance</span>
-</span><span id="TfIdf.__init__-40"><a href="#TfIdf.__init__-40"><span class="linenos">40</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_topn</span> <span class="o">=</span> <span class="n">topn</span>
-</span><span id="TfIdf.__init__-41"><a href="#TfIdf.__init__-41"><span class="linenos">41</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="TfIdf.__init__-41"><a href="#TfIdf.__init__-41"><span class="linenos">41</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+</span><span id="TfIdf.__init__-42"><a href="#TfIdf.__init__-42"><span class="linenos">42</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="TfIdf.__init__-43"><a href="#TfIdf.__init__-43"><span class="linenos">43</span></a>        <span class="n">ngram</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+</span><span id="TfIdf.__init__-44"><a href="#TfIdf.__init__-44"><span class="linenos">44</span></a>        <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+</span><span id="TfIdf.__init__-45"><a href="#TfIdf.__init__-45"><span class="linenos">45</span></a>        <span class="n">topn</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+</span><span id="TfIdf.__init__-46"><a href="#TfIdf.__init__-46"><span class="linenos">46</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span id="TfIdf.__init__-47"><a href="#TfIdf.__init__-47"><span class="linenos">47</span></a>    <span class="p">):</span>
+</span><span id="TfIdf.__init__-48"><a href="#TfIdf.__init__-48"><span class="linenos">48</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_ngram</span> <span class="o">=</span> <span class="n">ngram</span>
+</span><span id="TfIdf.__init__-49"><a href="#TfIdf.__init__-49"><span class="linenos">49</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_tolerance</span> <span class="o">=</span> <span class="n">tolerance</span>
+</span><span id="TfIdf.__init__-50"><a href="#TfIdf.__init__-50"><span class="linenos">50</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_topn</span> <span class="o">=</span> <span class="n">topn</span>
+</span><span id="TfIdf.__init__-51"><a href="#TfIdf.__init__-51"><span class="linenos">51</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
 </span></pre></div>
 
 
@@ -599,71 +548,62 @@ here.</p>
 
     </div>
     <a class="headerlink" href="#TfIdf.dedupe"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="TfIdf.dedupe-155"><a href="#TfIdf.dedupe-155"><span class="linenos">155</span></a>    <span class="nd">@override</span>
-</span><span id="TfIdf.dedupe-156"><a href="#TfIdf.dedupe-156"><span class="linenos">156</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dedupe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">frames</span><span class="p">:</span>
-</span><span id="TfIdf.dedupe-157"><a href="#TfIdf.dedupe-157"><span class="linenos">157</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;dedupe with tf-df</span>
-</span><span id="TfIdf.dedupe-158"><a href="#TfIdf.dedupe-158"><span class="linenos">158</span></a>
-</span><span id="TfIdf.dedupe-159"><a href="#TfIdf.dedupe-159"><span class="linenos">159</span></a><span class="sd">        1-to-1 maps are identified using the procedure, _not_ a map across the</span>
-</span><span id="TfIdf.dedupe-160"><a href="#TfIdf.dedupe-160"><span class="linenos">160</span></a><span class="sd">        whole array as identified by `attr` this is because this deduper</span>
-</span><span id="TfIdf.dedupe-161"><a href="#TfIdf.dedupe-161"><span class="linenos">161</span></a><span class="sd">        implements `top N` functionality and a non-iterative approach would</span>
-</span><span id="TfIdf.dedupe-162"><a href="#TfIdf.dedupe-162"><span class="linenos">162</span></a><span class="sd">        produce a mapping object that &gt; len(array)</span>
-</span><span id="TfIdf.dedupe-163"><a href="#TfIdf.dedupe-163"><span class="linenos">163</span></a>
-</span><span id="TfIdf.dedupe-164"><a href="#TfIdf.dedupe-164"><span class="linenos">164</span></a><span class="sd">        TODO: given above is it necessary to iterate or can individual &quot;1-to-1&quot;</span>
-</span><span id="TfIdf.dedupe-165"><a href="#TfIdf.dedupe-165"><span class="linenos">165</span></a><span class="sd">        maps suffice?</span>
-</span><span id="TfIdf.dedupe-166"><a href="#TfIdf.dedupe-166"><span class="linenos">166</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="TfIdf.dedupe-167"><a href="#TfIdf.dedupe-167"><span class="linenos">167</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-</span><span id="TfIdf.dedupe-168"><a href="#TfIdf.dedupe-168"><span class="linenos">168</span></a>            <span class="sa">f</span><span class="s1">&#39;Deduping attribute &quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&quot; with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">(&#39;</span>
-</span><span id="TfIdf.dedupe-169"><a href="#TfIdf.dedupe-169"><span class="linenos">169</span></a>            <span class="sa">f</span><span class="s2">&quot;ngram=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_ngram</span><span class="si">}</span><span class="s2">, &quot;</span>
-</span><span id="TfIdf.dedupe-170"><a href="#TfIdf.dedupe-170"><span class="linenos">170</span></a>            <span class="sa">f</span><span class="s2">&quot;tolerance=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_tolerance</span><span class="si">}</span><span class="s2">, &quot;</span>
-</span><span id="TfIdf.dedupe-171"><a href="#TfIdf.dedupe-171"><span class="linenos">171</span></a>            <span class="sa">f</span><span class="s2">&quot;topn=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_topn</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="TfIdf.dedupe-172"><a href="#TfIdf.dedupe-172"><span class="linenos">172</span></a>            <span class="s2">&quot;)&quot;</span>
-</span><span id="TfIdf.dedupe-173"><a href="#TfIdf.dedupe-173"><span class="linenos">173</span></a>        <span class="p">)</span>
-</span><span id="TfIdf.dedupe-174"><a href="#TfIdf.dedupe-174"><span class="linenos">174</span></a>
-</span><span id="TfIdf.dedupe-175"><a href="#TfIdf.dedupe-175"><span class="linenos">175</span></a>        <span class="n">frame_methods</span><span class="p">:</span> <span class="n">DFMethods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_methods</span>
-</span><span id="TfIdf.dedupe-176"><a href="#TfIdf.dedupe-176"><span class="linenos">176</span></a>
-</span><span id="TfIdf.dedupe-177"><a href="#TfIdf.dedupe-177"><span class="linenos">177</span></a>        <span class="n">tmp_attr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">attr</span> <span class="o">+</span> <span class="n">TMP_ATTR_LABEL</span>
-</span><span id="TfIdf.dedupe-178"><a href="#TfIdf.dedupe-178"><span class="linenos">178</span></a>
-</span><span id="TfIdf.dedupe-179"><a href="#TfIdf.dedupe-179"><span class="linenos">179</span></a>        <span class="n">vectorizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ngram</span><span class="p">)</span>
-</span><span id="TfIdf.dedupe-180"><a href="#TfIdf.dedupe-180"><span class="linenos">180</span></a>
-</span><span id="TfIdf.dedupe-181"><a href="#TfIdf.dedupe-181"><span class="linenos">181</span></a>        <span class="n">similarities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_similarities_matrix</span><span class="p">(</span>
-</span><span id="TfIdf.dedupe-182"><a href="#TfIdf.dedupe-182"><span class="linenos">182</span></a>            <span class="n">vectorizer</span><span class="p">,</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">get_col</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-</span><span id="TfIdf.dedupe-183"><a href="#TfIdf.dedupe-183"><span class="linenos">183</span></a>        <span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="TfIdf.dedupe-162"><a href="#TfIdf.dedupe-162"><span class="linenos">162</span></a>    <span class="nd">@override</span>
+</span><span id="TfIdf.dedupe-163"><a href="#TfIdf.dedupe-163"><span class="linenos">163</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dedupe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">frames</span><span class="p">:</span>
+</span><span id="TfIdf.dedupe-164"><a href="#TfIdf.dedupe-164"><span class="linenos">164</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Deduplicate with term frequency, inverse document frequency.</span>
+</span><span id="TfIdf.dedupe-165"><a href="#TfIdf.dedupe-165"><span class="linenos">165</span></a>
+</span><span id="TfIdf.dedupe-166"><a href="#TfIdf.dedupe-166"><span class="linenos">166</span></a><span class="sd">        Here, 1-to-1 maps are identified using the procedure i.e. for *each*</span>
+</span><span id="TfIdf.dedupe-167"><a href="#TfIdf.dedupe-167"><span class="linenos">167</span></a><span class="sd">        row, *not* a map across the whole array as identified by `attr`. This</span>
+</span><span id="TfIdf.dedupe-168"><a href="#TfIdf.dedupe-168"><span class="linenos">168</span></a><span class="sd">        is because this deduper implements &quot;top N&quot; matches functionality and a</span>
+</span><span id="TfIdf.dedupe-169"><a href="#TfIdf.dedupe-169"><span class="linenos">169</span></a><span class="sd">        non-iterative approach would produce a mapping object that &gt; len(array)</span>
+</span><span id="TfIdf.dedupe-170"><a href="#TfIdf.dedupe-170"><span class="linenos">170</span></a>
+</span><span id="TfIdf.dedupe-171"><a href="#TfIdf.dedupe-171"><span class="linenos">171</span></a><span class="sd">        Therefore, for instances of &quot;top N&quot; matches where &gt; 1, 1-to-1 match</span>
+</span><span id="TfIdf.dedupe-172"><a href="#TfIdf.dedupe-172"><span class="linenos">172</span></a><span class="sd">        maps are iteratively applied from worst to best, guarnateeing the best</span>
+</span><span id="TfIdf.dedupe-173"><a href="#TfIdf.dedupe-173"><span class="linenos">173</span></a><span class="sd">        end match.</span>
+</span><span id="TfIdf.dedupe-174"><a href="#TfIdf.dedupe-174"><span class="linenos">174</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="TfIdf.dedupe-175"><a href="#TfIdf.dedupe-175"><span class="linenos">175</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+</span><span id="TfIdf.dedupe-176"><a href="#TfIdf.dedupe-176"><span class="linenos">176</span></a>            <span class="sa">f</span><span class="s1">&#39;Deduping attribute &quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&quot; with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">(&#39;</span>
+</span><span id="TfIdf.dedupe-177"><a href="#TfIdf.dedupe-177"><span class="linenos">177</span></a>            <span class="sa">f</span><span class="s2">&quot;ngram=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_ngram</span><span class="si">}</span><span class="s2">, &quot;</span>
+</span><span id="TfIdf.dedupe-178"><a href="#TfIdf.dedupe-178"><span class="linenos">178</span></a>            <span class="sa">f</span><span class="s2">&quot;tolerance=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_tolerance</span><span class="si">}</span><span class="s2">, &quot;</span>
+</span><span id="TfIdf.dedupe-179"><a href="#TfIdf.dedupe-179"><span class="linenos">179</span></a>            <span class="sa">f</span><span class="s2">&quot;topn=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_topn</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="TfIdf.dedupe-180"><a href="#TfIdf.dedupe-180"><span class="linenos">180</span></a>            <span class="s2">&quot;)&quot;</span>
+</span><span id="TfIdf.dedupe-181"><a href="#TfIdf.dedupe-181"><span class="linenos">181</span></a>        <span class="p">)</span>
+</span><span id="TfIdf.dedupe-182"><a href="#TfIdf.dedupe-182"><span class="linenos">182</span></a>
+</span><span id="TfIdf.dedupe-183"><a href="#TfIdf.dedupe-183"><span class="linenos">183</span></a>        <span class="n">frame_methods</span><span class="p">:</span> <span class="n">DFMethods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_methods</span>
 </span><span id="TfIdf.dedupe-184"><a href="#TfIdf.dedupe-184"><span class="linenos">184</span></a>
-</span><span id="TfIdf.dedupe-185"><a href="#TfIdf.dedupe-185"><span class="linenos">185</span></a>        <span class="n">matches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_matches_array</span><span class="p">(</span>
-</span><span id="TfIdf.dedupe-186"><a href="#TfIdf.dedupe-186"><span class="linenos">186</span></a>            <span class="n">similarities</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">frame_methods</span><span class="o">.</span><span class="n">get_col</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
-</span><span id="TfIdf.dedupe-187"><a href="#TfIdf.dedupe-187"><span class="linenos">187</span></a>        <span class="p">)</span>
+</span><span id="TfIdf.dedupe-185"><a href="#TfIdf.dedupe-185"><span class="linenos">185</span></a>        <span class="n">tmp_attr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">attr</span> <span class="o">+</span> <span class="n">TMP_ATTR_LABEL</span>
+</span><span id="TfIdf.dedupe-186"><a href="#TfIdf.dedupe-186"><span class="linenos">186</span></a>
+</span><span id="TfIdf.dedupe-187"><a href="#TfIdf.dedupe-187"><span class="linenos">187</span></a>        <span class="n">vectorizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ngram</span><span class="p">)</span>
 </span><span id="TfIdf.dedupe-188"><a href="#TfIdf.dedupe-188"><span class="linenos">188</span></a>
-</span><span id="TfIdf.dedupe-189"><a href="#TfIdf.dedupe-189"><span class="linenos">189</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-</span><span id="TfIdf.dedupe-190"><a href="#TfIdf.dedupe-190"><span class="linenos">190</span></a>            <span class="sa">f</span><span class="s1">&#39;Assigning duplicated &quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&quot; instances to attribute &quot;</span><span class="si">{</span><span class="n">tmp_attr</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
-</span><span id="TfIdf.dedupe-191"><a href="#TfIdf.dedupe-191"><span class="linenos">191</span></a>        <span class="p">)</span>
-</span><span id="TfIdf.dedupe-192"><a href="#TfIdf.dedupe-192"><span class="linenos">192</span></a>        <span class="k">for</span> <span class="n">tfidf_map</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gen_map</span><span class="p">(</span><span class="n">matches</span><span class="p">):</span>
-</span><span id="TfIdf.dedupe-193"><a href="#TfIdf.dedupe-193"><span class="linenos">193</span></a>
-</span><span id="TfIdf.dedupe-194"><a href="#TfIdf.dedupe-194"><span class="linenos">194</span></a>            <span class="n">attr_map</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">map_dict</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">tfidf_map</span><span class="p">)</span>  <span class="c1"># i.e. &quot;Series&quot; like</span>
+</span><span id="TfIdf.dedupe-189"><a href="#TfIdf.dedupe-189"><span class="linenos">189</span></a>        <span class="n">similarities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_similarities_matrix</span><span class="p">(</span><span class="n">vectorizer</span><span class="p">,</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">get_col</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
+</span><span id="TfIdf.dedupe-190"><a href="#TfIdf.dedupe-190"><span class="linenos">190</span></a>
+</span><span id="TfIdf.dedupe-191"><a href="#TfIdf.dedupe-191"><span class="linenos">191</span></a>        <span class="n">matches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_matches_array</span><span class="p">(</span><span class="n">similarities</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">frame_methods</span><span class="o">.</span><span class="n">get_col</span><span class="p">(</span><span class="n">attr</span><span class="p">)))</span>
+</span><span id="TfIdf.dedupe-192"><a href="#TfIdf.dedupe-192"><span class="linenos">192</span></a>
+</span><span id="TfIdf.dedupe-193"><a href="#TfIdf.dedupe-193"><span class="linenos">193</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Assigning duplicated &quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&quot; instances to attribute &quot;</span><span class="si">{</span><span class="n">tmp_attr</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+</span><span id="TfIdf.dedupe-194"><a href="#TfIdf.dedupe-194"><span class="linenos">194</span></a>        <span class="k">for</span> <span class="n">tfidf_map</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gen_map</span><span class="p">(</span><span class="n">matches</span><span class="p">):</span>
 </span><span id="TfIdf.dedupe-195"><a href="#TfIdf.dedupe-195"><span class="linenos">195</span></a>
-</span><span id="TfIdf.dedupe-196"><a href="#TfIdf.dedupe-196"><span class="linenos">196</span></a>            <span class="n">new_attr</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">fill_na</span><span class="p">(</span>
-</span><span id="TfIdf.dedupe-197"><a href="#TfIdf.dedupe-197"><span class="linenos">197</span></a>                <span class="n">attr_map</span><span class="p">,</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">get_col</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-</span><span id="TfIdf.dedupe-198"><a href="#TfIdf.dedupe-198"><span class="linenos">198</span></a>            <span class="p">)</span>  <span class="c1"># i.e. &quot;Series&quot; like</span>
+</span><span id="TfIdf.dedupe-196"><a href="#TfIdf.dedupe-196"><span class="linenos">196</span></a>            <span class="n">attr_map</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">map_dict</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">tfidf_map</span><span class="p">)</span>  <span class="c1"># i.e. &quot;Series&quot; like</span>
+</span><span id="TfIdf.dedupe-197"><a href="#TfIdf.dedupe-197"><span class="linenos">197</span></a>
+</span><span id="TfIdf.dedupe-198"><a href="#TfIdf.dedupe-198"><span class="linenos">198</span></a>            <span class="n">new_attr</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">fill_na</span><span class="p">(</span><span class="n">attr_map</span><span class="p">,</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">get_col</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>  <span class="c1"># i.e. &quot;Series&quot; like</span>
 </span><span id="TfIdf.dedupe-199"><a href="#TfIdf.dedupe-199"><span class="linenos">199</span></a>
-</span><span id="TfIdf.dedupe-200"><a href="#TfIdf.dedupe-200"><span class="linenos">200</span></a>            <span class="n">frame_methods</span><span class="p">:</span> <span class="n">DFMethods</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">put_col</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">,</span> <span class="n">new_attr</span><span class="p">)</span>  <span class="c1"># type: ignore[no-redef]</span>
+</span><span id="TfIdf.dedupe-200"><a href="#TfIdf.dedupe-200"><span class="linenos">200</span></a>            <span class="n">frame_methods</span><span class="o">.</span><span class="n">put_col</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">,</span> <span class="n">new_attr</span><span class="p">)</span>  <span class="c1"># inplace create column</span>
 </span><span id="TfIdf.dedupe-201"><a href="#TfIdf.dedupe-201"><span class="linenos">201</span></a>
-</span><span id="TfIdf.dedupe-202"><a href="#TfIdf.dedupe-202"><span class="linenos">202</span></a>            <span class="n">frame_methods</span><span class="p">:</span> <span class="n">DFMethods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_group_id</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">)</span><span class="o">.</span><span class="n">drop_col</span><span class="p">(</span>  <span class="c1"># type: ignore[no-redef]</span>
-</span><span id="TfIdf.dedupe-203"><a href="#TfIdf.dedupe-203"><span class="linenos">203</span></a>                <span class="n">tmp_attr</span>
-</span><span id="TfIdf.dedupe-204"><a href="#TfIdf.dedupe-204"><span class="linenos">204</span></a>            <span class="p">)</span>
-</span><span id="TfIdf.dedupe-205"><a href="#TfIdf.dedupe-205"><span class="linenos">205</span></a>
-</span><span id="TfIdf.dedupe-206"><a href="#TfIdf.dedupe-206"><span class="linenos">206</span></a>        <span class="n">df</span><span class="p">:</span> <span class="n">frames</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">frame</span>
-</span><span id="TfIdf.dedupe-207"><a href="#TfIdf.dedupe-207"><span class="linenos">207</span></a>        <span class="k">return</span> <span class="n">df</span>
+</span><span id="TfIdf.dedupe-202"><a href="#TfIdf.dedupe-202"><span class="linenos">202</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">assign_group_id</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">)</span><span class="o">.</span><span class="n">drop_col</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">)</span>  <span class="c1"># updates `framemethods`</span>
+</span><span id="TfIdf.dedupe-203"><a href="#TfIdf.dedupe-203"><span class="linenos">203</span></a>
+</span><span id="TfIdf.dedupe-204"><a href="#TfIdf.dedupe-204"><span class="linenos">204</span></a>        <span class="k">return</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">frame</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>dedupe with tf-df</p>
+            <div class="docstring"><p>Deduplicate with term frequency, inverse document frequency.</p>
 
-<p>1-to-1 maps are identified using the procedure, _not_ a map across the
-whole array as identified by <code>attr</code> this is because this deduper
-implements <code>top N</code> functionality and a non-iterative approach would
-produce a mapping object that &gt; len(array)</p>
+<p>Here, 1-to-1 maps are identified using the procedure i.e. for <em>each</em>
+row, <em>not</em> a map across the whole array as identified by <code>attr</code>. This
+is because this deduper implements "top N" matches functionality and a
+non-iterative approach would produce a mapping object that &gt; len(array)</p>
 
-<p>TODO: given above is it necessary to iterate or can individual "1-to-1"
-maps suffice?</p>
+<p>Therefore, for instances of "top N" matches where &gt; 1, 1-to-1 match
+maps are iteratively applied from worst to best, guarnateeing the best
+end match.</p>
 </div>
 
 
@@ -672,199 +612,7 @@ maps suffice?</p>
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt><a href="strategy.html#DeduplicationStrategy">dupegrouper.strategy.DeduplicationStrategy</a></dt>
-                                <dd id="TfIdf.set_df" class="function"><a href="strategy.html#DeduplicationStrategy.set_df">set_df</a></dd>
-                <dd id="TfIdf.assign_group_id" class="function"><a href="strategy.html#DeduplicationStrategy.assign_group_id">assign_group_id</a></dd>
-
-            </div>
-                                </dl>
-                            </div>
-                </section>
-                <section id="Custom">
-                            <input id="Custom-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr class">
-            
-    <span class="def">class</span>
-    <span class="name">Custom</span><wbr>(<span class="base"><a href="strategy.html#DeduplicationStrategy">dupegrouper.strategy.DeduplicationStrategy</a></span>):
-
-                <label class="view-source-button" for="Custom-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#Custom"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Custom-31"><a href="#Custom-31"><span class="linenos">31</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Custom</span><span class="p">(</span><span class="n">DeduplicationStrategy</span><span class="p">):</span>
-</span><span id="Custom-32"><a href="#Custom-32"><span class="linenos">32</span></a>
-</span><span id="Custom-33"><a href="#Custom-33"><span class="linenos">33</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-</span><span id="Custom-34"><a href="#Custom-34"><span class="linenos">34</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="Custom-35"><a href="#Custom-35"><span class="linenos">35</span></a>        <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">_T</span><span class="p">,</span> <span class="n">_T</span><span class="p">]],</span>
-</span><span id="Custom-36"><a href="#Custom-36"><span class="linenos">36</span></a>        <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="Custom-37"><a href="#Custom-37"><span class="linenos">37</span></a>        <span class="o">/</span><span class="p">,</span>
-</span><span id="Custom-38"><a href="#Custom-38"><span class="linenos">38</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span id="Custom-39"><a href="#Custom-39"><span class="linenos">39</span></a>    <span class="p">):</span>
-</span><span id="Custom-40"><a href="#Custom-40"><span class="linenos">40</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_func</span> <span class="o">=</span> <span class="n">func</span>
-</span><span id="Custom-41"><a href="#Custom-41"><span class="linenos">41</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_attr</span> <span class="o">=</span> <span class="n">attr</span>
-</span><span id="Custom-42"><a href="#Custom-42"><span class="linenos">42</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
-</span><span id="Custom-43"><a href="#Custom-43"><span class="linenos">43</span></a>
-</span><span id="Custom-44"><a href="#Custom-44"><span class="linenos">44</span></a>    <span class="nd">@override</span>
-</span><span id="Custom-45"><a href="#Custom-45"><span class="linenos">45</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dedupe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">frames</span><span class="p">:</span>
-</span><span id="Custom-46"><a href="#Custom-46"><span class="linenos">46</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;dedupe with custom defined callable</span>
-</span><span id="Custom-47"><a href="#Custom-47"><span class="linenos">47</span></a>
-</span><span id="Custom-48"><a href="#Custom-48"><span class="linenos">48</span></a><span class="sd">        Implements deduplication using a function defined _outside_ of the</span>
-</span><span id="Custom-49"><a href="#Custom-49"><span class="linenos">49</span></a><span class="sd">        scope of this library i.e. by the end user.</span>
-</span><span id="Custom-50"><a href="#Custom-50"><span class="linenos">50</span></a>
-</span><span id="Custom-51"><a href="#Custom-51"><span class="linenos">51</span></a><span class="sd">        The function signature must be of the following style:</span>
-</span><span id="Custom-52"><a href="#Custom-52"><span class="linenos">52</span></a>
-</span><span id="Custom-53"><a href="#Custom-53"><span class="linenos">53</span></a><span class="sd">        `my_func(df, attr, /, **kwargs)`</span>
-</span><span id="Custom-54"><a href="#Custom-54"><span class="linenos">54</span></a>
-</span><span id="Custom-55"><a href="#Custom-55"><span class="linenos">55</span></a><span class="sd">        Where `df` is the dataframe, `attr` is a string identifying the label</span>
-</span><span id="Custom-56"><a href="#Custom-56"><span class="linenos">56</span></a><span class="sd">        of the dataframe attribute requiring deduplication and kwargs are any</span>
-</span><span id="Custom-57"><a href="#Custom-57"><span class="linenos">57</span></a><span class="sd">        number of additional keyword arguments taken by the function</span>
-</span><span id="Custom-58"><a href="#Custom-58"><span class="linenos">58</span></a>
-</span><span id="Custom-59"><a href="#Custom-59"><span class="linenos">59</span></a><span class="sd">        `df` and `attr`, must be *positional* arguments in the correct order!</span>
-</span><span id="Custom-60"><a href="#Custom-60"><span class="linenos">60</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Custom-61"><a href="#Custom-61"><span class="linenos">61</span></a>        <span class="k">del</span> <span class="n">attr</span>  <span class="c1"># Unused: initialised as class private attribute</span>
-</span><span id="Custom-62"><a href="#Custom-62"><span class="linenos">62</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-</span><span id="Custom-63"><a href="#Custom-63"><span class="linenos">63</span></a>            <span class="sa">f</span><span class="s1">&#39;Deduping attribute &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_attr</span><span class="si">}</span><span class="s1">&quot; with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&#39;</span>
-</span><span id="Custom-64"><a href="#Custom-64"><span class="linenos">64</span></a>            <span class="sa">f</span><span class="s1">&#39;(</span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">())</span><span class="si">}</span><span class="s1">)&#39;</span>
-</span><span id="Custom-65"><a href="#Custom-65"><span class="linenos">65</span></a>        <span class="p">)</span>
-</span><span id="Custom-66"><a href="#Custom-66"><span class="linenos">66</span></a>
-</span><span id="Custom-67"><a href="#Custom-67"><span class="linenos">67</span></a>        <span class="n">frame_methods</span><span class="p">:</span> <span class="n">DFMethods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_methods</span>
-</span><span id="Custom-68"><a href="#Custom-68"><span class="linenos">68</span></a>
-</span><span id="Custom-69"><a href="#Custom-69"><span class="linenos">69</span></a>        <span class="n">tmp_attr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attr</span> <span class="o">+</span> <span class="n">TMP_ATTR_LABEL</span>
-</span><span id="Custom-70"><a href="#Custom-70"><span class="linenos">70</span></a>
-</span><span id="Custom-71"><a href="#Custom-71"><span class="linenos">71</span></a>        <span class="n">attr_map</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">map_dict</span><span class="p">(</span>
-</span><span id="Custom-72"><a href="#Custom-72"><span class="linenos">72</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_attr</span><span class="p">,</span>
-</span><span id="Custom-73"><a href="#Custom-73"><span class="linenos">73</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="p">(</span>
-</span><span id="Custom-74"><a href="#Custom-74"><span class="linenos">74</span></a>                <span class="n">frame_methods</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span>
-</span><span id="Custom-75"><a href="#Custom-75"><span class="linenos">75</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_attr</span><span class="p">,</span>
-</span><span id="Custom-76"><a href="#Custom-76"><span class="linenos">76</span></a>                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">,</span>
-</span><span id="Custom-77"><a href="#Custom-77"><span class="linenos">77</span></a>            <span class="p">),</span>
-</span><span id="Custom-78"><a href="#Custom-78"><span class="linenos">78</span></a>        <span class="p">)</span>
-</span><span id="Custom-79"><a href="#Custom-79"><span class="linenos">79</span></a>
-</span><span id="Custom-80"><a href="#Custom-80"><span class="linenos">80</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-</span><span id="Custom-81"><a href="#Custom-81"><span class="linenos">81</span></a>            <span class="sa">f</span><span class="s2">&quot;Assigning duplicated </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_attr</span><span class="si">}</span><span class="s2"> instances to attribute </span><span class="si">{</span><span class="n">tmp_attr</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="Custom-82"><a href="#Custom-82"><span class="linenos">82</span></a>        <span class="p">)</span>
-</span><span id="Custom-83"><a href="#Custom-83"><span class="linenos">83</span></a>
-</span><span id="Custom-84"><a href="#Custom-84"><span class="linenos">84</span></a>        <span class="n">frame_methods</span><span class="o">.</span><span class="n">put_col</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">,</span> <span class="n">attr_map</span><span class="p">)</span>
-</span><span id="Custom-85"><a href="#Custom-85"><span class="linenos">85</span></a>
-</span><span id="Custom-86"><a href="#Custom-86"><span class="linenos">86</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_group_id</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">)</span><span class="o">.</span><span class="n">drop_col</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">)</span><span class="o">.</span><span class="n">frame</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>Abstract base class for defining deduplication strategies.</p>
-
-<p>This class provides the structure and methods for implementing different
-deduplication strategies. _Any_ deduplication strategy must inherit from
-here.</p>
-</div>
-
-
-                            <div id="Custom.__init__" class="classattr">
-                                        <input id="Custom.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="name">Custom</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="o">~</span><span class="n">_T</span><span class="p">,</span> <span class="o">~</span><span class="n">_T</span><span class="p">]]</span>, </span><span class="param"><span class="n">attr</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="o">/</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span>)</span>
-
-                <label class="view-source-button" for="Custom.__init__-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#Custom.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Custom.__init__-33"><a href="#Custom.__init__-33"><span class="linenos">33</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-</span><span id="Custom.__init__-34"><a href="#Custom.__init__-34"><span class="linenos">34</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="Custom.__init__-35"><a href="#Custom.__init__-35"><span class="linenos">35</span></a>        <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">_T</span><span class="p">,</span> <span class="n">_T</span><span class="p">]],</span>
-</span><span id="Custom.__init__-36"><a href="#Custom.__init__-36"><span class="linenos">36</span></a>        <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="Custom.__init__-37"><a href="#Custom.__init__-37"><span class="linenos">37</span></a>        <span class="o">/</span><span class="p">,</span>
-</span><span id="Custom.__init__-38"><a href="#Custom.__init__-38"><span class="linenos">38</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span id="Custom.__init__-39"><a href="#Custom.__init__-39"><span class="linenos">39</span></a>    <span class="p">):</span>
-</span><span id="Custom.__init__-40"><a href="#Custom.__init__-40"><span class="linenos">40</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_func</span> <span class="o">=</span> <span class="n">func</span>
-</span><span id="Custom.__init__-41"><a href="#Custom.__init__-41"><span class="linenos">41</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_attr</span> <span class="o">=</span> <span class="n">attr</span>
-</span><span id="Custom.__init__-42"><a href="#Custom.__init__-42"><span class="linenos">42</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
-</span></pre></div>
-
-
-    
-
-                            </div>
-                            <div id="Custom.dedupe" class="classattr">
-                                        <input id="Custom.dedupe-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-                    <div class="decorator decorator-override">@override</div>
-
-        <span class="def">def</span>
-        <span class="name">dedupe</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">attr</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">) -> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">polars</span><span class="o">.</span><span class="n">dataframe</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>:</span></span>
-
-                <label class="view-source-button" for="Custom.dedupe-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#Custom.dedupe"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Custom.dedupe-44"><a href="#Custom.dedupe-44"><span class="linenos">44</span></a>    <span class="nd">@override</span>
-</span><span id="Custom.dedupe-45"><a href="#Custom.dedupe-45"><span class="linenos">45</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dedupe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">frames</span><span class="p">:</span>
-</span><span id="Custom.dedupe-46"><a href="#Custom.dedupe-46"><span class="linenos">46</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;dedupe with custom defined callable</span>
-</span><span id="Custom.dedupe-47"><a href="#Custom.dedupe-47"><span class="linenos">47</span></a>
-</span><span id="Custom.dedupe-48"><a href="#Custom.dedupe-48"><span class="linenos">48</span></a><span class="sd">        Implements deduplication using a function defined _outside_ of the</span>
-</span><span id="Custom.dedupe-49"><a href="#Custom.dedupe-49"><span class="linenos">49</span></a><span class="sd">        scope of this library i.e. by the end user.</span>
-</span><span id="Custom.dedupe-50"><a href="#Custom.dedupe-50"><span class="linenos">50</span></a>
-</span><span id="Custom.dedupe-51"><a href="#Custom.dedupe-51"><span class="linenos">51</span></a><span class="sd">        The function signature must be of the following style:</span>
-</span><span id="Custom.dedupe-52"><a href="#Custom.dedupe-52"><span class="linenos">52</span></a>
-</span><span id="Custom.dedupe-53"><a href="#Custom.dedupe-53"><span class="linenos">53</span></a><span class="sd">        `my_func(df, attr, /, **kwargs)`</span>
-</span><span id="Custom.dedupe-54"><a href="#Custom.dedupe-54"><span class="linenos">54</span></a>
-</span><span id="Custom.dedupe-55"><a href="#Custom.dedupe-55"><span class="linenos">55</span></a><span class="sd">        Where `df` is the dataframe, `attr` is a string identifying the label</span>
-</span><span id="Custom.dedupe-56"><a href="#Custom.dedupe-56"><span class="linenos">56</span></a><span class="sd">        of the dataframe attribute requiring deduplication and kwargs are any</span>
-</span><span id="Custom.dedupe-57"><a href="#Custom.dedupe-57"><span class="linenos">57</span></a><span class="sd">        number of additional keyword arguments taken by the function</span>
-</span><span id="Custom.dedupe-58"><a href="#Custom.dedupe-58"><span class="linenos">58</span></a>
-</span><span id="Custom.dedupe-59"><a href="#Custom.dedupe-59"><span class="linenos">59</span></a><span class="sd">        `df` and `attr`, must be *positional* arguments in the correct order!</span>
-</span><span id="Custom.dedupe-60"><a href="#Custom.dedupe-60"><span class="linenos">60</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Custom.dedupe-61"><a href="#Custom.dedupe-61"><span class="linenos">61</span></a>        <span class="k">del</span> <span class="n">attr</span>  <span class="c1"># Unused: initialised as class private attribute</span>
-</span><span id="Custom.dedupe-62"><a href="#Custom.dedupe-62"><span class="linenos">62</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-</span><span id="Custom.dedupe-63"><a href="#Custom.dedupe-63"><span class="linenos">63</span></a>            <span class="sa">f</span><span class="s1">&#39;Deduping attribute &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_attr</span><span class="si">}</span><span class="s1">&quot; with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&#39;</span>
-</span><span id="Custom.dedupe-64"><a href="#Custom.dedupe-64"><span class="linenos">64</span></a>            <span class="sa">f</span><span class="s1">&#39;(</span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">())</span><span class="si">}</span><span class="s1">)&#39;</span>
-</span><span id="Custom.dedupe-65"><a href="#Custom.dedupe-65"><span class="linenos">65</span></a>        <span class="p">)</span>
-</span><span id="Custom.dedupe-66"><a href="#Custom.dedupe-66"><span class="linenos">66</span></a>
-</span><span id="Custom.dedupe-67"><a href="#Custom.dedupe-67"><span class="linenos">67</span></a>        <span class="n">frame_methods</span><span class="p">:</span> <span class="n">DFMethods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_methods</span>
-</span><span id="Custom.dedupe-68"><a href="#Custom.dedupe-68"><span class="linenos">68</span></a>
-</span><span id="Custom.dedupe-69"><a href="#Custom.dedupe-69"><span class="linenos">69</span></a>        <span class="n">tmp_attr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attr</span> <span class="o">+</span> <span class="n">TMP_ATTR_LABEL</span>
-</span><span id="Custom.dedupe-70"><a href="#Custom.dedupe-70"><span class="linenos">70</span></a>
-</span><span id="Custom.dedupe-71"><a href="#Custom.dedupe-71"><span class="linenos">71</span></a>        <span class="n">attr_map</span> <span class="o">=</span> <span class="n">frame_methods</span><span class="o">.</span><span class="n">map_dict</span><span class="p">(</span>
-</span><span id="Custom.dedupe-72"><a href="#Custom.dedupe-72"><span class="linenos">72</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_attr</span><span class="p">,</span>
-</span><span id="Custom.dedupe-73"><a href="#Custom.dedupe-73"><span class="linenos">73</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="p">(</span>
-</span><span id="Custom.dedupe-74"><a href="#Custom.dedupe-74"><span class="linenos">74</span></a>                <span class="n">frame_methods</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span>
-</span><span id="Custom.dedupe-75"><a href="#Custom.dedupe-75"><span class="linenos">75</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_attr</span><span class="p">,</span>
-</span><span id="Custom.dedupe-76"><a href="#Custom.dedupe-76"><span class="linenos">76</span></a>                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">,</span>
-</span><span id="Custom.dedupe-77"><a href="#Custom.dedupe-77"><span class="linenos">77</span></a>            <span class="p">),</span>
-</span><span id="Custom.dedupe-78"><a href="#Custom.dedupe-78"><span class="linenos">78</span></a>        <span class="p">)</span>
-</span><span id="Custom.dedupe-79"><a href="#Custom.dedupe-79"><span class="linenos">79</span></a>
-</span><span id="Custom.dedupe-80"><a href="#Custom.dedupe-80"><span class="linenos">80</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-</span><span id="Custom.dedupe-81"><a href="#Custom.dedupe-81"><span class="linenos">81</span></a>            <span class="sa">f</span><span class="s2">&quot;Assigning duplicated </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_attr</span><span class="si">}</span><span class="s2"> instances to attribute </span><span class="si">{</span><span class="n">tmp_attr</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="Custom.dedupe-82"><a href="#Custom.dedupe-82"><span class="linenos">82</span></a>        <span class="p">)</span>
-</span><span id="Custom.dedupe-83"><a href="#Custom.dedupe-83"><span class="linenos">83</span></a>
-</span><span id="Custom.dedupe-84"><a href="#Custom.dedupe-84"><span class="linenos">84</span></a>        <span class="n">frame_methods</span><span class="o">.</span><span class="n">put_col</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">,</span> <span class="n">attr_map</span><span class="p">)</span>
-</span><span id="Custom.dedupe-85"><a href="#Custom.dedupe-85"><span class="linenos">85</span></a>
-</span><span id="Custom.dedupe-86"><a href="#Custom.dedupe-86"><span class="linenos">86</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_group_id</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">)</span><span class="o">.</span><span class="n">drop_col</span><span class="p">(</span><span class="n">tmp_attr</span><span class="p">)</span><span class="o">.</span><span class="n">frame</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>dedupe with custom defined callable</p>
-
-<p>Implements deduplication using a function defined _outside_ of the
-scope of this library i.e. by the end user.</p>
-
-<p>The function signature must be of the following style:</p>
-
-<p><code>my_func(df, attr, /, **kwargs)</code></p>
-
-<p>Where <code>df</code> is the dataframe, <code>attr</code> is a string identifying the label
-of the dataframe attribute requiring deduplication and kwargs are any
-number of additional keyword arguments taken by the function</p>
-
-<p><code>df</code> and <code>attr</code>, must be <em>positional</em> arguments in the correct order!</p>
-</div>
-
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt><a href="strategy.html#DeduplicationStrategy">dupegrouper.strategy.DeduplicationStrategy</a></dt>
-                                <dd id="Custom.set_df" class="function"><a href="strategy.html#DeduplicationStrategy.set_df">set_df</a></dd>
-                <dd id="Custom.assign_group_id" class="function"><a href="strategy.html#DeduplicationStrategy.assign_group_id">assign_group_id</a></dd>
+                                <dd id="TfIdf.assign_group_id" class="function"><a href="strategy.html#DeduplicationStrategy.assign_group_id">assign_group_id</a></dd>
 
             </div>
                                 </dl>

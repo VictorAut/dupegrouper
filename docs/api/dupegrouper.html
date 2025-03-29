@@ -26,16 +26,17 @@
     <li><a href="#installation">Installation</a></li>
     <li><a href="#example">Example</a></li>
   </ul></li>
-  <li><a href="#usage-guides">Usage Guides</a>
+  <li><a href="#usage-guide">Usage Guide</a>
   <ul>
     <li><a href="#adding-strategies">Adding Strategies</a></li>
     <li><a href="#custom-strategies">Custom Strategies</a></li>
     <li><a href="#creating-a-comprehensive-strategy">Creating a Comprehensive Strategy</a></li>
-    <li><a href="#extending-api-for-custom-implementations">Extending API for Custom Implementations</a></li>
+    <li><a href="#extending-the-api-for-custom-implementations">Extending the API for Custom Implementations</a></li>
   </ul></li>
   <li><a href="#about">About</a>
   <ul>
     <li><a href="#license">License</a></li>
+    <li><a href="#todo">TODO</a></li>
   </ul></li>
 </ul>
 
@@ -96,9 +97,9 @@ dupegrouper    </h1>
 
 <p><strong>dupegrouper</strong> can be used for various deduplication use cases. It's intended purpose is to implement a uniform API that allows for both exact <em>and</em> near deduplication — whilst collecting duplicate instances into sets — i.e. "groups".</p>
 
-<p>Deduplicating data is a hard task — validating approaches takes time, can require a lot of scripting, testing, and iterating through approaches that may, or may not, be valid to your dataset.</p>
+<p>Deduplicating data is a hard task — validating approaches takes time, can require a lot of testing, validating, and iterating through approaches that may, or may not, be applicable to your dataset.</p>
 
-<p><strong>dupegrouper</strong> abstracts away the task <em>actually</em> deduplicating, so that you can focus on the most important thing: implementing an appropriate "strategy" to achieve your stated end goal ...</p>
+<p><strong>dupegrouper</strong> abstracts away the task of <em>actually</em> deduplicating, so that you can focus on the most important thing: implementing an appropriate "strategy" to achieve your stated end goal ...</p>
 
 <p>...In fact a "strategy" is key to <strong>dupegrouper's</strong> API. <strong>dupegrouper</strong> has:</p>
 
@@ -107,8 +108,6 @@ dupegrouper    </h1>
 <li>Pandas and Polars support</li>
 <li>A flexible API</li>
 </ul>
-
-<p>Head to the API Reference <a href="api/index.html">here</a>.</p>
 
 <h2 id="installation">Installation</h2>
 
@@ -124,25 +123,35 @@ dupegrouper    </h1>
 
 <span class="n">dg</span> <span class="o">=</span> <span class="n"><a href="#DupeGrouper">dupegrouper.DupeGrouper</a></span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="c1"># input dataframe</span>
 
+<span class="n">dg</span><span class="o">.</span><span class="n">add_strategy</span><span class="p">(</span><span class="n"><a href="dupegrouper/strategies.html#Exact">dupegrouper.strategies.Exact</a></span><span class="p">())</span>
+
 <span class="n">dg</span><span class="o">.</span><span class="n">dedupe</span><span class="p">(</span><span class="s2">&quot;address&quot;</span><span class="p">)</span>
 
 <span class="n">dg</span><span class="o">.</span><span class="n">df</span> <span class="c1"># retrieve dataframe</span>
 </code></pre>
 </div>
 
-<h1 id="usage-guides">Usage Guides</h1>
+<h1 id="usage-guide">Usage Guide</h1>
 
 <h2 id="adding-strategies">Adding Strategies</h2>
 
-<p>The base method <code>dedupe()</code> implements an <strong>exact</strong> deduplication by default. You can add more strategies:</p>
+<p><strong>dupegrouper</strong> comes with ready-to-use deduplication strategies:</p>
+
+<ul>
+<li><code><a href="dupegrouper/strategies.html#Exact">dupegrouper.strategies.Exact</a></code></li>
+<li><code><a href="dupegrouper/strategies.html#Fuzzy">dupegrouper.strategies.Fuzzy</a></code></li>
+<li><code><a href="dupegrouper/strategies.html#TfIdf">dupegrouper.strategies.TfIdf</a></code></li>
+</ul>
+
+<p>You can then add these in the order you want to apply them:</p>
 
 <div class="pdoc-code codehilite">
 <pre><span></span><code><span class="c1"># Deduplicate the address column</span>
 
 <span class="n">dg</span> <span class="o">=</span> <span class="n"><a href="#DupeGrouper">dupegrouper.DupeGrouper</a></span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 
-<span class="n">dg</span><span class="o">.</span><span class="n">add_strategy</span><span class="p">(</span><span class="n">dupegrouper</span><span class="o">.</span><span class="n">Exact</span><span class="p">())</span>
-<span class="n">dg</span><span class="o">.</span><span class="n">add_strategy</span><span class="p">(</span><span class="n">dupegrouper</span><span class="o">.</span><span class="n">Fuzzy</span><span class="p">(</span><span class="n">tolerance</span><span class="o">=</span><span class="mf">0.3</span><span class="p">))</span>
+<span class="n">dg</span><span class="o">.</span><span class="n">add_strategy</span><span class="p">(</span><span class="n"><a href="dupegrouper/strategies.html#Exact">dupegrouper.strategies.Exact</a></span><span class="p">())</span>
+<span class="n">dg</span><span class="o">.</span><span class="n">add_strategy</span><span class="p">(</span><span class="n"><a href="dupegrouper/strategies.html#Fuzzy">dupegrouper.strategies.Fuzzy</a></span><span class="p">(</span><span class="n">tolerance</span><span class="o">=</span><span class="mf">0.3</span><span class="p">))</span>
 
 <span class="n">dg</span><span class="o">.</span><span class="n">dedupe</span><span class="p">(</span><span class="s2">&quot;address&quot;</span><span class="p">)</span>
 </code></pre>
@@ -157,8 +166,8 @@ dupegrouper    </h1>
 
 <span class="n">dg</span><span class="o">.</span><span class="n">add_strategy</span><span class="p">({</span>
     <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="n">dupegrouper</span><span class="o">.</span><span class="n">Exact</span><span class="p">(),</span>
-        <span class="n">dupegrouper</span><span class="o">.</span><span class="n">Fuzzy</span><span class="p">(</span><span class="n">tolerance</span><span class="o">=</span><span class="mf">0.3</span><span class="p">),</span>
+        <span class="n"><a href="dupegrouper/strategies.html#Exact">dupegrouper.strategies.Exact</a></span><span class="p">(),</span>
+        <span class="n"><a href="dupegrouper/strategies.html#Fuzzy">dupegrouper.strategies.Fuzzy</a></span><span class="p">(</span><span class="n">tolerance</span><span class="o">=</span><span class="mf">0.3</span><span class="p">),</span>
     <span class="p">]</span>
 <span class="p">})</span>
 
@@ -168,7 +177,7 @@ dupegrouper    </h1>
 
 <h2 id="custom-strategies">Custom Strategies</h2>
 
-<p><code><a href="#DupeGrouper">dupegrouper.base.DupeGrouper</a></code> can accept custom functions too. Your callable is added as strategy and passed to the <code><a href="dupegrouper/strategies.html#Custom">dupegrouper.strategies.Custom</a></code> class, inheriting all of the base functionality of <code><a href="dupegrouper/strategy.html#DeduplicationStrategy">dupegrouper.strategy.DeduplicationStrategy</a></code>. E.g.</p>
+<p>An insance of <code><a href="#DupeGrouper">dupegrouper.DupeGrouper</a></code> can accept custom functions too.</p>
 
 <div class="pdoc-code codehilite">
 <pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">my_func</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">match_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
@@ -186,7 +195,7 @@ dupegrouper    </h1>
 </code></pre>
 </div>
 
-<p>Above, <code>my_func</code> deserves a custom implementation: it deduplicates rows only if said rows contain a the partial string <code>match_str</code>. You can your custom function as a strategy:</p>
+<p>Above, <code>my_func</code> deserves a custom implementation: it deduplicates rows only if said rows contain a the partial string <code>match_str</code>. You can then proceed to add your custom function as a strategy:</p>
 
 <div class="pdoc-code codehilite">
 <pre><span></span><code><span class="n">dg</span> <span class="o">=</span> <span class="n"><a href="#DupeGrouper">dupegrouper.DupeGrouper</a></span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
@@ -204,18 +213,25 @@ dupegrouper    </h1>
 <p>Your custom function's signature must be two positional arguments followed by keyword arguments:</p>
   
   <div class="pdoc-code codehilite">
-<pre><span></span><code><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+<pre><span></span><code><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
 </code></pre>
   </div>
+  
+  <p>Where <code>attr</code> is the attribute you wish to deduplicate.</p>
+</div>
+
+<div class="alert warning">
+<em>Warning</em>
+<p>In the current implementation, any custom callable will also <em>always dedupe exact matches!</em></p>
 </div>
 
 <h2 id="creating-a-comprehensive-strategy">Creating a Comprehensive Strategy</h2>
 
-<p>You can collect all of the above's ideas for a comprehensive strategy to deduplicate your data:</p>
+<p>You can use the above techniques for a comprehensive strategy to deduplicate your data:</p>
 
 <div class="pdoc-code codehilite">
 <pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">dupegrouper</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span> <span class="c1"># or polars</span>
 
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;example.csv&quot;</span><span class="p">)</span>
 
@@ -242,17 +258,24 @@ dupegrouper    </h1>
 </code></pre>
 </div>
 
-<h2 id="extending-api-for-custom-implementations">Extending API for Custom Implementations</h2>
+<h2 id="extending-the-api-for-custom-implementations">Extending the API for Custom Implementations</h2>
 
-<p>It's recommended that for simple custom implementations you use the approach discussed for custom functions. (see <a href="#custom-strategies"><em>Custom Strategies</em></a>)</p>
+<p>It's recommended that for simple custom implementations you use the approach discussed for custom functions. (see <a href="#custom-strategies"><em>Custom Strategies</em></a>).</p>
 
-<p>However, you can also inherit the TODO, and make direct use of TODO in a custom class implementation, and thus expose a custom <code>dedupe()</code> method, ready for use with an instance of <code><a href="#DupeGrouper">DupeGrouper</a></code></p>
+<p>However, you can derive directly from the abstract base class <code><a href="dupegrouper/strategy.html#DeduplicationStrategy">dupegrouper.strategy.DeduplicationStrategy</a></code>, and thus make direct use of the efficient, core deduplication methods implemented in this library, as described in it's <a href="./dupegrouper/strategy.html#DeduplicationStrategy">API</a>. This will expose a <code>dedupe()</code> method, ready for direct use within an instance of <code><a href="#DupeGrouper">DupeGrouper</a></code>, much the same way that other <code><a href="dupegrouper/strategies.html">dupegrouper.strategies</a></code> are passed in as strategies.</p>
 
 <h1 id="about">About</h1>
 
 <h2 id="license">License</h2>
 
 <p>This project is licensed under the GNU Lesser General Public License v3.0 (LGPL-3.0). See the <a href="LICENSE">LICENSE</a> file for more details.</p>
+
+<h2 id="todo">TODO</h2>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code>poetry<span class="w"> </span>run<span class="w"> </span>pdoc<span class="w"> </span>-t<span class="w"> </span>./docs/templates/<span class="w"> </span>--no-search<span class="w"> </span>-d<span class="w"> </span>google<span class="w"> </span>-o<span class="w"> </span>docs/api<span class="w"> </span>dupegrouper
+</code></pre>
+</div>
 </div>
 
                         <input id="mod-dupegrouper-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -287,182 +310,186 @@ dupegrouper    </h1>
 
     </div>
     <a class="headerlink" href="#DupeGrouper"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DupeGrouper-172"><a href="#DupeGrouper-172"><span class="linenos">172</span></a><span class="k">class</span><span class="w"> </span><span class="nc">DupeGrouper</span><span class="p">:</span>
-</span><span id="DupeGrouper-173"><a href="#DupeGrouper-173"><span class="linenos">173</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Top-level public class for grouping duplicates</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DupeGrouper-161"><a href="#DupeGrouper-161"><span class="linenos">161</span></a><span class="k">class</span><span class="w"> </span><span class="nc">DupeGrouper</span><span class="p">:</span>
+</span><span id="DupeGrouper-162"><a href="#DupeGrouper-162"><span class="linenos">162</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Top-level entrypoint for grouping duplicates</span>
+</span><span id="DupeGrouper-163"><a href="#DupeGrouper-163"><span class="linenos">163</span></a>
+</span><span id="DupeGrouper-164"><a href="#DupeGrouper-164"><span class="linenos">164</span></a><span class="sd">    This class handles initialisation of a dataframe, dispatching appropriately</span>
+</span><span id="DupeGrouper-165"><a href="#DupeGrouper-165"><span class="linenos">165</span></a><span class="sd">    given the supported dataframe libraries (e.g. Pandas). An instance of this</span>
+</span><span id="DupeGrouper-166"><a href="#DupeGrouper-166"><span class="linenos">166</span></a><span class="sd">    class can then accept a variety of strategies for deduplication and</span>
+</span><span id="DupeGrouper-167"><a href="#DupeGrouper-167"><span class="linenos">167</span></a><span class="sd">    grouping.</span>
+</span><span id="DupeGrouper-168"><a href="#DupeGrouper-168"><span class="linenos">168</span></a>
+</span><span id="DupeGrouper-169"><a href="#DupeGrouper-169"><span class="linenos">169</span></a><span class="sd">    Upon initialisation, `DupeGrouper` sets a new column, usually `&quot;group_id&quot;`</span>
+</span><span id="DupeGrouper-170"><a href="#DupeGrouper-170"><span class="linenos">170</span></a><span class="sd">    — but you can control this by setting an environment variable `GROUP_ID` at</span>
+</span><span id="DupeGrouper-171"><a href="#DupeGrouper-171"><span class="linenos">171</span></a><span class="sd">    runtime. The group_id is linearly increasing, numeric id column starting at</span>
+</span><span id="DupeGrouper-172"><a href="#DupeGrouper-172"><span class="linenos">172</span></a><span class="sd">    1 to the length of the dataframe provided.</span>
+</span><span id="DupeGrouper-173"><a href="#DupeGrouper-173"><span class="linenos">173</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="DupeGrouper-174"><a href="#DupeGrouper-174"><span class="linenos">174</span></a>
-</span><span id="DupeGrouper-175"><a href="#DupeGrouper-175"><span class="linenos">175</span></a><span class="sd">    This class handles initialisation of a dataframe, dispatching appropriately</span>
-</span><span id="DupeGrouper-176"><a href="#DupeGrouper-176"><span class="linenos">176</span></a><span class="sd">    given the supported dataframe libraries (e.g. Pandas). An instance of this</span>
-</span><span id="DupeGrouper-177"><a href="#DupeGrouper-177"><span class="linenos">177</span></a><span class="sd">    class can then accept a variety of strategies for deduplication and</span>
-</span><span id="DupeGrouper-178"><a href="#DupeGrouper-178"><span class="linenos">178</span></a><span class="sd">    grouping. Addition strategies is off-loaded to the helper</span>
-</span><span id="DupeGrouper-179"><a href="#DupeGrouper-179"><span class="linenos">179</span></a><span class="sd">    `_StrategyManager` class. The class provides dispatched functionality to</span>
-</span><span id="DupeGrouper-180"><a href="#DupeGrouper-180"><span class="linenos">180</span></a><span class="sd">    handle multiplicity of strategy inputs, as well as the _type_ of that</span>
-</span><span id="DupeGrouper-181"><a href="#DupeGrouper-181"><span class="linenos">181</span></a><span class="sd">    strategy.</span>
-</span><span id="DupeGrouper-182"><a href="#DupeGrouper-182"><span class="linenos">182</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="DupeGrouper-183"><a href="#DupeGrouper-183"><span class="linenos">183</span></a>
-</span><span id="DupeGrouper-184"><a href="#DupeGrouper-184"><span class="linenos">184</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-</span><span id="DupeGrouper-185"><a href="#DupeGrouper-185"><span class="linenos">185</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="n">_InitDataFrame</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">choose</span>
-</span><span id="DupeGrouper-186"><a href="#DupeGrouper-186"><span class="linenos">186</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_manager</span> <span class="o">=</span> <span class="n">_StrategyManager</span><span class="p">()</span>
-</span><span id="DupeGrouper-187"><a href="#DupeGrouper-187"><span class="linenos">187</span></a>
-</span><span id="DupeGrouper-188"><a href="#DupeGrouper-188"><span class="linenos">188</span></a>    <span class="nd">@singledispatchmethod</span>
-</span><span id="DupeGrouper-189"><a href="#DupeGrouper-189"><span class="linenos">189</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_call_strategy_deduper</span><span class="p">(</span>
-</span><span id="DupeGrouper-190"><a href="#DupeGrouper-190"><span class="linenos">190</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="DupeGrouper-191"><a href="#DupeGrouper-191"><span class="linenos">191</span></a>        <span class="n">strategy</span><span class="p">:</span> <span class="n">DeduplicationStrategy</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
-</span><span id="DupeGrouper-192"><a href="#DupeGrouper-192"><span class="linenos">192</span></a>        <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="DupeGrouper-193"><a href="#DupeGrouper-193"><span class="linenos">193</span></a>    <span class="p">):</span>
-</span><span id="DupeGrouper-194"><a href="#DupeGrouper-194"><span class="linenos">194</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Dispatch the appropriate strategy deduplication method.</span>
-</span><span id="DupeGrouper-195"><a href="#DupeGrouper-195"><span class="linenos">195</span></a>
-</span><span id="DupeGrouper-196"><a href="#DupeGrouper-196"><span class="linenos">196</span></a><span class="sd">        If the strategy is an instance of a dupegrouper `DeduplicationStrategy`</span>
-</span><span id="DupeGrouper-197"><a href="#DupeGrouper-197"><span class="linenos">197</span></a><span class="sd">        the strategy will have been added as such, with it&#39;s parameters. In the</span>
-</span><span id="DupeGrouper-198"><a href="#DupeGrouper-198"><span class="linenos">198</span></a><span class="sd">        case of a custom implementation of a Callable, passed as a tuple, we</span>
-</span><span id="DupeGrouper-199"><a href="#DupeGrouper-199"><span class="linenos">199</span></a><span class="sd">        pass this *directly* to the `Custom` class and initialise that.</span>
-</span><span id="DupeGrouper-200"><a href="#DupeGrouper-200"><span class="linenos">200</span></a>
-</span><span id="DupeGrouper-201"><a href="#DupeGrouper-201"><span class="linenos">201</span></a><span class="sd">        Args:</span>
-</span><span id="DupeGrouper-202"><a href="#DupeGrouper-202"><span class="linenos">202</span></a><span class="sd">            strategy: A `dupergrouper` deduplication strategy or a tuple</span>
-</span><span id="DupeGrouper-203"><a href="#DupeGrouper-203"><span class="linenos">203</span></a><span class="sd">                containing a (customer) callable and its parameters.</span>
-</span><span id="DupeGrouper-204"><a href="#DupeGrouper-204"><span class="linenos">204</span></a><span class="sd">            attr: The attribute used for deduplication.</span>
+</span><span id="DupeGrouper-175"><a href="#DupeGrouper-175"><span class="linenos">175</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+</span><span id="DupeGrouper-176"><a href="#DupeGrouper-176"><span class="linenos">176</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="n">_InitDataFrame</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">choose</span>
+</span><span id="DupeGrouper-177"><a href="#DupeGrouper-177"><span class="linenos">177</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_manager</span> <span class="o">=</span> <span class="n">_StrategyManager</span><span class="p">()</span>
+</span><span id="DupeGrouper-178"><a href="#DupeGrouper-178"><span class="linenos">178</span></a>
+</span><span id="DupeGrouper-179"><a href="#DupeGrouper-179"><span class="linenos">179</span></a>    <span class="nd">@singledispatchmethod</span>
+</span><span id="DupeGrouper-180"><a href="#DupeGrouper-180"><span class="linenos">180</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_call_strategy_deduper</span><span class="p">(</span>
+</span><span id="DupeGrouper-181"><a href="#DupeGrouper-181"><span class="linenos">181</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="DupeGrouper-182"><a href="#DupeGrouper-182"><span class="linenos">182</span></a>        <span class="n">strategy</span><span class="p">:</span> <span class="n">DeduplicationStrategy</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
+</span><span id="DupeGrouper-183"><a href="#DupeGrouper-183"><span class="linenos">183</span></a>        <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="DupeGrouper-184"><a href="#DupeGrouper-184"><span class="linenos">184</span></a>    <span class="p">):</span>
+</span><span id="DupeGrouper-185"><a href="#DupeGrouper-185"><span class="linenos">185</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Dispatch the appropriate strategy deduplication method.</span>
+</span><span id="DupeGrouper-186"><a href="#DupeGrouper-186"><span class="linenos">186</span></a>
+</span><span id="DupeGrouper-187"><a href="#DupeGrouper-187"><span class="linenos">187</span></a><span class="sd">        If the strategy is an instance of a dupegrouper `DeduplicationStrategy`</span>
+</span><span id="DupeGrouper-188"><a href="#DupeGrouper-188"><span class="linenos">188</span></a><span class="sd">        the strategy will have been added as such, with it&#39;s parameters. In the</span>
+</span><span id="DupeGrouper-189"><a href="#DupeGrouper-189"><span class="linenos">189</span></a><span class="sd">        case of a custom implementation of a Callable, passed as a tuple, we</span>
+</span><span id="DupeGrouper-190"><a href="#DupeGrouper-190"><span class="linenos">190</span></a><span class="sd">        pass this *directly* to the `Custom` class and initialise that.</span>
+</span><span id="DupeGrouper-191"><a href="#DupeGrouper-191"><span class="linenos">191</span></a>
+</span><span id="DupeGrouper-192"><a href="#DupeGrouper-192"><span class="linenos">192</span></a><span class="sd">        Args:</span>
+</span><span id="DupeGrouper-193"><a href="#DupeGrouper-193"><span class="linenos">193</span></a><span class="sd">            strategy: A `dupegrouper` deduplication strategy or a tuple</span>
+</span><span id="DupeGrouper-194"><a href="#DupeGrouper-194"><span class="linenos">194</span></a><span class="sd">                containing a (customer) callable and its parameters.</span>
+</span><span id="DupeGrouper-195"><a href="#DupeGrouper-195"><span class="linenos">195</span></a><span class="sd">            attr: The attribute used for deduplication.</span>
+</span><span id="DupeGrouper-196"><a href="#DupeGrouper-196"><span class="linenos">196</span></a>
+</span><span id="DupeGrouper-197"><a href="#DupeGrouper-197"><span class="linenos">197</span></a><span class="sd">        Returns:</span>
+</span><span id="DupeGrouper-198"><a href="#DupeGrouper-198"><span class="linenos">198</span></a><span class="sd">            A deduplicated dataframe</span>
+</span><span id="DupeGrouper-199"><a href="#DupeGrouper-199"><span class="linenos">199</span></a>
+</span><span id="DupeGrouper-200"><a href="#DupeGrouper-200"><span class="linenos">200</span></a><span class="sd">        Raises:</span>
+</span><span id="DupeGrouper-201"><a href="#DupeGrouper-201"><span class="linenos">201</span></a><span class="sd">            NotImplementedError.</span>
+</span><span id="DupeGrouper-202"><a href="#DupeGrouper-202"><span class="linenos">202</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DupeGrouper-203"><a href="#DupeGrouper-203"><span class="linenos">203</span></a>        <span class="k">del</span> <span class="n">attr</span>  <span class="c1"># Unused</span>
+</span><span id="DupeGrouper-204"><a href="#DupeGrouper-204"><span class="linenos">204</span></a>        <span class="k">return</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported strategy: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">strategy</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span id="DupeGrouper-205"><a href="#DupeGrouper-205"><span class="linenos">205</span></a>
-</span><span id="DupeGrouper-206"><a href="#DupeGrouper-206"><span class="linenos">206</span></a><span class="sd">        Returns:</span>
-</span><span id="DupeGrouper-207"><a href="#DupeGrouper-207"><span class="linenos">207</span></a><span class="sd">            A deduplicated dataframe</span>
-</span><span id="DupeGrouper-208"><a href="#DupeGrouper-208"><span class="linenos">208</span></a>
-</span><span id="DupeGrouper-209"><a href="#DupeGrouper-209"><span class="linenos">209</span></a><span class="sd">        Raises:</span>
-</span><span id="DupeGrouper-210"><a href="#DupeGrouper-210"><span class="linenos">210</span></a><span class="sd">            NotImplementedError.</span>
-</span><span id="DupeGrouper-211"><a href="#DupeGrouper-211"><span class="linenos">211</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="DupeGrouper-212"><a href="#DupeGrouper-212"><span class="linenos">212</span></a>        <span class="k">del</span> <span class="n">attr</span>  <span class="c1"># Unused</span>
-</span><span id="DupeGrouper-213"><a href="#DupeGrouper-213"><span class="linenos">213</span></a>        <span class="k">return</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported strategy: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">strategy</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="DupeGrouper-206"><a href="#DupeGrouper-206"><span class="linenos">206</span></a>    <span class="nd">@_call_strategy_deduper</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">DeduplicationStrategy</span><span class="p">)</span>
+</span><span id="DupeGrouper-207"><a href="#DupeGrouper-207"><span class="linenos">207</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strategy</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+</span><span id="DupeGrouper-208"><a href="#DupeGrouper-208"><span class="linenos">208</span></a>        <span class="k">return</span> <span class="n">strategy</span><span class="o">.</span><span class="n">_set_df</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">)</span><span class="o">.</span><span class="n">dedupe</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+</span><span id="DupeGrouper-209"><a href="#DupeGrouper-209"><span class="linenos">209</span></a>
+</span><span id="DupeGrouper-210"><a href="#DupeGrouper-210"><span class="linenos">210</span></a>    <span class="nd">@_call_strategy_deduper</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
+</span><span id="DupeGrouper-211"><a href="#DupeGrouper-211"><span class="linenos">211</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strategy</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span> <span class="n">attr</span><span class="p">):</span>
+</span><span id="DupeGrouper-212"><a href="#DupeGrouper-212"><span class="linenos">212</span></a>        <span class="n">func</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">strategy</span>
+</span><span id="DupeGrouper-213"><a href="#DupeGrouper-213"><span class="linenos">213</span></a>        <span class="k">return</span> <span class="n">Custom</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">_set_df</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">)</span><span class="o">.</span><span class="n">dedupe</span><span class="p">()</span>
 </span><span id="DupeGrouper-214"><a href="#DupeGrouper-214"><span class="linenos">214</span></a>
-</span><span id="DupeGrouper-215"><a href="#DupeGrouper-215"><span class="linenos">215</span></a>    <span class="nd">@_call_strategy_deduper</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">DeduplicationStrategy</span><span class="p">)</span>
-</span><span id="DupeGrouper-216"><a href="#DupeGrouper-216"><span class="linenos">216</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strategy</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
-</span><span id="DupeGrouper-217"><a href="#DupeGrouper-217"><span class="linenos">217</span></a>        <span class="k">return</span> <span class="n">strategy</span><span class="o">.</span><span class="n">set_df</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">)</span><span class="o">.</span><span class="n">dedupe</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-</span><span id="DupeGrouper-218"><a href="#DupeGrouper-218"><span class="linenos">218</span></a>
-</span><span id="DupeGrouper-219"><a href="#DupeGrouper-219"><span class="linenos">219</span></a>    <span class="nd">@_call_strategy_deduper</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
-</span><span id="DupeGrouper-220"><a href="#DupeGrouper-220"><span class="linenos">220</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strategy</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span> <span class="n">attr</span><span class="p">):</span>
-</span><span id="DupeGrouper-221"><a href="#DupeGrouper-221"><span class="linenos">221</span></a>        <span class="n">func</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">strategy</span>
-</span><span id="DupeGrouper-222"><a href="#DupeGrouper-222"><span class="linenos">222</span></a>        <span class="k">return</span> <span class="n">Custom</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">set_df</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">)</span><span class="o">.</span><span class="n">dedupe</span><span class="p">()</span>
-</span><span id="DupeGrouper-223"><a href="#DupeGrouper-223"><span class="linenos">223</span></a>
-</span><span id="DupeGrouper-224"><a href="#DupeGrouper-224"><span class="linenos">224</span></a>    <span class="nd">@singledispatchmethod</span>
-</span><span id="DupeGrouper-225"><a href="#DupeGrouper-225"><span class="linenos">225</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_dedupe</span><span class="p">(</span>
-</span><span id="DupeGrouper-226"><a href="#DupeGrouper-226"><span class="linenos">226</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="DupeGrouper-227"><a href="#DupeGrouper-227"><span class="linenos">227</span></a>        <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="DupeGrouper-228"><a href="#DupeGrouper-228"><span class="linenos">228</span></a>        <span class="n">strategy_collection</span><span class="p">:</span> <span class="n">strategy_map_collection</span><span class="p">,</span>
-</span><span id="DupeGrouper-229"><a href="#DupeGrouper-229"><span class="linenos">229</span></a>    <span class="p">):</span>
-</span><span id="DupeGrouper-230"><a href="#DupeGrouper-230"><span class="linenos">230</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Dispatch the appropriate deduplication logic.</span>
-</span><span id="DupeGrouper-231"><a href="#DupeGrouper-231"><span class="linenos">231</span></a>
-</span><span id="DupeGrouper-232"><a href="#DupeGrouper-232"><span class="linenos">232</span></a><span class="sd">        If strategies have been added individually, they are stored under a</span>
-</span><span id="DupeGrouper-233"><a href="#DupeGrouper-233"><span class="linenos">233</span></a><span class="sd">        &quot;default&quot; key and retrived as such when the public `.dedupe` method is</span>
-</span><span id="DupeGrouper-234"><a href="#DupeGrouper-234"><span class="linenos">234</span></a><span class="sd">        called _with_ the attribute label. In the case of having added</span>
-</span><span id="DupeGrouper-235"><a href="#DupeGrouper-235"><span class="linenos">235</span></a><span class="sd">        strategies in one go with a direct dict (mapping) object, the attribute</span>
-</span><span id="DupeGrouper-236"><a href="#DupeGrouper-236"><span class="linenos">236</span></a><span class="sd">        label is first extracted from strategy collection dictionary keys.</span>
-</span><span id="DupeGrouper-237"><a href="#DupeGrouper-237"><span class="linenos">237</span></a><span class="sd">        Upon completing deduplication the strategy collection is wiped for</span>
-</span><span id="DupeGrouper-238"><a href="#DupeGrouper-238"><span class="linenos">238</span></a><span class="sd">        (any) subsequent deduplication.</span>
-</span><span id="DupeGrouper-239"><a href="#DupeGrouper-239"><span class="linenos">239</span></a>
-</span><span id="DupeGrouper-240"><a href="#DupeGrouper-240"><span class="linenos">240</span></a><span class="sd">        Args:</span>
-</span><span id="DupeGrouper-241"><a href="#DupeGrouper-241"><span class="linenos">241</span></a><span class="sd">            attr: The attribute used for deduplication; or None in the case</span>
-</span><span id="DupeGrouper-242"><a href="#DupeGrouper-242"><span class="linenos">242</span></a><span class="sd">                of strategies being a mapping object</span>
+</span><span id="DupeGrouper-215"><a href="#DupeGrouper-215"><span class="linenos">215</span></a>    <span class="nd">@singledispatchmethod</span>
+</span><span id="DupeGrouper-216"><a href="#DupeGrouper-216"><span class="linenos">216</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_dedupe</span><span class="p">(</span>
+</span><span id="DupeGrouper-217"><a href="#DupeGrouper-217"><span class="linenos">217</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="DupeGrouper-218"><a href="#DupeGrouper-218"><span class="linenos">218</span></a>        <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="DupeGrouper-219"><a href="#DupeGrouper-219"><span class="linenos">219</span></a>        <span class="n">strategy_collection</span><span class="p">:</span> <span class="n">strategy_map_collection</span><span class="p">,</span>
+</span><span id="DupeGrouper-220"><a href="#DupeGrouper-220"><span class="linenos">220</span></a>    <span class="p">):</span>
+</span><span id="DupeGrouper-221"><a href="#DupeGrouper-221"><span class="linenos">221</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Dispatch the appropriate deduplication logic.</span>
+</span><span id="DupeGrouper-222"><a href="#DupeGrouper-222"><span class="linenos">222</span></a>
+</span><span id="DupeGrouper-223"><a href="#DupeGrouper-223"><span class="linenos">223</span></a><span class="sd">        If strategies have been added individually, they are stored under a</span>
+</span><span id="DupeGrouper-224"><a href="#DupeGrouper-224"><span class="linenos">224</span></a><span class="sd">        &quot;default&quot; key and retrived as such when the public `.dedupe` method is</span>
+</span><span id="DupeGrouper-225"><a href="#DupeGrouper-225"><span class="linenos">225</span></a><span class="sd">        called _with_ the attribute label. In the case of having added</span>
+</span><span id="DupeGrouper-226"><a href="#DupeGrouper-226"><span class="linenos">226</span></a><span class="sd">        strategies in one go with a direct dict (mapping) object, the attribute</span>
+</span><span id="DupeGrouper-227"><a href="#DupeGrouper-227"><span class="linenos">227</span></a><span class="sd">        label is first extracted from strategy collection dictionary keys.</span>
+</span><span id="DupeGrouper-228"><a href="#DupeGrouper-228"><span class="linenos">228</span></a><span class="sd">        Upon completing deduplication the strategy collection is wiped for</span>
+</span><span id="DupeGrouper-229"><a href="#DupeGrouper-229"><span class="linenos">229</span></a><span class="sd">        (any) subsequent deduplication.</span>
+</span><span id="DupeGrouper-230"><a href="#DupeGrouper-230"><span class="linenos">230</span></a>
+</span><span id="DupeGrouper-231"><a href="#DupeGrouper-231"><span class="linenos">231</span></a><span class="sd">        Args:</span>
+</span><span id="DupeGrouper-232"><a href="#DupeGrouper-232"><span class="linenos">232</span></a><span class="sd">            attr: The attribute used for deduplication; or None in the case</span>
+</span><span id="DupeGrouper-233"><a href="#DupeGrouper-233"><span class="linenos">233</span></a><span class="sd">                of strategies being a mapping object</span>
+</span><span id="DupeGrouper-234"><a href="#DupeGrouper-234"><span class="linenos">234</span></a>
+</span><span id="DupeGrouper-235"><a href="#DupeGrouper-235"><span class="linenos">235</span></a><span class="sd">        Returns:</span>
+</span><span id="DupeGrouper-236"><a href="#DupeGrouper-236"><span class="linenos">236</span></a><span class="sd">            None; internal `_df` attribute is updated.</span>
+</span><span id="DupeGrouper-237"><a href="#DupeGrouper-237"><span class="linenos">237</span></a>
+</span><span id="DupeGrouper-238"><a href="#DupeGrouper-238"><span class="linenos">238</span></a><span class="sd">        Raises:</span>
+</span><span id="DupeGrouper-239"><a href="#DupeGrouper-239"><span class="linenos">239</span></a><span class="sd">            NotImplementedError.</span>
+</span><span id="DupeGrouper-240"><a href="#DupeGrouper-240"><span class="linenos">240</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DupeGrouper-241"><a href="#DupeGrouper-241"><span class="linenos">241</span></a>        <span class="k">del</span> <span class="n">strategy_collection</span>  <span class="c1"># Unused</span>
+</span><span id="DupeGrouper-242"><a href="#DupeGrouper-242"><span class="linenos">242</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span id="DupeGrouper-243"><a href="#DupeGrouper-243"><span class="linenos">243</span></a>
-</span><span id="DupeGrouper-244"><a href="#DupeGrouper-244"><span class="linenos">244</span></a><span class="sd">        Returns:</span>
-</span><span id="DupeGrouper-245"><a href="#DupeGrouper-245"><span class="linenos">245</span></a><span class="sd">            None; internal `_df` attribute is updated.</span>
-</span><span id="DupeGrouper-246"><a href="#DupeGrouper-246"><span class="linenos">246</span></a>
-</span><span id="DupeGrouper-247"><a href="#DupeGrouper-247"><span class="linenos">247</span></a><span class="sd">        Raises:</span>
-</span><span id="DupeGrouper-248"><a href="#DupeGrouper-248"><span class="linenos">248</span></a><span class="sd">            NotImplementedError.</span>
-</span><span id="DupeGrouper-249"><a href="#DupeGrouper-249"><span class="linenos">249</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="DupeGrouper-250"><a href="#DupeGrouper-250"><span class="linenos">250</span></a>        <span class="k">del</span> <span class="n">strategy_collection</span>  <span class="c1"># Unused</span>
-</span><span id="DupeGrouper-251"><a href="#DupeGrouper-251"><span class="linenos">251</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="DupeGrouper-252"><a href="#DupeGrouper-252"><span class="linenos">252</span></a>
-</span><span id="DupeGrouper-253"><a href="#DupeGrouper-253"><span class="linenos">253</span></a>    <span class="nd">@_dedupe</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
-</span><span id="DupeGrouper-254"><a href="#DupeGrouper-254"><span class="linenos">254</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">strategy_collection</span><span class="p">):</span>
-</span><span id="DupeGrouper-255"><a href="#DupeGrouper-255"><span class="linenos">255</span></a>        <span class="k">for</span> <span class="n">strategy</span> <span class="ow">in</span> <span class="n">strategy_collection</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]:</span>
-</span><span id="DupeGrouper-256"><a href="#DupeGrouper-256"><span class="linenos">256</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_strategy_deduper</span><span class="p">(</span><span class="n">strategy</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
-</span><span id="DupeGrouper-257"><a href="#DupeGrouper-257"><span class="linenos">257</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_manager</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-</span><span id="DupeGrouper-258"><a href="#DupeGrouper-258"><span class="linenos">258</span></a>
-</span><span id="DupeGrouper-259"><a href="#DupeGrouper-259"><span class="linenos">259</span></a>    <span class="nd">@_dedupe</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">NoneType</span><span class="p">)</span>
-</span><span id="DupeGrouper-260"><a href="#DupeGrouper-260"><span class="linenos">260</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">strategy_collection</span><span class="p">):</span>
-</span><span id="DupeGrouper-261"><a href="#DupeGrouper-261"><span class="linenos">261</span></a>        <span class="k">del</span> <span class="n">attr</span>  <span class="c1"># Unused</span>
-</span><span id="DupeGrouper-262"><a href="#DupeGrouper-262"><span class="linenos">262</span></a>        <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">strategies</span> <span class="ow">in</span> <span class="n">strategy_collection</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="DupeGrouper-263"><a href="#DupeGrouper-263"><span class="linenos">263</span></a>            <span class="k">for</span> <span class="n">strategy</span> <span class="ow">in</span> <span class="n">strategies</span><span class="p">:</span>
-</span><span id="DupeGrouper-264"><a href="#DupeGrouper-264"><span class="linenos">264</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_strategy_deduper</span><span class="p">(</span><span class="n">strategy</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
-</span><span id="DupeGrouper-265"><a href="#DupeGrouper-265"><span class="linenos">265</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_manager</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-</span><span id="DupeGrouper-266"><a href="#DupeGrouper-266"><span class="linenos">266</span></a>
-</span><span id="DupeGrouper-267"><a href="#DupeGrouper-267"><span class="linenos">267</span></a>    <span class="c1"># PUBLIC API:</span>
-</span><span id="DupeGrouper-268"><a href="#DupeGrouper-268"><span class="linenos">268</span></a>
-</span><span id="DupeGrouper-269"><a href="#DupeGrouper-269"><span class="linenos">269</span></a>    <span class="nd">@singledispatchmethod</span>
-</span><span id="DupeGrouper-270"><a href="#DupeGrouper-270"><span class="linenos">270</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_strategy</span><span class="p">(</span>
-</span><span id="DupeGrouper-271"><a href="#DupeGrouper-271"><span class="linenos">271</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">strategy</span><span class="p">:</span> <span class="n">DeduplicationStrategy</span> <span class="o">|</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="n">strategy_map_collection</span>
-</span><span id="DupeGrouper-272"><a href="#DupeGrouper-272"><span class="linenos">272</span></a>    <span class="p">):</span>
-</span><span id="DupeGrouper-273"><a href="#DupeGrouper-273"><span class="linenos">273</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="DupeGrouper-274"><a href="#DupeGrouper-274"><span class="linenos">274</span></a><span class="sd">        Add a strategy to the strategy manager.</span>
-</span><span id="DupeGrouper-275"><a href="#DupeGrouper-275"><span class="linenos">275</span></a>
-</span><span id="DupeGrouper-276"><a href="#DupeGrouper-276"><span class="linenos">276</span></a><span class="sd">        Instances of `DeduplicationStrategy` or tuple are added to the</span>
-</span><span id="DupeGrouper-277"><a href="#DupeGrouper-277"><span class="linenos">277</span></a><span class="sd">        &quot;default&quot; key. Mapping objects update the manager directly</span>
-</span><span id="DupeGrouper-278"><a href="#DupeGrouper-278"><span class="linenos">278</span></a>
-</span><span id="DupeGrouper-279"><a href="#DupeGrouper-279"><span class="linenos">279</span></a><span class="sd">        Args:</span>
-</span><span id="DupeGrouper-280"><a href="#DupeGrouper-280"><span class="linenos">280</span></a><span class="sd">            strategy: A deduplication strategy, tuple, or strategy collection</span>
-</span><span id="DupeGrouper-281"><a href="#DupeGrouper-281"><span class="linenos">281</span></a><span class="sd">                to add.</span>
-</span><span id="DupeGrouper-282"><a href="#DupeGrouper-282"><span class="linenos">282</span></a>
-</span><span id="DupeGrouper-283"><a href="#DupeGrouper-283"><span class="linenos">283</span></a><span class="sd">        Returns:</span>
-</span><span id="DupeGrouper-284"><a href="#DupeGrouper-284"><span class="linenos">284</span></a><span class="sd">            None; `_strategy_manager` is updated</span>
-</span><span id="DupeGrouper-285"><a href="#DupeGrouper-285"><span class="linenos">285</span></a>
-</span><span id="DupeGrouper-286"><a href="#DupeGrouper-286"><span class="linenos">286</span></a><span class="sd">        Raises:</span>
-</span><span id="DupeGrouper-287"><a href="#DupeGrouper-287"><span class="linenos">287</span></a><span class="sd">            NotImplementedError</span>
-</span><span id="DupeGrouper-288"><a href="#DupeGrouper-288"><span class="linenos">288</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="DupeGrouper-289"><a href="#DupeGrouper-289"><span class="linenos">289</span></a>        <span class="k">return</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported strategy: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">strategy</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="DupeGrouper-244"><a href="#DupeGrouper-244"><span class="linenos">244</span></a>    <span class="nd">@_dedupe</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+</span><span id="DupeGrouper-245"><a href="#DupeGrouper-245"><span class="linenos">245</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">strategy_collection</span><span class="p">):</span>
+</span><span id="DupeGrouper-246"><a href="#DupeGrouper-246"><span class="linenos">246</span></a>        <span class="k">for</span> <span class="n">strategy</span> <span class="ow">in</span> <span class="n">strategy_collection</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]:</span>
+</span><span id="DupeGrouper-247"><a href="#DupeGrouper-247"><span class="linenos">247</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_strategy_deduper</span><span class="p">(</span><span class="n">strategy</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+</span><span id="DupeGrouper-248"><a href="#DupeGrouper-248"><span class="linenos">248</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_manager</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+</span><span id="DupeGrouper-249"><a href="#DupeGrouper-249"><span class="linenos">249</span></a>
+</span><span id="DupeGrouper-250"><a href="#DupeGrouper-250"><span class="linenos">250</span></a>    <span class="nd">@_dedupe</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">NoneType</span><span class="p">)</span>
+</span><span id="DupeGrouper-251"><a href="#DupeGrouper-251"><span class="linenos">251</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">strategy_collection</span><span class="p">):</span>
+</span><span id="DupeGrouper-252"><a href="#DupeGrouper-252"><span class="linenos">252</span></a>        <span class="k">del</span> <span class="n">attr</span>  <span class="c1"># Unused</span>
+</span><span id="DupeGrouper-253"><a href="#DupeGrouper-253"><span class="linenos">253</span></a>        <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">strategies</span> <span class="ow">in</span> <span class="n">strategy_collection</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="DupeGrouper-254"><a href="#DupeGrouper-254"><span class="linenos">254</span></a>            <span class="k">for</span> <span class="n">strategy</span> <span class="ow">in</span> <span class="n">strategies</span><span class="p">:</span>
+</span><span id="DupeGrouper-255"><a href="#DupeGrouper-255"><span class="linenos">255</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_strategy_deduper</span><span class="p">(</span><span class="n">strategy</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+</span><span id="DupeGrouper-256"><a href="#DupeGrouper-256"><span class="linenos">256</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_manager</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+</span><span id="DupeGrouper-257"><a href="#DupeGrouper-257"><span class="linenos">257</span></a>
+</span><span id="DupeGrouper-258"><a href="#DupeGrouper-258"><span class="linenos">258</span></a>    <span class="c1"># PUBLIC API:</span>
+</span><span id="DupeGrouper-259"><a href="#DupeGrouper-259"><span class="linenos">259</span></a>
+</span><span id="DupeGrouper-260"><a href="#DupeGrouper-260"><span class="linenos">260</span></a>    <span class="nd">@singledispatchmethod</span>
+</span><span id="DupeGrouper-261"><a href="#DupeGrouper-261"><span class="linenos">261</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_strategy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strategy</span><span class="p">:</span> <span class="n">DeduplicationStrategy</span> <span class="o">|</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="n">strategy_map_collection</span><span class="p">):</span>
+</span><span id="DupeGrouper-262"><a href="#DupeGrouper-262"><span class="linenos">262</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="DupeGrouper-263"><a href="#DupeGrouper-263"><span class="linenos">263</span></a><span class="sd">        Add a strategy to the strategy manager.</span>
+</span><span id="DupeGrouper-264"><a href="#DupeGrouper-264"><span class="linenos">264</span></a>
+</span><span id="DupeGrouper-265"><a href="#DupeGrouper-265"><span class="linenos">265</span></a><span class="sd">        Instances of `DeduplicationStrategy` or tuple are added to the</span>
+</span><span id="DupeGrouper-266"><a href="#DupeGrouper-266"><span class="linenos">266</span></a><span class="sd">        &quot;default&quot; key. Mapping objects update the manager directly</span>
+</span><span id="DupeGrouper-267"><a href="#DupeGrouper-267"><span class="linenos">267</span></a>
+</span><span id="DupeGrouper-268"><a href="#DupeGrouper-268"><span class="linenos">268</span></a><span class="sd">        Args:</span>
+</span><span id="DupeGrouper-269"><a href="#DupeGrouper-269"><span class="linenos">269</span></a><span class="sd">            strategy: A deduplication strategy, tuple, or strategy collection</span>
+</span><span id="DupeGrouper-270"><a href="#DupeGrouper-270"><span class="linenos">270</span></a><span class="sd">                (mapping) to add.</span>
+</span><span id="DupeGrouper-271"><a href="#DupeGrouper-271"><span class="linenos">271</span></a>
+</span><span id="DupeGrouper-272"><a href="#DupeGrouper-272"><span class="linenos">272</span></a><span class="sd">        Returns:</span>
+</span><span id="DupeGrouper-273"><a href="#DupeGrouper-273"><span class="linenos">273</span></a><span class="sd">            self is updated</span>
+</span><span id="DupeGrouper-274"><a href="#DupeGrouper-274"><span class="linenos">274</span></a>
+</span><span id="DupeGrouper-275"><a href="#DupeGrouper-275"><span class="linenos">275</span></a><span class="sd">        Raises:</span>
+</span><span id="DupeGrouper-276"><a href="#DupeGrouper-276"><span class="linenos">276</span></a><span class="sd">            NotImplementedError</span>
+</span><span id="DupeGrouper-277"><a href="#DupeGrouper-277"><span class="linenos">277</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DupeGrouper-278"><a href="#DupeGrouper-278"><span class="linenos">278</span></a>        <span class="k">return</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported strategy: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">strategy</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="DupeGrouper-279"><a href="#DupeGrouper-279"><span class="linenos">279</span></a>
+</span><span id="DupeGrouper-280"><a href="#DupeGrouper-280"><span class="linenos">280</span></a>    <span class="nd">@add_strategy</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">DeduplicationStrategy</span><span class="p">)</span>
+</span><span id="DupeGrouper-281"><a href="#DupeGrouper-281"><span class="linenos">281</span></a>    <span class="nd">@add_strategy</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
+</span><span id="DupeGrouper-282"><a href="#DupeGrouper-282"><span class="linenos">282</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strategy</span><span class="p">):</span>
+</span><span id="DupeGrouper-283"><a href="#DupeGrouper-283"><span class="linenos">283</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="n">strategy</span><span class="p">)</span>
+</span><span id="DupeGrouper-284"><a href="#DupeGrouper-284"><span class="linenos">284</span></a>
+</span><span id="DupeGrouper-285"><a href="#DupeGrouper-285"><span class="linenos">285</span></a>    <span class="nd">@add_strategy</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+</span><span id="DupeGrouper-286"><a href="#DupeGrouper-286"><span class="linenos">286</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strategy</span><span class="p">:</span> <span class="n">strategy_map_collection</span><span class="p">):</span>
+</span><span id="DupeGrouper-287"><a href="#DupeGrouper-287"><span class="linenos">287</span></a>        <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">strat_list</span> <span class="ow">in</span> <span class="n">strategy</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="DupeGrouper-288"><a href="#DupeGrouper-288"><span class="linenos">288</span></a>            <span class="k">for</span> <span class="n">strat</span> <span class="ow">in</span> <span class="n">strat_list</span><span class="p">:</span>
+</span><span id="DupeGrouper-289"><a href="#DupeGrouper-289"><span class="linenos">289</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">strat</span><span class="p">)</span>
 </span><span id="DupeGrouper-290"><a href="#DupeGrouper-290"><span class="linenos">290</span></a>
-</span><span id="DupeGrouper-291"><a href="#DupeGrouper-291"><span class="linenos">291</span></a>    <span class="nd">@add_strategy</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">DeduplicationStrategy</span><span class="p">)</span>
-</span><span id="DupeGrouper-292"><a href="#DupeGrouper-292"><span class="linenos">292</span></a>    <span class="nd">@add_strategy</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
-</span><span id="DupeGrouper-293"><a href="#DupeGrouper-293"><span class="linenos">293</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strategy</span><span class="p">):</span>
-</span><span id="DupeGrouper-294"><a href="#DupeGrouper-294"><span class="linenos">294</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="n">strategy</span><span class="p">)</span>
-</span><span id="DupeGrouper-295"><a href="#DupeGrouper-295"><span class="linenos">295</span></a>
-</span><span id="DupeGrouper-296"><a href="#DupeGrouper-296"><span class="linenos">296</span></a>    <span class="nd">@add_strategy</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
-</span><span id="DupeGrouper-297"><a href="#DupeGrouper-297"><span class="linenos">297</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strategy</span><span class="p">:</span> <span class="n">strategy_map_collection</span><span class="p">):</span>
-</span><span id="DupeGrouper-298"><a href="#DupeGrouper-298"><span class="linenos">298</span></a>        <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">strat_list</span> <span class="ow">in</span> <span class="n">strategy</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="DupeGrouper-299"><a href="#DupeGrouper-299"><span class="linenos">299</span></a>            <span class="k">for</span> <span class="n">strat</span> <span class="ow">in</span> <span class="n">strat_list</span><span class="p">:</span>
-</span><span id="DupeGrouper-300"><a href="#DupeGrouper-300"><span class="linenos">300</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">strat</span><span class="p">)</span>
-</span><span id="DupeGrouper-301"><a href="#DupeGrouper-301"><span class="linenos">301</span></a>
-</span><span id="DupeGrouper-302"><a href="#DupeGrouper-302"><span class="linenos">302</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dedupe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span id="DupeGrouper-303"><a href="#DupeGrouper-303"><span class="linenos">303</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_dedupe</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_manager</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
-</span><span id="DupeGrouper-304"><a href="#DupeGrouper-304"><span class="linenos">304</span></a>
-</span><span id="DupeGrouper-305"><a href="#DupeGrouper-305"><span class="linenos">305</span></a>    <span class="nd">@property</span>
-</span><span id="DupeGrouper-306"><a href="#DupeGrouper-306"><span class="linenos">306</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">strategies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
-</span><span id="DupeGrouper-307"><a href="#DupeGrouper-307"><span class="linenos">307</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="DupeGrouper-308"><a href="#DupeGrouper-308"><span class="linenos">308</span></a><span class="sd">        Returns the strategies currently stored in the strategy manager.</span>
+</span><span id="DupeGrouper-291"><a href="#DupeGrouper-291"><span class="linenos">291</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dedupe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span id="DupeGrouper-292"><a href="#DupeGrouper-292"><span class="linenos">292</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;dedupe, and group, the data based on the provided attribute</span>
+</span><span id="DupeGrouper-293"><a href="#DupeGrouper-293"><span class="linenos">293</span></a>
+</span><span id="DupeGrouper-294"><a href="#DupeGrouper-294"><span class="linenos">294</span></a><span class="sd">        Args:</span>
+</span><span id="DupeGrouper-295"><a href="#DupeGrouper-295"><span class="linenos">295</span></a><span class="sd">            attr: The attribute to deduplicate. If stratgies have been added as</span>
+</span><span id="DupeGrouper-296"><a href="#DupeGrouper-296"><span class="linenos">296</span></a><span class="sd">                a mapping object, this must not passed, as the keys of the</span>
+</span><span id="DupeGrouper-297"><a href="#DupeGrouper-297"><span class="linenos">297</span></a><span class="sd">                mapping object will be used instead</span>
+</span><span id="DupeGrouper-298"><a href="#DupeGrouper-298"><span class="linenos">298</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DupeGrouper-299"><a href="#DupeGrouper-299"><span class="linenos">299</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_dedupe</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_manager</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+</span><span id="DupeGrouper-300"><a href="#DupeGrouper-300"><span class="linenos">300</span></a>
+</span><span id="DupeGrouper-301"><a href="#DupeGrouper-301"><span class="linenos">301</span></a>    <span class="nd">@property</span>
+</span><span id="DupeGrouper-302"><a href="#DupeGrouper-302"><span class="linenos">302</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">strategies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
+</span><span id="DupeGrouper-303"><a href="#DupeGrouper-303"><span class="linenos">303</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="DupeGrouper-304"><a href="#DupeGrouper-304"><span class="linenos">304</span></a><span class="sd">        Returns the strategies currently stored in the strategy manager.</span>
+</span><span id="DupeGrouper-305"><a href="#DupeGrouper-305"><span class="linenos">305</span></a>
+</span><span id="DupeGrouper-306"><a href="#DupeGrouper-306"><span class="linenos">306</span></a><span class="sd">        If no strategies are stored, returns `None`. Otherwise, returns a tuple</span>
+</span><span id="DupeGrouper-307"><a href="#DupeGrouper-307"><span class="linenos">307</span></a><span class="sd">        of strategy names or a dictionary mapping attributes to their</span>
+</span><span id="DupeGrouper-308"><a href="#DupeGrouper-308"><span class="linenos">308</span></a><span class="sd">        respective strategies.</span>
 </span><span id="DupeGrouper-309"><a href="#DupeGrouper-309"><span class="linenos">309</span></a>
-</span><span id="DupeGrouper-310"><a href="#DupeGrouper-310"><span class="linenos">310</span></a><span class="sd">        If no strategies are stored, returns None. Otherwise, returns a tuple</span>
-</span><span id="DupeGrouper-311"><a href="#DupeGrouper-311"><span class="linenos">311</span></a><span class="sd">        of strategy names or a dictionary mapping attributes to their</span>
-</span><span id="DupeGrouper-312"><a href="#DupeGrouper-312"><span class="linenos">312</span></a><span class="sd">        respective strategies.</span>
-</span><span id="DupeGrouper-313"><a href="#DupeGrouper-313"><span class="linenos">313</span></a>
-</span><span id="DupeGrouper-314"><a href="#DupeGrouper-314"><span class="linenos">314</span></a><span class="sd">        Returns:</span>
-</span><span id="DupeGrouper-315"><a href="#DupeGrouper-315"><span class="linenos">315</span></a><span class="sd">            The stored strategies, formatted</span>
-</span><span id="DupeGrouper-316"><a href="#DupeGrouper-316"><span class="linenos">316</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="DupeGrouper-317"><a href="#DupeGrouper-317"><span class="linenos">317</span></a>        <span class="n">strategies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_manager</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-</span><span id="DupeGrouper-318"><a href="#DupeGrouper-318"><span class="linenos">318</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">strategies</span><span class="p">:</span>
-</span><span id="DupeGrouper-319"><a href="#DupeGrouper-319"><span class="linenos">319</span></a>            <span class="k">return</span> <span class="kc">None</span>
-</span><span id="DupeGrouper-320"><a href="#DupeGrouper-320"><span class="linenos">320</span></a>
-</span><span id="DupeGrouper-321"><a href="#DupeGrouper-321"><span class="linenos">321</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">parse_strategies</span><span class="p">(</span><span class="n">dict_values</span><span class="p">):</span>
-</span><span id="DupeGrouper-322"><a href="#DupeGrouper-322"><span class="linenos">322</span></a>            <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
-</span><span id="DupeGrouper-323"><a href="#DupeGrouper-323"><span class="linenos">323</span></a>                <span class="p">[</span>
-</span><span id="DupeGrouper-324"><a href="#DupeGrouper-324"><span class="linenos">324</span></a>                    <span class="p">(</span><span class="n">vx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vx</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="n">vx</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
-</span><span id="DupeGrouper-325"><a href="#DupeGrouper-325"><span class="linenos">325</span></a>                    <span class="k">for</span> <span class="n">vx</span> <span class="ow">in</span> <span class="n">dict_values</span>
-</span><span id="DupeGrouper-326"><a href="#DupeGrouper-326"><span class="linenos">326</span></a>                <span class="p">]</span>
-</span><span id="DupeGrouper-327"><a href="#DupeGrouper-327"><span class="linenos">327</span></a>            <span class="p">)</span>
-</span><span id="DupeGrouper-328"><a href="#DupeGrouper-328"><span class="linenos">328</span></a>
-</span><span id="DupeGrouper-329"><a href="#DupeGrouper-329"><span class="linenos">329</span></a>        <span class="k">if</span> <span class="s2">&quot;default&quot;</span> <span class="ow">in</span> <span class="n">strategies</span><span class="p">:</span>
-</span><span id="DupeGrouper-330"><a href="#DupeGrouper-330"><span class="linenos">330</span></a>            <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">parse_strategies</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">strategies</span><span class="o">.</span><span class="n">items</span><span class="p">()])[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="DupeGrouper-331"><a href="#DupeGrouper-331"><span class="linenos">331</span></a>        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">parse_strategies</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">strategies</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-</span><span id="DupeGrouper-332"><a href="#DupeGrouper-332"><span class="linenos">332</span></a>
-</span><span id="DupeGrouper-333"><a href="#DupeGrouper-333"><span class="linenos">333</span></a>    <span class="nd">@property</span>
-</span><span id="DupeGrouper-334"><a href="#DupeGrouper-334"><span class="linenos">334</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="DupeGrouper-335"><a href="#DupeGrouper-335"><span class="linenos">335</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span>
+</span><span id="DupeGrouper-310"><a href="#DupeGrouper-310"><span class="linenos">310</span></a><span class="sd">        Returns:</span>
+</span><span id="DupeGrouper-311"><a href="#DupeGrouper-311"><span class="linenos">311</span></a><span class="sd">            The stored strategies, formatted</span>
+</span><span id="DupeGrouper-312"><a href="#DupeGrouper-312"><span class="linenos">312</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DupeGrouper-313"><a href="#DupeGrouper-313"><span class="linenos">313</span></a>        <span class="n">strategies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_manager</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="DupeGrouper-314"><a href="#DupeGrouper-314"><span class="linenos">314</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">strategies</span><span class="p">:</span>
+</span><span id="DupeGrouper-315"><a href="#DupeGrouper-315"><span class="linenos">315</span></a>            <span class="k">return</span> <span class="kc">None</span>
+</span><span id="DupeGrouper-316"><a href="#DupeGrouper-316"><span class="linenos">316</span></a>
+</span><span id="DupeGrouper-317"><a href="#DupeGrouper-317"><span class="linenos">317</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">parse_strategies</span><span class="p">(</span><span class="n">dict_values</span><span class="p">):</span>
+</span><span id="DupeGrouper-318"><a href="#DupeGrouper-318"><span class="linenos">318</span></a>            <span class="k">return</span> <span class="nb">tuple</span><span class="p">([(</span><span class="n">vx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vx</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="n">vx</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="k">for</span> <span class="n">vx</span> <span class="ow">in</span> <span class="n">dict_values</span><span class="p">])</span>
+</span><span id="DupeGrouper-319"><a href="#DupeGrouper-319"><span class="linenos">319</span></a>
+</span><span id="DupeGrouper-320"><a href="#DupeGrouper-320"><span class="linenos">320</span></a>        <span class="k">if</span> <span class="s2">&quot;default&quot;</span> <span class="ow">in</span> <span class="n">strategies</span><span class="p">:</span>
+</span><span id="DupeGrouper-321"><a href="#DupeGrouper-321"><span class="linenos">321</span></a>            <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">parse_strategies</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">strategies</span><span class="o">.</span><span class="n">items</span><span class="p">()])[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="DupeGrouper-322"><a href="#DupeGrouper-322"><span class="linenos">322</span></a>        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">parse_strategies</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">strategies</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</span><span id="DupeGrouper-323"><a href="#DupeGrouper-323"><span class="linenos">323</span></a>
+</span><span id="DupeGrouper-324"><a href="#DupeGrouper-324"><span class="linenos">324</span></a>    <span class="nd">@property</span>
+</span><span id="DupeGrouper-325"><a href="#DupeGrouper-325"><span class="linenos">325</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="DupeGrouper-326"><a href="#DupeGrouper-326"><span class="linenos">326</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Top-level public class for grouping duplicates</p>
+            <div class="docstring"><p>Top-level entrypoint for grouping duplicates</p>
 
 <p>This class handles initialisation of a dataframe, dispatching appropriately
 given the supported dataframe libraries (e.g. Pandas). An instance of this
 class can then accept a variety of strategies for deduplication and
-grouping. Addition strategies is off-loaded to the helper
-<code>_StrategyManager</code> class. The class provides dispatched functionality to
-handle multiplicity of strategy inputs, as well as the _type_ of that
-strategy.</p>
+grouping.</p>
+
+<p>Upon initialisation, <code><a href="#DupeGrouper">DupeGrouper</a></code> sets a new column, usually <code>"group_id"</code>
+— but you can control this by setting an environment variable <code>GROUP_ID</code> at
+runtime. The group_id is linearly increasing, numeric id column starting at
+1 to the length of the dataframe provided.</p>
 </div>
 
 
@@ -476,9 +503,9 @@ strategy.</p>
 
     </div>
     <a class="headerlink" href="#DupeGrouper.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DupeGrouper.__init__-184"><a href="#DupeGrouper.__init__-184"><span class="linenos">184</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-</span><span id="DupeGrouper.__init__-185"><a href="#DupeGrouper.__init__-185"><span class="linenos">185</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="n">_InitDataFrame</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">choose</span>
-</span><span id="DupeGrouper.__init__-186"><a href="#DupeGrouper.__init__-186"><span class="linenos">186</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_manager</span> <span class="o">=</span> <span class="n">_StrategyManager</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DupeGrouper.__init__-175"><a href="#DupeGrouper.__init__-175"><span class="linenos">175</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+</span><span id="DupeGrouper.__init__-176"><a href="#DupeGrouper.__init__-176"><span class="linenos">176</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="n">_InitDataFrame</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">choose</span>
+</span><span id="DupeGrouper.__init__-177"><a href="#DupeGrouper.__init__-177"><span class="linenos">177</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_manager</span> <span class="o">=</span> <span class="n">_StrategyManager</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -497,27 +524,25 @@ strategy.</p>
 
     </div>
     <a class="headerlink" href="#DupeGrouper.add_strategy"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DupeGrouper.add_strategy-269"><a href="#DupeGrouper.add_strategy-269"><span class="linenos">269</span></a>    <span class="nd">@singledispatchmethod</span>
-</span><span id="DupeGrouper.add_strategy-270"><a href="#DupeGrouper.add_strategy-270"><span class="linenos">270</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_strategy</span><span class="p">(</span>
-</span><span id="DupeGrouper.add_strategy-271"><a href="#DupeGrouper.add_strategy-271"><span class="linenos">271</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">strategy</span><span class="p">:</span> <span class="n">DeduplicationStrategy</span> <span class="o">|</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="n">strategy_map_collection</span>
-</span><span id="DupeGrouper.add_strategy-272"><a href="#DupeGrouper.add_strategy-272"><span class="linenos">272</span></a>    <span class="p">):</span>
-</span><span id="DupeGrouper.add_strategy-273"><a href="#DupeGrouper.add_strategy-273"><span class="linenos">273</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="DupeGrouper.add_strategy-274"><a href="#DupeGrouper.add_strategy-274"><span class="linenos">274</span></a><span class="sd">        Add a strategy to the strategy manager.</span>
-</span><span id="DupeGrouper.add_strategy-275"><a href="#DupeGrouper.add_strategy-275"><span class="linenos">275</span></a>
-</span><span id="DupeGrouper.add_strategy-276"><a href="#DupeGrouper.add_strategy-276"><span class="linenos">276</span></a><span class="sd">        Instances of `DeduplicationStrategy` or tuple are added to the</span>
-</span><span id="DupeGrouper.add_strategy-277"><a href="#DupeGrouper.add_strategy-277"><span class="linenos">277</span></a><span class="sd">        &quot;default&quot; key. Mapping objects update the manager directly</span>
-</span><span id="DupeGrouper.add_strategy-278"><a href="#DupeGrouper.add_strategy-278"><span class="linenos">278</span></a>
-</span><span id="DupeGrouper.add_strategy-279"><a href="#DupeGrouper.add_strategy-279"><span class="linenos">279</span></a><span class="sd">        Args:</span>
-</span><span id="DupeGrouper.add_strategy-280"><a href="#DupeGrouper.add_strategy-280"><span class="linenos">280</span></a><span class="sd">            strategy: A deduplication strategy, tuple, or strategy collection</span>
-</span><span id="DupeGrouper.add_strategy-281"><a href="#DupeGrouper.add_strategy-281"><span class="linenos">281</span></a><span class="sd">                to add.</span>
-</span><span id="DupeGrouper.add_strategy-282"><a href="#DupeGrouper.add_strategy-282"><span class="linenos">282</span></a>
-</span><span id="DupeGrouper.add_strategy-283"><a href="#DupeGrouper.add_strategy-283"><span class="linenos">283</span></a><span class="sd">        Returns:</span>
-</span><span id="DupeGrouper.add_strategy-284"><a href="#DupeGrouper.add_strategy-284"><span class="linenos">284</span></a><span class="sd">            None; `_strategy_manager` is updated</span>
-</span><span id="DupeGrouper.add_strategy-285"><a href="#DupeGrouper.add_strategy-285"><span class="linenos">285</span></a>
-</span><span id="DupeGrouper.add_strategy-286"><a href="#DupeGrouper.add_strategy-286"><span class="linenos">286</span></a><span class="sd">        Raises:</span>
-</span><span id="DupeGrouper.add_strategy-287"><a href="#DupeGrouper.add_strategy-287"><span class="linenos">287</span></a><span class="sd">            NotImplementedError</span>
-</span><span id="DupeGrouper.add_strategy-288"><a href="#DupeGrouper.add_strategy-288"><span class="linenos">288</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="DupeGrouper.add_strategy-289"><a href="#DupeGrouper.add_strategy-289"><span class="linenos">289</span></a>        <span class="k">return</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported strategy: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">strategy</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DupeGrouper.add_strategy-260"><a href="#DupeGrouper.add_strategy-260"><span class="linenos">260</span></a>    <span class="nd">@singledispatchmethod</span>
+</span><span id="DupeGrouper.add_strategy-261"><a href="#DupeGrouper.add_strategy-261"><span class="linenos">261</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_strategy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strategy</span><span class="p">:</span> <span class="n">DeduplicationStrategy</span> <span class="o">|</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="n">strategy_map_collection</span><span class="p">):</span>
+</span><span id="DupeGrouper.add_strategy-262"><a href="#DupeGrouper.add_strategy-262"><span class="linenos">262</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="DupeGrouper.add_strategy-263"><a href="#DupeGrouper.add_strategy-263"><span class="linenos">263</span></a><span class="sd">        Add a strategy to the strategy manager.</span>
+</span><span id="DupeGrouper.add_strategy-264"><a href="#DupeGrouper.add_strategy-264"><span class="linenos">264</span></a>
+</span><span id="DupeGrouper.add_strategy-265"><a href="#DupeGrouper.add_strategy-265"><span class="linenos">265</span></a><span class="sd">        Instances of `DeduplicationStrategy` or tuple are added to the</span>
+</span><span id="DupeGrouper.add_strategy-266"><a href="#DupeGrouper.add_strategy-266"><span class="linenos">266</span></a><span class="sd">        &quot;default&quot; key. Mapping objects update the manager directly</span>
+</span><span id="DupeGrouper.add_strategy-267"><a href="#DupeGrouper.add_strategy-267"><span class="linenos">267</span></a>
+</span><span id="DupeGrouper.add_strategy-268"><a href="#DupeGrouper.add_strategy-268"><span class="linenos">268</span></a><span class="sd">        Args:</span>
+</span><span id="DupeGrouper.add_strategy-269"><a href="#DupeGrouper.add_strategy-269"><span class="linenos">269</span></a><span class="sd">            strategy: A deduplication strategy, tuple, or strategy collection</span>
+</span><span id="DupeGrouper.add_strategy-270"><a href="#DupeGrouper.add_strategy-270"><span class="linenos">270</span></a><span class="sd">                (mapping) to add.</span>
+</span><span id="DupeGrouper.add_strategy-271"><a href="#DupeGrouper.add_strategy-271"><span class="linenos">271</span></a>
+</span><span id="DupeGrouper.add_strategy-272"><a href="#DupeGrouper.add_strategy-272"><span class="linenos">272</span></a><span class="sd">        Returns:</span>
+</span><span id="DupeGrouper.add_strategy-273"><a href="#DupeGrouper.add_strategy-273"><span class="linenos">273</span></a><span class="sd">            self is updated</span>
+</span><span id="DupeGrouper.add_strategy-274"><a href="#DupeGrouper.add_strategy-274"><span class="linenos">274</span></a>
+</span><span id="DupeGrouper.add_strategy-275"><a href="#DupeGrouper.add_strategy-275"><span class="linenos">275</span></a><span class="sd">        Raises:</span>
+</span><span id="DupeGrouper.add_strategy-276"><a href="#DupeGrouper.add_strategy-276"><span class="linenos">276</span></a><span class="sd">            NotImplementedError</span>
+</span><span id="DupeGrouper.add_strategy-277"><a href="#DupeGrouper.add_strategy-277"><span class="linenos">277</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DupeGrouper.add_strategy-278"><a href="#DupeGrouper.add_strategy-278"><span class="linenos">278</span></a>        <span class="k">return</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported strategy: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">strategy</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -530,13 +555,13 @@ strategy.</p>
 
 <ul>
 <li><strong>strategy:</strong>  A deduplication strategy, tuple, or strategy collection
-to add.</li>
+(mapping) to add.</li>
 </ul>
 
 <h6 id="returns">Returns:</h6>
 
 <blockquote>
-  <p>None; <code>_strategy_manager</code> is updated</p>
+  <p>self is updated</p>
 </blockquote>
 
 <h6 id="raises">Raises:</h6>
@@ -559,12 +584,29 @@ to add.</li>
 
     </div>
     <a class="headerlink" href="#DupeGrouper.dedupe"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DupeGrouper.dedupe-302"><a href="#DupeGrouper.dedupe-302"><span class="linenos">302</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dedupe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span id="DupeGrouper.dedupe-303"><a href="#DupeGrouper.dedupe-303"><span class="linenos">303</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_dedupe</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_manager</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DupeGrouper.dedupe-291"><a href="#DupeGrouper.dedupe-291"><span class="linenos">291</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dedupe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span id="DupeGrouper.dedupe-292"><a href="#DupeGrouper.dedupe-292"><span class="linenos">292</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;dedupe, and group, the data based on the provided attribute</span>
+</span><span id="DupeGrouper.dedupe-293"><a href="#DupeGrouper.dedupe-293"><span class="linenos">293</span></a>
+</span><span id="DupeGrouper.dedupe-294"><a href="#DupeGrouper.dedupe-294"><span class="linenos">294</span></a><span class="sd">        Args:</span>
+</span><span id="DupeGrouper.dedupe-295"><a href="#DupeGrouper.dedupe-295"><span class="linenos">295</span></a><span class="sd">            attr: The attribute to deduplicate. If stratgies have been added as</span>
+</span><span id="DupeGrouper.dedupe-296"><a href="#DupeGrouper.dedupe-296"><span class="linenos">296</span></a><span class="sd">                a mapping object, this must not passed, as the keys of the</span>
+</span><span id="DupeGrouper.dedupe-297"><a href="#DupeGrouper.dedupe-297"><span class="linenos">297</span></a><span class="sd">                mapping object will be used instead</span>
+</span><span id="DupeGrouper.dedupe-298"><a href="#DupeGrouper.dedupe-298"><span class="linenos">298</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DupeGrouper.dedupe-299"><a href="#DupeGrouper.dedupe-299"><span class="linenos">299</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_dedupe</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_manager</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
 </span></pre></div>
 
 
-    
+            <div class="docstring"><p>dedupe, and group, the data based on the provided attribute</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>attr:</strong>  The attribute to deduplicate. If stratgies have been added as
+a mapping object, this must not passed, as the keys of the
+mapping object will be used instead</li>
+</ul>
+</div>
+
 
                             </div>
                             <div id="DupeGrouper.strategies" class="classattr">
@@ -576,39 +618,34 @@ to add.</li>
 
     </div>
     <a class="headerlink" href="#DupeGrouper.strategies"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DupeGrouper.strategies-305"><a href="#DupeGrouper.strategies-305"><span class="linenos">305</span></a>    <span class="nd">@property</span>
-</span><span id="DupeGrouper.strategies-306"><a href="#DupeGrouper.strategies-306"><span class="linenos">306</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">strategies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
-</span><span id="DupeGrouper.strategies-307"><a href="#DupeGrouper.strategies-307"><span class="linenos">307</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="DupeGrouper.strategies-308"><a href="#DupeGrouper.strategies-308"><span class="linenos">308</span></a><span class="sd">        Returns the strategies currently stored in the strategy manager.</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DupeGrouper.strategies-301"><a href="#DupeGrouper.strategies-301"><span class="linenos">301</span></a>    <span class="nd">@property</span>
+</span><span id="DupeGrouper.strategies-302"><a href="#DupeGrouper.strategies-302"><span class="linenos">302</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">strategies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
+</span><span id="DupeGrouper.strategies-303"><a href="#DupeGrouper.strategies-303"><span class="linenos">303</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="DupeGrouper.strategies-304"><a href="#DupeGrouper.strategies-304"><span class="linenos">304</span></a><span class="sd">        Returns the strategies currently stored in the strategy manager.</span>
+</span><span id="DupeGrouper.strategies-305"><a href="#DupeGrouper.strategies-305"><span class="linenos">305</span></a>
+</span><span id="DupeGrouper.strategies-306"><a href="#DupeGrouper.strategies-306"><span class="linenos">306</span></a><span class="sd">        If no strategies are stored, returns `None`. Otherwise, returns a tuple</span>
+</span><span id="DupeGrouper.strategies-307"><a href="#DupeGrouper.strategies-307"><span class="linenos">307</span></a><span class="sd">        of strategy names or a dictionary mapping attributes to their</span>
+</span><span id="DupeGrouper.strategies-308"><a href="#DupeGrouper.strategies-308"><span class="linenos">308</span></a><span class="sd">        respective strategies.</span>
 </span><span id="DupeGrouper.strategies-309"><a href="#DupeGrouper.strategies-309"><span class="linenos">309</span></a>
-</span><span id="DupeGrouper.strategies-310"><a href="#DupeGrouper.strategies-310"><span class="linenos">310</span></a><span class="sd">        If no strategies are stored, returns None. Otherwise, returns a tuple</span>
-</span><span id="DupeGrouper.strategies-311"><a href="#DupeGrouper.strategies-311"><span class="linenos">311</span></a><span class="sd">        of strategy names or a dictionary mapping attributes to their</span>
-</span><span id="DupeGrouper.strategies-312"><a href="#DupeGrouper.strategies-312"><span class="linenos">312</span></a><span class="sd">        respective strategies.</span>
-</span><span id="DupeGrouper.strategies-313"><a href="#DupeGrouper.strategies-313"><span class="linenos">313</span></a>
-</span><span id="DupeGrouper.strategies-314"><a href="#DupeGrouper.strategies-314"><span class="linenos">314</span></a><span class="sd">        Returns:</span>
-</span><span id="DupeGrouper.strategies-315"><a href="#DupeGrouper.strategies-315"><span class="linenos">315</span></a><span class="sd">            The stored strategies, formatted</span>
-</span><span id="DupeGrouper.strategies-316"><a href="#DupeGrouper.strategies-316"><span class="linenos">316</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="DupeGrouper.strategies-317"><a href="#DupeGrouper.strategies-317"><span class="linenos">317</span></a>        <span class="n">strategies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_manager</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-</span><span id="DupeGrouper.strategies-318"><a href="#DupeGrouper.strategies-318"><span class="linenos">318</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">strategies</span><span class="p">:</span>
-</span><span id="DupeGrouper.strategies-319"><a href="#DupeGrouper.strategies-319"><span class="linenos">319</span></a>            <span class="k">return</span> <span class="kc">None</span>
-</span><span id="DupeGrouper.strategies-320"><a href="#DupeGrouper.strategies-320"><span class="linenos">320</span></a>
-</span><span id="DupeGrouper.strategies-321"><a href="#DupeGrouper.strategies-321"><span class="linenos">321</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">parse_strategies</span><span class="p">(</span><span class="n">dict_values</span><span class="p">):</span>
-</span><span id="DupeGrouper.strategies-322"><a href="#DupeGrouper.strategies-322"><span class="linenos">322</span></a>            <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
-</span><span id="DupeGrouper.strategies-323"><a href="#DupeGrouper.strategies-323"><span class="linenos">323</span></a>                <span class="p">[</span>
-</span><span id="DupeGrouper.strategies-324"><a href="#DupeGrouper.strategies-324"><span class="linenos">324</span></a>                    <span class="p">(</span><span class="n">vx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vx</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="n">vx</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
-</span><span id="DupeGrouper.strategies-325"><a href="#DupeGrouper.strategies-325"><span class="linenos">325</span></a>                    <span class="k">for</span> <span class="n">vx</span> <span class="ow">in</span> <span class="n">dict_values</span>
-</span><span id="DupeGrouper.strategies-326"><a href="#DupeGrouper.strategies-326"><span class="linenos">326</span></a>                <span class="p">]</span>
-</span><span id="DupeGrouper.strategies-327"><a href="#DupeGrouper.strategies-327"><span class="linenos">327</span></a>            <span class="p">)</span>
-</span><span id="DupeGrouper.strategies-328"><a href="#DupeGrouper.strategies-328"><span class="linenos">328</span></a>
-</span><span id="DupeGrouper.strategies-329"><a href="#DupeGrouper.strategies-329"><span class="linenos">329</span></a>        <span class="k">if</span> <span class="s2">&quot;default&quot;</span> <span class="ow">in</span> <span class="n">strategies</span><span class="p">:</span>
-</span><span id="DupeGrouper.strategies-330"><a href="#DupeGrouper.strategies-330"><span class="linenos">330</span></a>            <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">parse_strategies</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">strategies</span><span class="o">.</span><span class="n">items</span><span class="p">()])[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="DupeGrouper.strategies-331"><a href="#DupeGrouper.strategies-331"><span class="linenos">331</span></a>        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">parse_strategies</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">strategies</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</span><span id="DupeGrouper.strategies-310"><a href="#DupeGrouper.strategies-310"><span class="linenos">310</span></a><span class="sd">        Returns:</span>
+</span><span id="DupeGrouper.strategies-311"><a href="#DupeGrouper.strategies-311"><span class="linenos">311</span></a><span class="sd">            The stored strategies, formatted</span>
+</span><span id="DupeGrouper.strategies-312"><a href="#DupeGrouper.strategies-312"><span class="linenos">312</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DupeGrouper.strategies-313"><a href="#DupeGrouper.strategies-313"><span class="linenos">313</span></a>        <span class="n">strategies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategy_manager</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="DupeGrouper.strategies-314"><a href="#DupeGrouper.strategies-314"><span class="linenos">314</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">strategies</span><span class="p">:</span>
+</span><span id="DupeGrouper.strategies-315"><a href="#DupeGrouper.strategies-315"><span class="linenos">315</span></a>            <span class="k">return</span> <span class="kc">None</span>
+</span><span id="DupeGrouper.strategies-316"><a href="#DupeGrouper.strategies-316"><span class="linenos">316</span></a>
+</span><span id="DupeGrouper.strategies-317"><a href="#DupeGrouper.strategies-317"><span class="linenos">317</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">parse_strategies</span><span class="p">(</span><span class="n">dict_values</span><span class="p">):</span>
+</span><span id="DupeGrouper.strategies-318"><a href="#DupeGrouper.strategies-318"><span class="linenos">318</span></a>            <span class="k">return</span> <span class="nb">tuple</span><span class="p">([(</span><span class="n">vx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vx</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="n">vx</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="k">for</span> <span class="n">vx</span> <span class="ow">in</span> <span class="n">dict_values</span><span class="p">])</span>
+</span><span id="DupeGrouper.strategies-319"><a href="#DupeGrouper.strategies-319"><span class="linenos">319</span></a>
+</span><span id="DupeGrouper.strategies-320"><a href="#DupeGrouper.strategies-320"><span class="linenos">320</span></a>        <span class="k">if</span> <span class="s2">&quot;default&quot;</span> <span class="ow">in</span> <span class="n">strategies</span><span class="p">:</span>
+</span><span id="DupeGrouper.strategies-321"><a href="#DupeGrouper.strategies-321"><span class="linenos">321</span></a>            <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">parse_strategies</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">strategies</span><span class="o">.</span><span class="n">items</span><span class="p">()])[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="DupeGrouper.strategies-322"><a href="#DupeGrouper.strategies-322"><span class="linenos">322</span></a>        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">parse_strategies</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">strategies</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 </span></pre></div>
 
 
             <div class="docstring"><p>Returns the strategies currently stored in the strategy manager.</p>
 
-<p>If no strategies are stored, returns None. Otherwise, returns a tuple
+<p>If no strategies are stored, returns <code>None</code>. Otherwise, returns a tuple
 of strategy names or a dictionary mapping attributes to their
 respective strategies.</p>
 
@@ -630,9 +667,9 @@ respective strategies.</p>
 
     </div>
     <a class="headerlink" href="#DupeGrouper.df"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DupeGrouper.df-333"><a href="#DupeGrouper.df-333"><span class="linenos">333</span></a>    <span class="nd">@property</span>
-</span><span id="DupeGrouper.df-334"><a href="#DupeGrouper.df-334"><span class="linenos">334</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="DupeGrouper.df-335"><a href="#DupeGrouper.df-335"><span class="linenos">335</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DupeGrouper.df-324"><a href="#DupeGrouper.df-324"><span class="linenos">324</span></a>    <span class="nd">@property</span>
+</span><span id="DupeGrouper.df-325"><a href="#DupeGrouper.df-325"><span class="linenos">325</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="DupeGrouper.df-326"><a href="#DupeGrouper.df-326"><span class="linenos">326</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span>
 </span></pre></div>
 
 

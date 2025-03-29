@@ -23,5 +23,4 @@ class Exact(DeduplicationStrategy):
     def dedupe(self, attr: str, /) -> frames:
         logger.debug(f'Deduping attribute "{attr}" with {self.__class__.__name__}()')
         frame_methods: DFMethods = self.assign_group_id(attr)
-        df: frames = frame_methods.frame
-        return df
+        return frame_methods.frame

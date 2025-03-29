@@ -121,6 +121,9 @@ dg.dedupe("address")
 >
 > Where `attr` is the attribute you wish to deduplicate.
 
+> [!WARNING]
+> In the current implementation, any custom callable will also *always dedupe exact matches!*
+
 ## Creating a Comprehensive Strategy
 
 You can use the above techniques for a comprehensive strategy to deduplicate your data:

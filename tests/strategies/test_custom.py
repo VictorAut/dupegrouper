@@ -1,6 +1,4 @@
-import pytest
 import pandas as pd
-import polars as pl
 from dupegrouper.strategies.custom import Custom
 
 
@@ -15,8 +13,6 @@ def my_func(df: pd.DataFrame, attr: str, /, match_str: str) -> dict[str, str]:
             if match_str in left.lower() and match_str in right.lower():
                 my_map[left] = right
                 break
-
-    print(my_map)
     return my_map
 
 
@@ -27,6 +23,6 @@ def test_custom_dedupe(df_pandas):
 
     updated_df = deduper.dedupe()
 
-    expected_group_ids = [1, 2, 3, 4, 5, 6, 7, 8, 1, 1, 11, 12, 13] 
+    expected_group_ids = [1, 2, 3, 3, 5, 6, 3, 8, 1, 1, 11, 12, 13]
 
     assert list(updated_df["group_id"]) == expected_group_ids
