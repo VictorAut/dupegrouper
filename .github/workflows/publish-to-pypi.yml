@@ -104,7 +104,7 @@ jobs:
 
     environment:
       name: testpypi
-      url: https://test.pypi.org/p/<package-name>
+      url: https://test.pypi.org/p/dupegrouper
 
     permissions:
       id-token: write # mandatory for trusted publishing
