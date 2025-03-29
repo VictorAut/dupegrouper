@@ -1,10 +1,9 @@
 A Python library for grouping duplicate data efficiently.
 
 <p align="center">
-<a href="https://pypi.python.org/pypi/dupegrouper"><img height="20" alt="PyPI Version" src="https://shields.mitmproxy.org/pypi/v/pdoc.svg"></a>
-<img height="20" alt="Supported Python Versions" src="https://shields.mitmproxy.org/pypi/pyversions/pdoc.svg">
+<a href="https://pypi.python.org/pypi/dupegrouper"><img height="20" alt="PyPI Version" src="https://img.shields.io/pypi/v/dupegrouper"></a>
+<img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/dupegrouper">
 </p>
-
 
 # Introduction
 
@@ -166,10 +165,4 @@ However, you can derive directly from the abstract base class `dupegrouper.strat
 # About
 
 ## License
-This project is licensed under the GNU Lesser General Public License v3.0 (LGPL-3.0). See the [LICENSE](LICENSE) file for more details.
-
-## TODO
-
-```shell
-poetry run pdoc -t ./docs/templates/ --no-search -d google -o docs/api dupegrouper
-```
+This project is licensed under the [Apache-2.0 License](https://www.apache.org/licenses/LICENSE-2.0.html). See the [LICENSE](LICENSE) file for more details.
