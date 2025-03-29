@@ -1,3 +1,9 @@
+name: Build API docs and deploy
+on:
+  push:
+    branches:
+      - "main"
+
 # security: restrict permissions for CI jobs.
 permissions:
   contents: read
