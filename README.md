@@ -20,7 +20,7 @@ Deduplicating data is a hard task — validating approaches takes time, can requ
 - Pandas and Polars support
 - A flexible API
 
-Checkout the [API Documentation](https://victorautonell-oiry.me/dupegrouper/dupegrouper.html)
+Checkout the [API Documentation](https://victorautonell-oiry.me/dupegrouper/dupegrouper.html).
 
 
 ## Installation
