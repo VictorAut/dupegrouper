@@ -16,7 +16,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
 ]
 repository = "https://github.com/VictorAut/dupegrouper/"
-# documentation = "TODO"
+documentation = "https://victorautonell-oiry.me/dupegrouper/dupegrouper.html"
 
 [tool.poetry.dependencies]
 python = "^3.11"
