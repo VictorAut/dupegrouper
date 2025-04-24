@@ -1,4 +1,4 @@
-name: publish | PyPI
+name: ⚙️ publish | PyPI
 
 on: 
   workflow_dispatch:
