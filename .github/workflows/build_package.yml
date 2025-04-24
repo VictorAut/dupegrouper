@@ -61,11 +61,6 @@ jobs:
           name: python-package-distributions
           path: dist/
 
-      - name: Output token and debug info
-        run: |
-          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}"
-          echo "Repository URL: ${{ steps.repo-url.outputs.url }}"
-
       - name: Set repository URL
         id: repo-url
         run: |
@@ -74,6 +69,11 @@ jobs:
           else
             echo "url=https://test.pypi.org/legacy/" >> "$GITHUB_OUTPUT"
           fi  
+
+      - name: Output token and debug info
+        run: |
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}"
+          echo "Repository URL: ${{ steps.repo-url.outputs.url }}"
       
       - name: Publish distribution to ${{ inputs.index }}
         uses: pypa/gh-action-pypi-publish@release/v1
