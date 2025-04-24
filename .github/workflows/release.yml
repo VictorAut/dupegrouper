@@ -4,7 +4,8 @@ on:
   workflow_dispatch:
 
 permissions:
-      id-token: write # mandatory for trusted publishing
+  pages: write
+  id-token: write # mandatory for trusted publishing
 
 jobs:
   build:
