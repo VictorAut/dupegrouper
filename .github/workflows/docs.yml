@@ -1,9 +1,9 @@
 name: docs | build and deploy
-on:
-  push:
-    branches:
-      - "main"
 
+on: 
+  workflow_dispatch:
+  workflow_call:
+  
 # security: restrict permissions for CI jobs.
 permissions:
   contents: read
