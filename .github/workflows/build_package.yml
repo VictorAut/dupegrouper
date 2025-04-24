@@ -72,7 +72,7 @@ jobs:
       
       - name: Set Build Config URI
         run: |
-          echo "BUILD_CONFIG_URI=https://github.com/VictorAut/dupegrouper/.github/workflows/build_package.yml@refs/heads/main" >> $GITHUB_ENV
+          echo "BUILD_CONFIG_URI=https://github.com/VictorAut/dupegrouper/.github/workflows/build_package.yml" >> $GITHUB_ENV
       
       - name: Publish distribution to ${{ inputs.index }}
         uses: pypa/gh-action-pypi-publish@release/v1
