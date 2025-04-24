@@ -61,6 +61,11 @@ jobs:
           name: python-package-distributions
           path: dist/
 
+      - name: Output token and debug info
+        run: |
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}"
+          echo "Repository URL: ${{ steps.repo-url.outputs.url }}"
+
       - name: Set repository URL
         id: repo-url
         run: |
