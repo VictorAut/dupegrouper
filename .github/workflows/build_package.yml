@@ -68,10 +68,16 @@ jobs:
             echo "url=https://upload.pypi.org/legacy/" >> "$GITHUB_OUTPUT"
           else
             echo "url=https://test.pypi.org/legacy/" >> "$GITHUB_OUTPUT"
-          fi  
+          fi
+      
+      - name: Set Build Config URI
+        run: |
+          echo "BUILD_CONFIG_URI=https://github.com/VictorAut/dupegrouper/.github/workflows/build_package.yml@refs/heads/main" >> $GITHUB_ENV
       
       - name: Publish distribution to ${{ inputs.index }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: ${{ steps.repo-url.outputs.url }}
           verbose: true
+        env:
+          BUILD_CONFIG_URI: ${{ env.BUILD_CONFIG_URI }}
