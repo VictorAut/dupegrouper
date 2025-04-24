@@ -3,6 +3,9 @@ name: ⚙️ release | PyPI
 on: 
   workflow_dispatch:
 
+permissions:
+      id-token: write # mandatory for trusted publishing
+
 jobs:
   build:
     name: Build distribution
