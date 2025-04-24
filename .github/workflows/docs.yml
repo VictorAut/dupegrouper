@@ -1,4 +1,4 @@
-name: docs | build and deploy
+name: ⚙️ docs | build and deploy
 
 on: 
   workflow_dispatch:
