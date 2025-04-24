@@ -39,7 +39,7 @@ class _InitDataFrame:
     """
 
     def __init__(self, df):
-        self._df: frames = self._init_dispatch(df)
+        self.df: frames = self._init_dispatch(df)
 
     @singledispatchmethod
     @staticmethod
@@ -64,10 +64,6 @@ class _InitDataFrame:
     @_init_dispatch.register(pl.DataFrame)
     def _(self, df):
         return df.with_columns(**{GROUP_ID: range(1, len(df) + 1)})
-
-    @property
-    def choose(self):
-        return self._df
 
 
 # STRATEGY MANAGMENT:
@@ -172,7 +168,7 @@ class DupeGrouper:
     """
 
     def __init__(self, df: pd.DataFrame):
-        self._df = _InitDataFrame(df).choose
+        self._df = _InitDataFrame(df).df
         self._strategy_manager = _StrategyManager()
 
     @singledispatchmethod

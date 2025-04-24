@@ -2,6 +2,7 @@
 
 from unittest.mock import ANY, Mock, patch
 
+from pandas.testing import assert_frame_equal
 import pandas as pd
 import polars as pl
 import pytest
@@ -22,13 +23,13 @@ from dupegrouper.strategy import DeduplicationStrategy
 
 
 def test_init_dataframe_pandas(df_pandas):
-    df_init = _InitDataFrame(df_pandas).choose
+    df_init = _InitDataFrame(df_pandas).df
     assert "group_id" in df_init.columns
     assert df_init["group_id"].tolist() == [i for i in range(1, 14)]
 
 
 def test_init_dataframe_polars(df_polars):
-    df_init = _InitDataFrame(df_polars).choose
+    df_init = _InitDataFrame(df_polars).df
     assert "group_id" in df_init.columns
     assert df_init["group_id"].to_list() == [i for i in range(1, 14)]
 
@@ -237,3 +238,56 @@ def test_dupegrouper_add_strategy_equal_execution(df_pandas):
 
     # Q.E.D
     assert inline_group_ids == asdict_group_ids
+
+
+def test_iterative_deduplication(df_pandas):
+    """tests that deduplication can be iteratively re-applied"""
+
+    def dedupe_iteration(input: pd.DataFrame) -> pd.DataFrame:
+
+        dg = DupeGrouper(input)
+        dg.add_strategy(Fuzzy(tolerance=0.3))
+        dg.dedupe("address")
+        return dg.df
+
+    # fresh data
+
+    df_pandas = df_pandas[["id", "address", "email"]]
+
+    # dedupe once
+
+    output_iter1 = dedupe_iteration(df_pandas)
+
+    # now we mimic an additional row being added i.e. iterative deduplication
+    # But this addition results in a re-ordering!
+    # So we add at the start
+
+    print(list(output_iter1["group_id"]))
+
+    output_iter1 = pd.concat(
+        [
+            output_iter1,
+            pd.DataFrame(
+                data={
+                    "id": [99],
+                    "address": ["Calle Sueco, 56, 05688, Rioja, Navarra"],
+                    "email": ["hellothere@example.com"],
+                    "group_id": [14],
+                }
+            ),
+        ]
+    )
+
+    print(output_iter1)
+
+    # note we now expect group_id 14 -> 3 via deduplication and record selection
+
+    expected_group_ids = [1, 2, 3, 3, 5, 6, 7, 8, 1, 1, 11, 12, 13, 3]
+
+    # dedupe again
+
+    output_iter2 = dedupe_iteration(output_iter1)
+
+    print(list(output_iter2["group_id"]))
+
+    assert expected_group_ids == list(output_iter2["group_id"])
