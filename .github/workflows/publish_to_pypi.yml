@@ -1,6 +1,6 @@
-name: Publish Python Distribution to PyPI and TestPyPI
+name: Publish Python Distribution | PyPI
 
-on: push
+on: workflow_dispatch
 
 jobs:
   build:

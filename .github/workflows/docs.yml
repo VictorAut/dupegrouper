@@ -1,4 +1,4 @@
-name: Build API docs and deploy
+name: docs | build and deploy
 on:
   push:
     branches:
