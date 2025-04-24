@@ -130,5 +130,8 @@ jobs:
           --repo "$GITHUB_REPOSITORY"
 
   docs:
+    name: Publishes documentation
+    needs:
+      - publish-to-pypi
     uses: ./.github/workflows/docs.yml
     if: startsWith(github.ref, 'refs/tags/')
