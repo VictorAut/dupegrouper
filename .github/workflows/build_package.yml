@@ -69,13 +69,9 @@ jobs:
           else
             echo "url=https://test.pypi.org/legacy/" >> "$GITHUB_OUTPUT"
           fi  
-
-      - name: Output token and debug info
-        run: |
-          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}"
-          echo "Repository URL: ${{ steps.repo-url.outputs.url }}"
       
       - name: Publish distribution to ${{ inputs.index }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: ${{ steps.repo-url.outputs.url }}
+          verbose: true
