@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
   workflow_call:
 
+permissions:
+  id-token: write  # mandatory for trusted publishing
+
 jobs:
   build-and-publish:
     uses: ./.github/workflows/build_package.yml
