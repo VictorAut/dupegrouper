@@ -1,0 +1,13 @@
+name: TODO
+
+on:
+  workflow_call:
+    inputs:
+        index:
+          description: Environment
+          required: true
+          type: choice
+          default: TestPyPI
+          options:
+            - PyPI
+            - TestPyPI

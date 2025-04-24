@@ -4,13 +4,10 @@ on:
   workflow_call:
     inputs:
         index:
-          description: Environment
+          description: which index, PyPI or TestPyPI to publish to
           required: true
-          type: choice
+          type: string
           default: TestPyPI
-          options:
-            - PyPI
-            - TestPyPI
     # outputs:
     #   artifact-name:
     #     description: "The name of the uploaded artifact"
