@@ -45,39 +45,39 @@ jobs:
           name: python-package-distributions
           path: dist/
 
-  publish:
-    name: Publish Python distribution to ${{ inputs.index }}
-    needs:
-      - build
-    runs-on: ubuntu-latest
+  # publish:
+  #   name: Publish Python distribution to ${{ inputs.index }}
+  #   needs:
+  #     - build
+  #   runs-on: ubuntu-latest
 
-    permissions:
-      id-token: write # mandatory for trusted publishing
+  #   permissions:
+  #     id-token: write # mandatory for trusted publishing
 
-    steps:
-      - name: Download all the dists
-        uses: actions/download-artifact@v4
-        with:
-          name: python-package-distributions
-          path: dist/
+  #   steps:
+  #     - name: Download all the dists
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: python-package-distributions
+  #         path: dist/
 
-      - name: Set repository URL
-        id: repo-url
-        run: |
-          if [[ "${{ inputs.index }}" == "PyPI" ]]; then
-            echo "url=https://upload.pypi.org/legacy/" >> "$GITHUB_OUTPUT"
-          else
-            echo "url=https://test.pypi.org/legacy/" >> "$GITHUB_OUTPUT"
-          fi
+  #     - name: Set repository URL
+  #       id: repo-url
+  #       run: |
+  #         if [[ "${{ inputs.index }}" == "PyPI" ]]; then
+  #           echo "url=https://upload.pypi.org/legacy/" >> "$GITHUB_OUTPUT"
+  #         else
+  #           echo "url=https://test.pypi.org/legacy/" >> "$GITHUB_OUTPUT"
+  #         fi
       
-      - name: Set Build Config URI
-        run: |
-          echo "BUILD_CONFIG_URI=https://github.com/VictorAut/dupegrouper/.github/workflows/build_package.yml" >> $GITHUB_ENV
+  #     - name: Set Build Config URI
+  #       run: |
+  #         echo "BUILD_CONFIG_URI=https://github.com/VictorAut/dupegrouper/.github/workflows/build_package.yml" >> $GITHUB_ENV
       
-      - name: Publish distribution to ${{ inputs.index }}
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: ${{ steps.repo-url.outputs.url }}
-          verbose: true
-        env:
-          BUILD_CONFIG_URI: ${{ env.BUILD_CONFIG_URI }}
+  #     - name: Publish distribution to ${{ inputs.index }}
+  #       uses: pypa/gh-action-pypi-publish@release/v1
+  #       with:
+  #         repository-url: ${{ steps.repo-url.outputs.url }}
+  #         verbose: true
+  #       env:
+  #         BUILD_CONFIG_URI: ${{ env.BUILD_CONFIG_URI }}
