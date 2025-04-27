@@ -7,5 +7,6 @@ scrap*
 .coverage
 
 htmlcov/
+coverage.xml
 
 .python-version
