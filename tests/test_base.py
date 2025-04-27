@@ -22,13 +22,13 @@ from dupegrouper.strategy import DeduplicationStrategy
 
 
 def test_init_dataframe_pandas(df_pandas):
-    df_init = _InitDataFrame(df_pandas).df
+    df_init = _InitDataFrame(df_pandas).choose
     assert "group_id" in df_init.columns
     assert df_init["group_id"].tolist() == [i for i in range(1, 14)]
 
 
 def test_init_dataframe_polars(df_polars):
-    df_init = _InitDataFrame(df_polars).df
+    df_init = _InitDataFrame(df_polars).choose
     assert "group_id" in df_init.columns
     assert df_init["group_id"].to_list() == [i for i in range(1, 14)]
 
