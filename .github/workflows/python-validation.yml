@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: python | setup  ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
@@ -28,5 +28,8 @@ jobs:
       - name: poetry | install dependencies
         run: poetry install --no-interaction
 
-      - name: Run Tests with Pytest
-        run: poetry run pytest --verbose
+      - name: pytest | coverage
+        run: |
+          poetry run coverage run -m pytest tests/ -v
+          poetry run coverage html --omit "tests/**/*"
+  
