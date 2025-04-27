@@ -4,11 +4,14 @@ This module contains `DupeGrouper`, at the core of all 'dupe and group'
 functionality provided by dupegrouper.
 """
 
-import collections.abc
+from __future__ import annotations
 import collections
 from functools import singledispatchmethod
 import inspect
-from types import NoneType
+try:
+    from types import NoneType
+except ImportError:
+    NoneType = type(None)
 import typing
 
 import pandas as pd

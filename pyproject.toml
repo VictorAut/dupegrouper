@@ -5,7 +5,7 @@ description = "A Python library for grouping duplicate data efficiently."
 authors = ["VictorAutonell-Oiry"]
 readme = "README.md"
 license = "Apache-2.0"
-keywords = [ "duplicates", "deduplication", "grouping" ]
+keywords = ["duplicates", "deduplication", "grouping"]
 classifiers = [
   "Development Status :: 2 - Pre-Alpha",
 
@@ -19,7 +19,7 @@ repository = "https://github.com/VictorAut/dupegrouper/"
 documentation = "https://victorautonell-oiry.me/dupegrouper/dupegrouper.html"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.9"
 pandas = "^2.2.3"
 polars = "^1.24.0"
 rapidfuzz = "^3.12.2"
@@ -31,13 +31,14 @@ typing-extensions = "^4.13.0"
 
 [tool.poetry.group.dev.dependencies]
 faker = "^37.0.0"
-ipython = "^9.0.2"
+ipython = { version = "^9.0.2", python = ">=3.11" }
 ipykernel = "^6.29.5"
 black = "^25.1.0"
 ruff = "^0.11.2"
 mypy = "^1.15.0"
-pandas-stubs = "^2.2.3.250308"
-scipy-stubs = "^1.15.2.1"
+pandas-stubs = { version = "^2.2.3.250308", python = ">=3.10" }
+scipy-stubs = { version = "^1.15.2.1", python = ">=3.10" }
+pytest-cov = "^6.1.1"
 
 
 [tool.poetry.group.test.dependencies]

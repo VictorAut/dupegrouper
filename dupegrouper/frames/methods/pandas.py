@@ -1,5 +1,6 @@
 """Defines methods after Pandas API"""
 
+from __future__ import annotations
 from typing_extensions import override
 import typing
 

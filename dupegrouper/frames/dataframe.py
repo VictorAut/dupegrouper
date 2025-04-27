@@ -1,5 +1,6 @@
 """Abstract base class container"""
 
+from __future__ import annotations
 from abc import ABC, abstractmethod
 
 import typing

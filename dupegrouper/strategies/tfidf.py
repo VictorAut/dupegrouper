@@ -1,5 +1,6 @@
 """Perform near deduplication with TF-IDF"""
 
+from __future__ import annotations
 import functools
 import logging
 from typing_extensions import override
