@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 jobs:
-  static-checks:
+  formatting-check:
       runs-on: ubuntu-latest
 
       steps:
@@ -31,10 +31,48 @@ jobs:
           run: |
             poetry run black --check .
 
+  linting:
+      runs-on: ubuntu-latest
+
+      steps:
+        - uses: actions/checkout@v4
+
+        - name: python | setup 3.12
+          uses: actions/setup-python@v5
+          with:
+            python-version: "3.12"
+
+        - name: poetry | install
+          run: |
+            python -m pip install --upgrade pip
+            pip install poetry
+
+        - name: poetry | install dependencies
+          run: poetry install --no-interaction
+
         - name: check | ruff
           run: |
             poetry run ruff check .
 
+  type-checking:
+      runs-on: ubuntu-latest
+
+      steps:
+        - uses: actions/checkout@v4
+
+        - name: python | setup 3.12
+          uses: actions/setup-python@v5
+          with:
+            python-version: "3.12"
+
+        - name: poetry | install
+          run: |
+            python -m pip install --upgrade pip
+            pip install poetry
+
+        - name: poetry | install dependencies
+          run: poetry install --no-interaction
+          
         - name: check | mypy
           run: |
             poetry run mypy .
