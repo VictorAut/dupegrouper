@@ -35,32 +35,32 @@ jobs:
         run: |
           poetry run coverage run -m pytest tests/ -v
           poetry run coverage xml --omit "tests/**/*"
-          
-        # poetry run coverage html --omit "tests/**/*"
-      
-      - name: tests | coverage
-        uses: irongut/CodeCoverageSummary@v1.3.0
-        with:
-          filename: "coverage.xml"
-          badge: true
-          fail_below_min: false
-          format: markdown
-          hide_branch_rate: false
-          hide_complexity: true
-          indicators: true
-          output: both
-          # thresholds: "${{ inputs.low-pct-coverage-threshold }} ${{ inputs.high-pct-coverage-threshold }}"
 
-      - name: coverage | add header
-        run: |
-          echo "## Coverage Report" > coverage.md
-          cat code-coverage-results.md >> coverage.md
+      - name: Coverage comment
+        uses: py-cov-action/python-coverage-comment-action@v3
+      
+      # - name: tests | coverage
+      #   uses: irongut/CodeCoverageSummary@v1.3.0
+      #   with:
+      #     filename: "coverage.xml"
+      #     badge: true
+      #     fail_below_min: false
+      #     format: markdown
+      #     hide_branch_rate: false
+      #     hide_complexity: true
+      #     indicators: true
+      #     output: both
+      #     # thresholds: "${{ inputs.low-pct-coverage-threshold }} ${{ inputs.high-pct-coverage-threshold }}"
+
+      # - name: coverage | add header
+      #   run: |
+      #     echo "## Coverage Report" > coverage.md
+      #     cat code-coverage-results.md >> coverage.md
   
-      - name: tests | pr-comment
-        uses: marocchino/sticky-pull-request-comment@v2
-        if: ${{ github.event_name == 'pull_request'}}
-        with:
-          header: Coverage Report
-          hide_and_recreate: true
-          # hide_classify: OUTDATED
-          path: coverage.md
+      # - name: tests | pr-comment
+      #   uses: marocchino/sticky-pull-request-comment@v2
+      #   if: ${{ github.event_name == 'pull_request'}}
+      #   with:
+      #     header: Coverage Report
+      #     hide_and_recreate: true
+      #     path: coverage.md
