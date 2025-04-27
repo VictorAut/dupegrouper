@@ -11,16 +11,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    # TODO
-    permissions:
-      # Gives the action the necessary permissions for publishing new
-      # comments in pull requests.
-      pull-requests: write
-      # Gives the action the necessary permissions for pushing data to the
-      # python-coverage-comment-action branch, and for editing existing
-      # comments (to avoid publishing multiple comments in the same PR)
-      contents: write
-
     strategy:
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
@@ -45,34 +35,29 @@ jobs:
         run: |
           poetry run coverage run -m pytest tests/ -v
           poetry run coverage xml --omit "tests/**/*"
-
-      - name: Coverage comment
-        uses: py-cov-action/python-coverage-comment-action@v3
-        with:
-          GITHUB_TOKEN: ${{ github.token }}
       
-      # - name: tests | coverage
-      #   uses: irongut/CodeCoverageSummary@v1.3.0
-      #   with:
-      #     filename: "coverage.xml"
-      #     badge: true
-      #     fail_below_min: false
-      #     format: markdown
-      #     hide_branch_rate: false
-      #     hide_complexity: true
-      #     indicators: true
-      #     output: both
-      #     # thresholds: "${{ inputs.low-pct-coverage-threshold }} ${{ inputs.high-pct-coverage-threshold }}"
+      - name: tests | coverage
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: "coverage.xml"
+          badge: true
+          fail_below_min: false
+          format: markdown
+          hide_branch_rate: false
+          hide_complexity: true
+          indicators: true
+          output: both
+          # thresholds: "${{ inputs.low-pct-coverage-threshold }} ${{ inputs.high-pct-coverage-threshold }}"
 
-      # - name: coverage | add header
-      #   run: |
-      #     echo "## Coverage Report" > coverage.md
-      #     cat code-coverage-results.md >> coverage.md
+      - name: coverage | add header
+        run: |
+          echo "## Coverage Report" > coverage.md
+          cat code-coverage-results.md >> coverage.md
   
-      # - name: tests | pr-comment
-      #   uses: marocchino/sticky-pull-request-comment@v2
-      #   if: ${{ github.event_name == 'pull_request'}}
-      #   with:
-      #     header: Coverage Report
-      #     hide_and_recreate: true
-      #     path: coverage.md
+      - name: tests | pr-comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: ${{ github.event_name == 'pull_request'}}
+        with:
+          header: Coverage Report
+          hide_and_recreate: true
+          path: coverage.md
