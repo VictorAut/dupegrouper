@@ -1,4 +1,4 @@
-name: Python Validation
+name: python | validation
 
 on:
   push:
