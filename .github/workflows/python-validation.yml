@@ -31,5 +31,6 @@ jobs:
       - name: pytest | coverage
         run: |
           poetry run coverage run -m pytest tests/ -v
+          poetry run coverage xml --omit "tests/**/*"
           poetry run coverage html --omit "tests/**/*"
   
