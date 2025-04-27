@@ -48,6 +48,8 @@ jobs:
 
       - name: Coverage comment
         uses: py-cov-action/python-coverage-comment-action@v3
+        with:
+          GITHUB_TOKEN: ${{ github.token }}
       
       # - name: tests | coverage
       #   uses: irongut/CodeCoverageSummary@v1.3.0
