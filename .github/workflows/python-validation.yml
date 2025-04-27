@@ -48,3 +48,11 @@ jobs:
           output: both
           # thresholds: "${{ inputs.low-pct-coverage-threshold }} ${{ inputs.high-pct-coverage-threshold }}"
   
+      - name: tests | pr-comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
+        with:
+          header: ${{ inputs.working-directory }}
+          hide_and_recreate: true
+          hide_classify: OUTDATED
+          path: coverage.md
