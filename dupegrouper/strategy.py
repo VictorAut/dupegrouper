@@ -32,7 +32,7 @@ _logger = logging.getLogger(__name__)
 class _DataFrameDispatcher:
     """Dispatcher to collect methods for the given dataframe"""
 
-    def __init__(self, df):
+    def __init__(self, df: frames):
         self._frame_methods: DFMethods = self._df_dispatch(df)
 
     @singledispatchmethod
@@ -68,7 +68,7 @@ class _DataFrameDispatcher:
 class DeduplicationStrategy(ABC):
     """Defines a deduplication strategy."""
 
-    def _set_df(self, df):
+    def _set_df(self, df: frames):
         """Inject dataframe data and load dataframe methods corresponding
         to the type of the dataframe the corresponding methods.
 

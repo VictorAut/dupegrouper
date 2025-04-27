@@ -16,7 +16,7 @@ class DFMethods(ABC):
     implementations needed
     """
 
-    def __init__(self, df: pd.DataFrame):
+    def __init__(self, df: pd.DataFrame):  # TODO this is frames?
         self._df = df
 
     @abstractmethod

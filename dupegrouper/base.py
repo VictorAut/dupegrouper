@@ -8,10 +8,11 @@ from __future__ import annotations
 import collections
 from functools import singledispatchmethod
 import inspect
+
 try:
     from types import NoneType
 except ImportError:
-    NoneType = type(None)
+    NoneType = type(None)  # type: ignore
 import typing
 
 import pandas as pd
@@ -41,7 +42,7 @@ class _InitDataFrame:
     variable `GROUP_ID`.
     """
 
-    def __init__(self, df):
+    def __init__(self, df: frames):
         self.df: frames = self._init_dispatch(df)
 
     @singledispatchmethod
@@ -85,7 +86,7 @@ class _StrategyManager:
     A `StrategyTypeError` is thrown, otherwise.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._strategies: strategy_map_collection = collections.defaultdict(list)
 
     def add(
@@ -170,7 +171,7 @@ class DupeGrouper:
     1 to the length of the dataframe provided.
     """
 
-    def __init__(self, df: pd.DataFrame):
+    def __init__(self, df: frames):
         self._df = _InitDataFrame(df).df
         self._strategy_manager = _StrategyManager()
 
@@ -320,7 +321,7 @@ class DupeGrouper:
         return {k: parse_strategies(v) for k, v in strategies.items()}
 
     @property
-    def df(self) -> pd.DataFrame:
+    def df(self) -> frames:
         return self._df
 
 

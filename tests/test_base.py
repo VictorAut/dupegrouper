@@ -2,7 +2,6 @@
 
 from unittest.mock import ANY, Mock, patch
 
-from pandas.testing import assert_frame_equal
 import pandas as pd
 import polars as pl
 import pytest
@@ -243,7 +242,7 @@ def test_dupegrouper_add_strategy_equal_execution(df_pandas):
 def test_iterative_deduplication(df_pandas):
     """tests that deduplication can be iteratively re-applied"""
 
-    def dedupe_iteration(input: pd.DataFrame) -> pd.DataFrame:
+    def dedupe_iteration(input):
 
         dg = DupeGrouper(input)
         dg.add_strategy(Fuzzy(tolerance=0.3))
