@@ -38,11 +38,12 @@ ruff = "^0.11.2"
 mypy = "^1.15.0"
 pandas-stubs = { version = "^2.2.3.250308", python = ">=3.10" }
 scipy-stubs = { version = "^1.15.2.1", python = ">=3.10" }
-pytest-cov = "^6.1.1"
+tox = "^4.25.0"
 
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3.5"
+pytest-cov = "^6.1.1"
 
 [tool.poetry.group.docs.dependencies]
 pdoc = "^15.0.1"
@@ -57,3 +58,16 @@ follow_untyped_imports = true
 
 [tool.black]
 line-length = 120
+
+[tool.tox]
+requires = ["tox>=4"]
+env_list = ["format", "lint", "type", "3.9", "3.10", "3.11", "3.12", "3.13"]
+
+[tool.tox.env_run_base] # fallback for non explicitely defined [tool.tox.*] i.e. py39 and up
+description = "Run test under {base_python}"
+commands = [["pytest"]]
+
+[tool.tox.env.type]
+description = "run type check on code base"
+deps = ["mypy==1.11.2", "types-cachetools>=5.5.0.20240820", "types-chardet>=5.0.4.6"]
+commands = [["mypy", "src{/}tox"], ["mypy", "tests"]]
