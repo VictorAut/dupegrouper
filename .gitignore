@@ -6,4 +6,4 @@ scrap*
 
 .coverage
 
-htmlcov
+htmlcov/
