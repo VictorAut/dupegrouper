@@ -3,3 +3,5 @@
 scrap*
 
 **/__pycache__/*
+
+.coverage
