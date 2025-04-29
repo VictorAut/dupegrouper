@@ -12,7 +12,7 @@ from scipy.sparse import csr_matrix
 from sklearn.feature_extraction.text import TfidfVectorizer  # type: ignore
 from sparse_dot_topn import sp_matmul_topn  # type: ignore
 
-from dupegrouper.definitions import TMP_ATTR_LABEL, frames
+from dupegrouper.definitions import TMP_ATTR_LABEL, DataFrameType
 from dupegrouper.frames import DFMethods
 from dupegrouper.strategy import DeduplicationStrategy
 
@@ -160,7 +160,7 @@ class TfIdf(DeduplicationStrategy):
                 yield {i: j}
 
     @override
-    def dedupe(self, attr: str, /) -> frames:
+    def dedupe(self, attr: str, /) -> DataFrameType:
         """Deduplicate with term frequency, inverse document frequency.
 
         Here, 1-to-1 maps are identified using the procedure i.e. for *each*

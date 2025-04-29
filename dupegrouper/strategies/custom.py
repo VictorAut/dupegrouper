@@ -7,7 +7,7 @@ import logging
 import typing
 from typing_extensions import override
 
-from dupegrouper.definitions import TMP_ATTR_LABEL, frames
+from dupegrouper.definitions import TMP_ATTR_LABEL, DataFrameType
 from dupegrouper.frames import DFMethods
 from dupegrouper.strategy import DeduplicationStrategy
 
@@ -41,7 +41,7 @@ class Custom(DeduplicationStrategy):
         self._kwargs = kwargs
 
     @override
-    def dedupe(self, attr=None) -> frames:
+    def dedupe(self, attr=None) -> DataFrameType:
         """dedupe with custom defined callable
 
         Implements deduplication using a function defined _outside_ of the

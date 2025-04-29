@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 from abc import ABC, abstractmethod
-
 import typing
 
-import pandas as pd
+from dupegrouper.definitions import DataFrameType
 
 
 class DFMethods(ABC):
@@ -16,7 +15,7 @@ class DFMethods(ABC):
     implementations needed
     """
 
-    def __init__(self, df: pd.DataFrame):  # TODO this is frames?
+    def __init__(self, df: DataFrameType):
         self._df = df
 
     @abstractmethod
@@ -47,7 +46,7 @@ class DFMethods(ABC):
 
     @staticmethod
     @abstractmethod
-    def fill_na(series: pd.Series, array):
+    def fill_na(series, array):
         """Return a column array-like of data null-filled with `array`"""
         pass
 

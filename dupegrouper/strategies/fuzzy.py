@@ -7,7 +7,7 @@ from typing_extensions import override
 import numpy as np
 from rapidfuzz import fuzz
 
-from dupegrouper.definitions import TMP_ATTR_LABEL, frames
+from dupegrouper.definitions import TMP_ATTR_LABEL, DataFrameType
 from dupegrouper.frames import DFMethods
 from dupegrouper.strategy import DeduplicationStrategy
 
@@ -33,7 +33,7 @@ class Fuzzy(DeduplicationStrategy):
         return fuzz.ratio(s1, s2)
 
     @override
-    def dedupe(self, attr: str, /) -> frames:
+    def dedupe(self, attr: str, /) -> DataFrameType:
         """Deduplicate with string match using fuzzy wuzzy
 
         String matches are applied on only *unique* instances of the attribute,

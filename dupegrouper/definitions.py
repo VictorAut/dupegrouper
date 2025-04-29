@@ -23,12 +23,10 @@ TMP_ATTR_LABEL: typing.Final[str] = os.environ.get("TMP_ATTR_LABEL", "__tmp_attr
 
 # TYPES:
 
-strategy_list_item: typing.TypeAlias = "DeduplicationStrategy | tuple[typing.Callable, dict[str, str]]"
-
-strategy_map_collection = typing.DefaultDict[
+StrategyMapCollection: typing.TypeAlias = typing.DefaultDict[
     str,
-    list[strategy_list_item],
+    list["DeduplicationStrategy | tuple[typing.Callable, dict[str, str]]"],
 ]
 
 
-frames: typing.TypeAlias = "pd.DataFrame | pl.DataFrame"  # | ...
+DataFrameType: typing.TypeAlias = "pd.DataFrame | pl.DataFrame"  # | ...

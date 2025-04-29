@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 import polars as pl
 
-from dupegrouper.definitions import GROUP_ID, frames
+from dupegrouper.definitions import GROUP_ID, DataFrameType
 from dupegrouper.frames.methods import PandasMethods, PolarsMethods
 from dupegrouper.frames import DFMethods
 
@@ -26,49 +26,13 @@ from dupegrouper.frames import DFMethods
 _logger = logging.getLogger(__name__)
 
 
-# DATAFRAME DISPATCHER
-
-
-class _DataFrameDispatcher:
-    """Dispatcher to collect methods for the given dataframe"""
-
-    def __init__(self, df: frames):
-        self._frame_methods: DFMethods = self._df_dispatch(df)
-
-    @singledispatchmethod
-    @staticmethod
-    def _df_dispatch(df: frames) -> DFMethods:
-        """
-        Dispatch the dataframe to the appropriate handler.
-
-        Args:
-            df: The dataframe to dispatch to the appropriate handler.
-
-        Raises:
-            NotImplementedError
-        """
-        raise NotImplementedError(f"Unsupported data frame: {type(df)}")
-
-    @_df_dispatch.register(pd.DataFrame)
-    def _(self, df) -> DFMethods:
-        return PandasMethods(df)
-
-    @_df_dispatch.register(pl.DataFrame)
-    def _(self, df) -> DFMethods:
-        return PolarsMethods(df)
-
-    @property
-    def frame_methods(self) -> DFMethods:
-        return self._frame_methods
-
-
 # STRATEGY:
 
 
 class DeduplicationStrategy(ABC):
     """Defines a deduplication strategy."""
 
-    def _set_df(self, df: frames):
+    def _set_df(self, df: DataFrameType):
         """Inject dataframe data and load dataframe methods corresponding
         to the type of the dataframe the corresponding methods.
 
@@ -140,13 +104,49 @@ class DeduplicationStrategy(ABC):
         return frame_methods  # i.e. has `frame` and `methods`
 
     @abstractmethod
-    def dedupe(self, attr: str) -> frames:
+    def dedupe(self, attr: str) -> DataFrameType:
         """Use `assign_group_id` to implement deduplication logic
 
         Args:
             attr: The attribute to use for deduplication.
 
         Returns:
-            frames: the deduplicated dataframe
+            DataFrameType: the deduplicated dataframe
         """
         pass
+
+
+# DATAFRAME DISPATCHER
+
+
+class _DataFrameDispatcher:
+    """Dispatcher to collect methods for the given dataframe"""
+
+    def __init__(self, df: DataFrameType):
+        self._frame_methods: DFMethods = self._df_dispatch(df)
+
+    @singledispatchmethod
+    @staticmethod
+    def _df_dispatch(df: DataFrameType) -> DFMethods:
+        """
+        Dispatch the dataframe to the appropriate handler.
+
+        Args:
+            df: The dataframe to dispatch to the appropriate handler.
+
+        Raises:
+            NotImplementedError
+        """
+        raise NotImplementedError(f"Unsupported data frame: {type(df)}")
+
+    @_df_dispatch.register(pd.DataFrame)
+    def _(self, df) -> DFMethods:
+        return PandasMethods(df)
+
+    @_df_dispatch.register(pl.DataFrame)
+    def _(self, df) -> DFMethods:
+        return PolarsMethods(df)
+
+    @property
+    def frame_methods(self) -> DFMethods:
+        return self._frame_methods

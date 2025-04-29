@@ -11,14 +11,18 @@ from dupegrouper.frames.dataframe import DFMethods
 
 class PolarsMethods(DFMethods):
 
+    def __init__(self, df: pl.DataFrame):
+        super().__init__(df)
+        self._df: pl.DataFrame = df
+
     @override
     def put_col(self, column: str, array) -> typing.Self:
-        self._df = self._df.with_columns(**{column: array})  # type: ignore[operator]
+        self._df = self._df.with_columns(**{column: array})
         return self
 
     @override
     def get_col(self, column: str) -> pl.Series:
-        return self._df.get_column(column)  # type: ignore[operator]
+        return self._df.get_column(column)
 
     @override
     def map_dict(self, column: str, mapping: dict) -> pl.Series:
@@ -31,7 +35,7 @@ class PolarsMethods(DFMethods):
 
     @staticmethod
     @override
-    def fill_na(series: pl.Series, array) -> pl.Series:  # type: ignore[override]
+    def fill_na(series: pl.Series, array) -> pl.Series:
         return series.fill_null(array)
 
     @property
