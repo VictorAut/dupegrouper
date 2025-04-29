@@ -323,7 +323,7 @@ def _add_group_id(df: frames) -> frames:
     Raises:
         NotImplemenetedError
     """
-    del df  # Unused
+    raise NotImplementedError(f"Unsupported data frame: {type(df)}")
 
 
 @_add_group_id.register(pd.DataFrame)

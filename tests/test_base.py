@@ -46,7 +46,7 @@ def test_init_dataframe_polars(df_polars_raw):
         # arbitrary: different value
         ("beep_boop_id", "beep_boop_id"),
         # arbitrary: supported (but bad!) column naming with whitespace
-        ("bad group id", "bad group id")
+        ("bad group id", "bad group id"),
     ],
 )
 def test_different_group_id_env_var(env_var_value, expected_value, df_pandas_raw):
@@ -55,8 +55,8 @@ def test_different_group_id_env_var(env_var_value, expected_value, df_pandas_raw
     else:
         os.environ.pop("GROUP_ID", None)  # remove it if exists
 
-    importlib.reload(dupegrouper.definitions) # reset constant
-    importlib.reload(dupegrouper.base) # final value in `base`
+    importlib.reload(dupegrouper.definitions)  # reset constant
+    importlib.reload(dupegrouper.base)  # final value in `base`
     df_init = _add_group_id(df_pandas_raw)
     assert expected_value in df_init.columns
 
