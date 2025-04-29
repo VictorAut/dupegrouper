@@ -1,5 +1,7 @@
 """Tests for dupegrouper.base"""
 
+import importlib
+import os
 from unittest.mock import ANY, Mock, patch
 
 import pandas as pd
@@ -7,30 +9,61 @@ import polars as pl
 import pytest
 
 from dupegrouper.base import (
-    _InitDataFrame,
-    _StrategyManager,
     DupeGrouper,
     StrategyTypeError,
+    _add_group_id,
+    _StrategyManager,
 )
+import dupegrouper.definitions
 from dupegrouper.strategies import Exact, Fuzzy, TfIdf
 from dupegrouper.strategy import DeduplicationStrategy
 
 
 ########################
-#  TEST _InitDataFrame #
+#  TEST _add_group_id #
 ########################
 
 
-def test_init_dataframe_pandas(df_pandas):
-    df_init = _InitDataFrame(df_pandas).df
+def test_init_dataframe_pandas(df_pandas_raw):
+    df_init = _add_group_id(df_pandas_raw)
     assert "group_id" in df_init.columns
     assert df_init["group_id"].tolist() == [i for i in range(1, 14)]
 
 
-def test_init_dataframe_polars(df_polars):
-    df_init = _InitDataFrame(df_polars).df
+def test_init_dataframe_polars(df_polars_raw):
+    df_init = _add_group_id(df_polars_raw)
     assert "group_id" in df_init.columns
     assert df_init["group_id"].to_list() == [i for i in range(1, 14)]
+
+
+@pytest.mark.parametrize(
+    "env_var_value, expected_value",
+    [
+        # i.e. the default
+        ("group_id", "group_id"),
+        # null override to default, simulates unset
+        (None, "group_id"),
+        # arbitrary: different value
+        ("beep_boop_id", "beep_boop_id"),
+        # arbitrary: supported (but bad!) column naming with whitespace
+        ("bad group id", "bad group id")
+    ],
+)
+def test_different_group_id_env_var(env_var_value, expected_value, df_pandas_raw):
+    if env_var_value:
+        os.environ["GROUP_ID"] = env_var_value
+    else:
+        os.environ.pop("GROUP_ID", None)  # remove it if exists
+
+    importlib.reload(dupegrouper.definitions) # reset constant
+    importlib.reload(dupegrouper.base) # final value in `base`
+    df_init = _add_group_id(df_pandas_raw)
+    assert expected_value in df_init.columns
+
+    # clean up
+    os.environ["GROUP_ID"] = "group_id"
+    importlib.reload(dupegrouper.definitions)
+    importlib.reload(dupegrouper.base)
 
 
 ##############################################

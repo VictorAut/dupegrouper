@@ -6,7 +6,7 @@ functionality provided by dupegrouper.
 
 from __future__ import annotations
 import collections
-from functools import singledispatchmethod
+from functools import singledispatch, singledispatchmethod
 import inspect
 
 try:
@@ -25,49 +25,6 @@ from dupegrouper.definitions import (
 )
 from dupegrouper.strategies.custom import Custom
 from dupegrouper.strategy import DeduplicationStrategy
-
-
-# DATAFRAME CONSTRUCTOR:
-
-
-class _InitDataFrame:
-    """Initialize a DataFrame with a unique group identifier column.
-
-    Modifies the input DataFrame (either Pandas or Polars) to include a new
-    column "group_id", which contains sequential integer values starting from
-    from 1, to act as the new unique identified of duplicate, or near-duplicate
-    rows in the dataframe.
-
-    Note: the default label, "group_id" can be overriden via the environment
-    variable `GROUP_ID`.
-    """
-
-    def __init__(self, df: frames):
-        self.df: frames = self._init_dispatch(df)
-
-    @singledispatchmethod
-    @staticmethod
-    def _init_dispatch(df: frames):
-        """Dispatch method to initialise a dataframe with a new group id.
-
-        Args:
-            df: the input dataframe
-
-        Returns:
-            The dataframe, with new "group_id", or similarly named.
-
-        Raises:
-            NotImplemenetedError
-        """
-        raise NotImplementedError(f"Unsupported data frame: {type(df)}")
-
-    @_init_dispatch.register(pd.DataFrame)
-    def _(self, df):
-        return df.assign(**{GROUP_ID: range(1, len(df) + 1)})
-
-    @_init_dispatch.register(pl.DataFrame)
-    def _(self, df):
-        return df.with_columns(**{GROUP_ID: range(1, len(df) + 1)})
 
 
 # STRATEGY MANAGMENT:
@@ -172,7 +129,7 @@ class DupeGrouper:
     """
 
     def __init__(self, df: frames):
-        self._df = _InitDataFrame(df).df
+        self._df = _add_group_id(df)
         self._strategy_manager = _StrategyManager()
 
     @singledispatchmethod
@@ -344,3 +301,37 @@ class StrategyTypeError(Exception):
             base_msg = "Input dict is not valid: items must be a list of `DeduplicationStrategy` or tuples"
             context = ""
         super().__init__(base_msg + context)
+
+
+# ADD GROUP_ID:
+
+
+@singledispatch
+def _add_group_id(df: frames) -> frames:
+    """Add a "group id" to a dataframe
+
+    Modifies the input DataFrame to include a new column "group_id", which
+    contains sequential integer values starting from from 1, to act as the new
+    unique identified of duplicate, or near-duplicate rows in the dataframe.
+
+    Args:
+        df: the input dataframe
+
+    Returns:
+        The dataframe, with new "group_id", or similarly named.
+
+    Raises:
+        NotImplemenetedError
+    """
+    del df  # Unused
+
+
+@_add_group_id.register(pd.DataFrame)
+def _(df):
+    return df.assign(**{GROUP_ID: pd.RangeIndex(start=1, stop=len(df) + 1)})
+
+
+@_add_group_id.register(pl.DataFrame)
+def _(df):
+    # return df.with_columns(**{GROUP_ID: range(1, len(df) + 1)})
+    return df.with_columns(pl.arange(1, len(df) + 1).alias(GROUP_ID))
