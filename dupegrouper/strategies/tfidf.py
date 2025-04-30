@@ -13,7 +13,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer  # type: ignore
 from sparse_dot_topn import sp_matmul_topn  # type: ignore
 
 from dupegrouper.definitions import TMP_ATTR_LABEL, DataFrameType
-from dupegrouper.frames import DFMethods
+from dupegrouper.frames import DataFrameContainer
 from dupegrouper.strategy import DeduplicationStrategy
 
 
@@ -180,7 +180,7 @@ class TfIdf(DeduplicationStrategy):
             ")"
         )
 
-        frame_methods: DFMethods = self.frame_methods
+        frame_methods: DataFrameContainer = self.frame_methods
 
         tmp_attr: str = attr + TMP_ATTR_LABEL
 

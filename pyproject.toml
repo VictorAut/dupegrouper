@@ -27,6 +27,7 @@ scikit-learn = "^1.6.1"
 sparse-dot-topn = "^1.1.5"
 multipledispatch = "^1.0.0"
 typing-extensions = "^4.13.0"
+pyspark = "^3.5.5"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -38,6 +39,7 @@ ruff = "^0.11.2"
 mypy = "^1.15.0"
 pandas-stubs = { version = "^2.2.3.250308", python = ">=3.10" }
 scipy-stubs = { version = "^1.15.2.1", python = ">=3.10" }
+pyinstrument = "^5.0.1"
 
 
 [tool.poetry.group.test.dependencies]

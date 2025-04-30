@@ -6,10 +6,10 @@ import typing
 
 import polars as pl
 
-from dupegrouper.frames.dataframe import DFMethods
+from dupegrouper.frames.dataframe import DataFrameContainer
 
 
-class PolarsMethods(DFMethods):
+class PolarsMethods(DataFrameContainer):
 
     def __init__(self, df: pl.DataFrame):
         super().__init__(df)

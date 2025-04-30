@@ -1,5 +1,5 @@
-from .dataframe import DFMethods
+from .dataframe import DataFrameContainer
 
 __all__ = [
-    "DFMethods",
+    "DataFrameContainer",
 ]

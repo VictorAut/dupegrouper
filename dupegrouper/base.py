@@ -45,7 +45,7 @@ class DupeGrouper:
     """
 
     def __init__(self, df: DataFrameType):
-        self._df = _add_group_id(df)
+        self._df: DataFrameType = _add_group_id(df)
         self._strategy_manager = _StrategyManager()
 
     @singledispatchmethod

@@ -8,7 +8,7 @@ import numpy as np
 from rapidfuzz import fuzz
 
 from dupegrouper.definitions import TMP_ATTR_LABEL, DataFrameType
-from dupegrouper.frames import DFMethods
+from dupegrouper.frames import DataFrameContainer
 from dupegrouper.strategy import DeduplicationStrategy
 
 
@@ -42,7 +42,7 @@ class Fuzzy(DeduplicationStrategy):
         """
         logger.debug(f'Deduping attribute "{attr}" with {self.__class__.__name__}' f"(tolerance={self._tolerance})")
 
-        frame_methods: DFMethods = self.frame_methods
+        frame_methods: DataFrameContainer = self.frame_methods
 
         tmp_attr: str = attr + TMP_ATTR_LABEL
 

@@ -17,7 +17,7 @@ import polars as pl
 
 from dupegrouper.definitions import GROUP_ID, DataFrameType
 from dupegrouper.frames.methods import PandasMethods, PolarsMethods
-from dupegrouper.frames import DFMethods
+from dupegrouper.frames import DataFrameContainer
 
 
 # LOGGER:
@@ -42,7 +42,7 @@ class DeduplicationStrategy(ABC):
         Returns:
             self: i.e. allow for further chaining
         """
-        self.frame_methods: DFMethods = _DataFrameDispatcher(df).frame_methods
+        self.frame_methods: DataFrameContainer = _DataFrameDispatcher(df).frame_methods
         return self
 
     def assign_group_id(self, attr: str):
@@ -68,13 +68,13 @@ class DeduplicationStrategy(ABC):
             attr: the dataframe label of the attribute
 
         Returns:
-            frame_methods; i.e. an instance "DFMethods" i.e. container of data
-            and linked dataframe methods; ready for further downstream
+            frame_methods; i.e. an instance "DataFrameContainer" i.e. container
+            of data and linked dataframe methods; ready for further downstream
             processing.
         """
         _logger.debug(f'Re-assigning new "group_id" per duped instance of attribute "{attr}"')
 
-        frame_methods: DFMethods = self.frame_methods  # type according to future ABC
+        frame_methods: DataFrameContainer = self.frame_methods
 
         attrs = np.asarray(frame_methods.get_col(attr))
         groups = np.asarray(frame_methods.get_col(GROUP_ID))
@@ -99,7 +99,7 @@ class DeduplicationStrategy(ABC):
             groups,
         )
 
-        frame_methods: DFMethods = frame_methods.put_col(GROUP_ID, new_groups)  # type: ignore[no-redef]
+        frame_methods: DataFrameContainer = frame_methods.put_col(GROUP_ID, new_groups)  # type: ignore[no-redef]
 
         return frame_methods  # i.e. has `frame` and `methods`
 
@@ -116,18 +116,18 @@ class DeduplicationStrategy(ABC):
         pass
 
 
-# DATAFRAME DISPATCHER
+# DATAFRAME DISPATCHER:
 
 
 class _DataFrameDispatcher:
     """Dispatcher to collect methods for the given dataframe"""
 
     def __init__(self, df: DataFrameType):
-        self._frame_methods: DFMethods = self._df_dispatch(df)
+        self.frame_methods: DataFrameContainer = self._df_dispatch(df)
 
     @singledispatchmethod
     @staticmethod
-    def _df_dispatch(df: DataFrameType) -> DFMethods:
+    def _df_dispatch(df: DataFrameType) -> DataFrameContainer:
         """
         Dispatch the dataframe to the appropriate handler.
 
@@ -140,13 +140,9 @@ class _DataFrameDispatcher:
         raise NotImplementedError(f"Unsupported data frame: {type(df)}")
 
     @_df_dispatch.register(pd.DataFrame)
-    def _(self, df) -> DFMethods:
+    def _(self, df) -> DataFrameContainer:
         return PandasMethods(df)
 
     @_df_dispatch.register(pl.DataFrame)
-    def _(self, df) -> DFMethods:
+    def _(self, df) -> DataFrameContainer:
         return PolarsMethods(df)
-
-    @property
-    def frame_methods(self) -> DFMethods:
-        return self._frame_methods

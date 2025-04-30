@@ -7,7 +7,7 @@ import typing
 from dupegrouper.definitions import DataFrameType
 
 
-class DFMethods(ABC):
+class DataFrameContainer(ABC):
     """Implements needed methodsgiven any instance of a dataframe
 
     At runtime any instance of this class will also be a data container of the
@@ -16,7 +16,7 @@ class DFMethods(ABC):
     """
 
     def __init__(self, df: DataFrameType):
-        self._df = df
+        self._df: DataFrameType = df
 
     @abstractmethod
     def put_col(self, column: str, array) -> typing.Self:

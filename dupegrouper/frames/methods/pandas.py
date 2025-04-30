@@ -6,10 +6,10 @@ import typing
 
 import pandas as pd
 
-from dupegrouper.frames.dataframe import DFMethods
+from dupegrouper.frames.dataframe import DataFrameContainer
 
 
-class PandasMethods(DFMethods):
+class PandasMethods(DataFrameContainer):
 
     def __init__(self, df: pd.DataFrame):
         super().__init__(df)
