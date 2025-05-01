@@ -10,30 +10,48 @@ import pytest
 
 from dupegrouper.base import (
     DupeGrouper,
+    DeduplicationStrategy,
     StrategyTypeError,
-    _add_group_id,
     _StrategyManager,
+    _dispatch_dataframe,
 )
+from dupegrouper.frames import DataFrameContainer
 import dupegrouper.definitions
+import dupegrouper.frames
+import dupegrouper.frames.methods
 from dupegrouper.strategies import Exact, Fuzzy, TfIdf
-from dupegrouper.strategy import DeduplicationStrategy
 
 
-########################
-#  TEST _add_group_id #
-########################
+#############################
+#  TEST _dispatch_dataframe #
+#############################
 
 
-def test_init_dataframe_pandas(df_pandas_raw):
-    df_init = _add_group_id(df_pandas_raw)
-    assert "group_id" in df_init.columns
-    assert df_init["group_id"].tolist() == [i for i in range(1, 14)]
+def test_init_dataframe_pandas(df_pandas_raw: pd.DataFrame):
+    df_container: DataFrameContainer = _dispatch_dataframe(df_pandas_raw)
+    df: pd.DataFrame = df_container.frame
+    assert "group_id" in df.columns
+    assert df["group_id"].tolist() == [i for i in range(1, 14)]
 
 
-def test_init_dataframe_polars(df_polars_raw):
-    df_init = _add_group_id(df_polars_raw)
-    assert "group_id" in df_init.columns
-    assert df_init["group_id"].to_list() == [i for i in range(1, 14)]
+def test_init_dataframe_polars(df_polars_raw: pl.DataFrame):
+    df_container: DataFrameContainer = _dispatch_dataframe(df_polars_raw)
+    df: pl.DataFrame = df_container.frame
+    assert "group_id" in df.columns
+    assert df["group_id"].to_list() == [i for i in range(1, 14)]
+
+
+def test_dataframe_dispatcher_unsupported():
+    class FakeDataFrame:
+        pass
+
+    with pytest.raises(NotImplementedError, match="Unsupported data frame"):
+        _dispatch_dataframe(FakeDataFrame())
+
+
+######################
+#  TEST set group_id #
+######################
 
 
 @pytest.mark.parametrize(
@@ -56,14 +74,14 @@ def test_different_group_id_env_var(env_var_value, expected_value, df_pandas_raw
         os.environ.pop("GROUP_ID", None)  # remove it if exists
 
     importlib.reload(dupegrouper.definitions)  # reset constant
-    importlib.reload(dupegrouper.base)  # final value in `base`
-    df_init = _add_group_id(df_pandas_raw)
+    importlib.reload(dupegrouper.frames.methods.pandas)  # final value in `base`
+    df_init = _dispatch_dataframe(df_pandas_raw).frame
     assert expected_value in df_init.columns
 
     # clean up
     os.environ["GROUP_ID"] = "group_id"
     importlib.reload(dupegrouper.definitions)
-    importlib.reload(dupegrouper.base)
+    importlib.reload(dupegrouper.frames.methods.pandas)
 
 
 ##############################################

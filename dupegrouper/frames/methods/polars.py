@@ -6,6 +6,7 @@ import typing
 
 import polars as pl
 
+from dupegrouper.definitions import GROUP_ID
 from dupegrouper.frames.dataframe import DataFrameContainer
 
 
@@ -13,7 +14,14 @@ class PolarsMethods(DataFrameContainer):
 
     def __init__(self, df: pl.DataFrame):
         super().__init__(df)
-        self._df: pl.DataFrame = df
+        self._df: pl.DataFrame = self._add_group_id(df)
+
+    @staticmethod
+    @override
+    def _add_group_id(df) -> pl.DataFrame:
+        return df.with_columns(pl.arange(1, len(df) + 1).alias(GROUP_ID))
+
+    # POLARS API WRAPPERS:
 
     @override
     def put_col(self, column: str, array) -> typing.Self:
@@ -37,8 +45,3 @@ class PolarsMethods(DataFrameContainer):
     @override
     def fill_na(series: pl.Series, array) -> pl.Series:
         return series.fill_null(array)
-
-    @property
-    @override
-    def frame(self):
-        return self._df

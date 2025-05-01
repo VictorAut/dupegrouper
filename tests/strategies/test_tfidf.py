@@ -1,11 +1,12 @@
 import pytest
 
+from dupegrouper.base import _dispatch_dataframe
 from dupegrouper.strategies.tfidf import TfIdf
 
 
 def do_tfidf(df, tfidf_params, group_id):
     tfidf = TfIdf(**tfidf_params)
-    tfidf._set_df(df)
+    tfidf._set_df(_dispatch_dataframe(df))
 
     updated_df = tfidf.dedupe("address")
 

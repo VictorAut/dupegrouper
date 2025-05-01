@@ -8,15 +8,11 @@ overrideable `dedupe()` is defined.
 
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from functools import singledispatchmethod
 import logging
 
 import numpy as np
-import pandas as pd
-import polars as pl
 
 from dupegrouper.definitions import GROUP_ID, DataFrameType
-from dupegrouper.frames.methods import PandasMethods, PolarsMethods
 from dupegrouper.frames import DataFrameContainer
 
 
@@ -32,7 +28,7 @@ _logger = logging.getLogger(__name__)
 class DeduplicationStrategy(ABC):
     """Defines a deduplication strategy."""
 
-    def _set_df(self, df: DataFrameType):
+    def _set_df(self, frame_methods: DataFrameContainer):
         """Inject dataframe data and load dataframe methods corresponding
         to the type of the dataframe the corresponding methods.
 
@@ -42,7 +38,7 @@ class DeduplicationStrategy(ABC):
         Returns:
             self: i.e. allow for further chaining
         """
-        self.frame_methods: DataFrameContainer = _DataFrameDispatcher(df).frame_methods
+        self.frame_methods: DataFrameContainer = frame_methods
         return self
 
     def assign_group_id(self, attr: str):
@@ -114,35 +110,3 @@ class DeduplicationStrategy(ABC):
             DataFrameType: the deduplicated dataframe
         """
         pass
-
-
-# DATAFRAME DISPATCHER:
-
-
-class _DataFrameDispatcher:
-    """Dispatcher to collect methods for the given dataframe"""
-
-    def __init__(self, df: DataFrameType):
-        self.frame_methods: DataFrameContainer = self._df_dispatch(df)
-
-    @singledispatchmethod
-    @staticmethod
-    def _df_dispatch(df: DataFrameType) -> DataFrameContainer:
-        """
-        Dispatch the dataframe to the appropriate handler.
-
-        Args:
-            df: The dataframe to dispatch to the appropriate handler.
-
-        Raises:
-            NotImplementedError
-        """
-        raise NotImplementedError(f"Unsupported data frame: {type(df)}")
-
-    @_df_dispatch.register(pd.DataFrame)
-    def _(self, df) -> DataFrameContainer:
-        return PandasMethods(df)
-
-    @_df_dispatch.register(pl.DataFrame)
-    def _(self, df) -> DataFrameContainer:
-        return PolarsMethods(df)

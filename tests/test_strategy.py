@@ -4,31 +4,9 @@ import pandas as pd
 
 import pytest
 
-from dupegrouper.strategy import DeduplicationStrategy, _DataFrameDispatcher
+from dupegrouper.base import _dispatch_dataframe
+from dupegrouper.strategy import DeduplicationStrategy
 from dupegrouper.frames.methods import PandasMethods, PolarsMethods
-
-
-#############################
-# TEST _DataFrameDispatcher #
-#############################
-
-
-def test_dataframe_dispatcher_pandas(df_pandas):
-    dispatcher = _DataFrameDispatcher(df_pandas)
-    assert isinstance(dispatcher.frame_methods, PandasMethods)
-
-
-def test_dataframe_dispatcher_polars(df_polars):
-    dispatcher = _DataFrameDispatcher(df_polars)
-    assert isinstance(dispatcher.frame_methods, PolarsMethods)
-
-
-def test_dataframe_dispatcher_unsupported():
-    class FakeDataFrame:
-        pass
-
-    with pytest.raises(NotImplementedError, match="Unsupported data frame"):
-        _DataFrameDispatcher(FakeDataFrame())
 
 
 ###########################
@@ -43,14 +21,14 @@ class DummyStrategy(DeduplicationStrategy):
 
 def test_set_df_pandas(df_pandas):
     strategy = DummyStrategy()
-    strategy._set_df(df_pandas)
+    strategy._set_df(_dispatch_dataframe(df_pandas))
 
     assert isinstance(strategy.frame_methods, PandasMethods)
 
 
 def test_set_df_polars(df_polars):
     strategy = DummyStrategy()
-    strategy._set_df(df_polars)
+    strategy._set_df(_dispatch_dataframe(df_polars))
 
     assert isinstance(strategy.frame_methods, PolarsMethods)
 
@@ -77,7 +55,7 @@ def test_assign_group_id(attribute_array, expected_group_id):
     df = pd.DataFrame({"name": attribute_array, "group_id": [1, 2, 3, 4, 5, 6]})
 
     strategy = DummyStrategy()
-    strategy._set_df(df)
+    strategy._set_df(_dispatch_dataframe(df))
 
     updated_df = strategy.assign_group_id("name").frame
 
@@ -87,15 +65,24 @@ def test_assign_group_id(attribute_array, expected_group_id):
 def test_dedupe():
     """In a way, this essentially mimics testing `dupegrouper.strategies.Exact`"""
 
-    df = pd.DataFrame({"name": ["Alice", "Bob", "Alice", "Charlie", "Bob", "Charlie"], "group_id": [1, 2, 3, 4, 5, 6]})
+    df = pd.DataFrame(
+        {
+            "name": [
+                "Alice",
+                "Bob",
+                "Alice",
+                "Charlie",
+                "Bob",
+                "Charlie",
+            ],
+            "group_id": [1, 2, 3, 4, 5, 6],
+        }
+    )
 
     strategy = DummyStrategy()
-    strategy._set_df(df)
+    strategy._set_df(_dispatch_dataframe(df))
 
     deduped_df = strategy.dedupe("name")  # Uses assign_group_id internally
 
     expected_groups = [1, 2, 1, 4, 2, 4]
     assert list(deduped_df["group_id"]) == expected_groups
-
-
-# deduplication.strategies.Exact is wrapper of `assign_group_id` so above is valid

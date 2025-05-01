@@ -8,7 +8,7 @@ from dupegrouper.definitions import DataFrameType
 
 
 class DataFrameContainer(ABC):
-    """Implements needed methodsgiven any instance of a dataframe
+    """Container class for a dataframe and associated methods
 
     At runtime any instance of this class will also be a data container of the
     dataframe. The abstractmethods defined here are all the required
@@ -18,11 +18,19 @@ class DataFrameContainer(ABC):
     def __init__(self, df: DataFrameType):
         self._df: DataFrameType = df
 
+    @staticmethod
+    @abstractmethod
+    def _add_group_id(df: DataFrameType):
+        """Return a dataframe with a group id column"""
+        pass
+
+    # DATAFRAME `LIBRARY` WRAPPERS:
+
     @abstractmethod
     def put_col(self, column: str, array) -> typing.Self:
         """assign i.e. write a column with array-like data
 
-        No return: `_df` is updated
+        No return; `_df` is updated
         """
         pass
 
@@ -51,6 +59,9 @@ class DataFrameContainer(ABC):
         pass
 
     @property
-    @abstractmethod
     def frame(self):
-        pass
+        return self._df
+
+    @frame.setter
+    def frame(self, new_frame: DataFrameType):
+        self._df = new_frame

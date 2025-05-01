@@ -19,15 +19,16 @@ import pandas as pd
 import polars as pl
 
 from dupegrouper.definitions import (
-    GROUP_ID,
     StrategyMapCollection,
     DataFrameType,
 )
+from dupegrouper.frames.methods import PandasMethods, PolarsMethods
+from dupegrouper.frames import DataFrameContainer
 from dupegrouper.strategies.custom import Custom
 from dupegrouper.strategy import DeduplicationStrategy
 
 
-# BASE:
+# CORE:
 
 
 class DupeGrouper:
@@ -40,12 +41,12 @@ class DupeGrouper:
 
     Upon initialisation, `DupeGrouper` sets a new column, usually `"group_id"`
     — but you can control this by setting an environment variable `GROUP_ID` at
-    runtime. The group_id is linearly increasing, numeric id column starting at
-    1 to the length of the dataframe provided.
+    runtime. The group_id is a monotonically increasing, numeric id column
+    starting at 1 to the length of the dataframe provided.
     """
 
     def __init__(self, df: DataFrameType):
-        self._df: DataFrameType = _add_group_id(df)
+        self._df: DataFrameContainer = _dispatch_dataframe(df)
         self._strategy_manager = _StrategyManager()
 
     @singledispatchmethod
@@ -76,11 +77,11 @@ class DupeGrouper:
         return NotImplementedError(f"Unsupported strategy: {type(strategy)}")
 
     @_call_strategy_deduper.register(DeduplicationStrategy)
-    def _(self, strategy, attr):
+    def _(self, strategy, attr) -> DataFrameType:
         return strategy._set_df(self._df).dedupe(attr)
 
     @_call_strategy_deduper.register(tuple)
-    def _(self, strategy: tuple[typing.Callable, typing.Any], attr):
+    def _(self, strategy: tuple[typing.Callable, typing.Any], attr) -> DataFrameType:
         func, kwargs = strategy
         return Custom(func, attr, **kwargs)._set_df(self._df).dedupe()
 
@@ -116,7 +117,7 @@ class DupeGrouper:
     @_dedupe.register(str)
     def _(self, attr, strategy_collection):
         for strategy in strategy_collection["default"]:
-            self._df = self._call_strategy_deduper(strategy, attr)
+            self._df.frame = self._call_strategy_deduper(strategy, attr)
         self._strategy_manager.reset()
 
     @_dedupe.register(NoneType)
@@ -124,7 +125,8 @@ class DupeGrouper:
         del attr  # Unused
         for attr, strategies in strategy_collection.items():
             for strategy in strategies:
-                self._df = self._call_strategy_deduper(strategy, attr)
+                self._df.frame = self._call_strategy_deduper(strategy, attr)
+
         self._strategy_manager.reset()
 
     # PUBLIC API:
@@ -195,7 +197,7 @@ class DupeGrouper:
 
     @property
     def df(self) -> DataFrameType:
-        return self._df
+        return self._df.frame
 
 
 # STRATEGY MANAGER:
@@ -304,34 +306,28 @@ class StrategyTypeError(Exception):
         super().__init__(base_msg + context)
 
 
-# ADD GROUP_ID:
+# DATAFRAME DISPATCHER:
 
 
 @singledispatch
-def _add_group_id(df: DataFrameType) -> DataFrameType:
-    """Add a "group id" to a dataframe
-
-    Modifies the input DataFrame to include a new column "group_id", which
-    contains sequential integer values starting from from 1, to act as the new
-    unique identified of duplicate, or near-duplicate rows in the dataframe.
+def _dispatch_dataframe(df: DataFrameType) -> DataFrameContainer:
+    """
+    Dispatch the dataframe to the appropriate handler.
 
     Args:
-        df: the input dataframe
-
-    Returns:
-        The dataframe, with new "group_id", or similarly named.
+        df: The dataframe to dispatch to the appropriate handler.
 
     Raises:
-        NotImplemenetedError
+        NotImplementedError
     """
     raise NotImplementedError(f"Unsupported data frame: {type(df)}")
 
 
-@_add_group_id.register(pd.DataFrame)
+@_dispatch_dataframe.register(pd.DataFrame)
 def _(df):
-    return df.assign(**{GROUP_ID: pd.RangeIndex(start=1, stop=len(df) + 1)})
+    return PandasMethods(df)
 
 
-@_add_group_id.register(pl.DataFrame)
+@_dispatch_dataframe.register(pl.DataFrame)
 def _(df):
-    return df.with_columns(pl.arange(1, len(df) + 1).alias(GROUP_ID))
+    return PolarsMethods(df)

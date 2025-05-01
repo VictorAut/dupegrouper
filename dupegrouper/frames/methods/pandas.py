@@ -6,6 +6,7 @@ import typing
 
 import pandas as pd
 
+from dupegrouper.definitions import GROUP_ID
 from dupegrouper.frames.dataframe import DataFrameContainer
 
 
@@ -13,7 +14,14 @@ class PandasMethods(DataFrameContainer):
 
     def __init__(self, df: pd.DataFrame):
         super().__init__(df)
-        self._df: pd.DataFrame = df
+        self._df: pd.DataFrame = self._add_group_id(df)
+
+    @staticmethod
+    @override
+    def _add_group_id(df) -> pd.DataFrame:
+        return df.assign(**{GROUP_ID: pd.RangeIndex(start=1, stop=len(df) + 1)})
+
+    # PANDAS API WRAPPERS:
 
     @override
     def put_col(self, column: str, array) -> typing.Self:
@@ -37,8 +45,3 @@ class PandasMethods(DataFrameContainer):
     @override
     def fill_na(series: pd.Series, array) -> pd.Series:
         return series.fillna(array)
-
-    @property
-    @override
-    def frame(self):
-        return self._df

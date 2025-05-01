@@ -1,11 +1,12 @@
 import pytest
 
+from dupegrouper.base import _dispatch_dataframe
 from dupegrouper.strategies.fuzzy import Fuzzy
 
 
 def do_fuzzy(df, fuzzy_params, group_id):
     fuzzy = Fuzzy(**fuzzy_params)
-    fuzzy._set_df(df)
+    fuzzy._set_df(_dispatch_dataframe(df))
 
     updated_df = fuzzy.dedupe("address")
 
