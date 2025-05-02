@@ -58,13 +58,15 @@ class DataFrameContainer(ABC):
         """Return a column array-like of data null-filled with `array`"""
         pass
 
-    # @abstractmethod
-    # def __getattr__(self, name: str) -> typing.Any:
-    #     return getattr(self._df, name)
+    @abstractmethod
+    def __getattr__(self, name: str) -> typing.Any:
+        return getattr(self._df, name)
 
     @property
     def frame(self):
         return self._df
+    
+    # THIN TRANSPARENCY DELEGATION
 
     @frame.setter
     def frame(self, new_frame: DataFrameType):

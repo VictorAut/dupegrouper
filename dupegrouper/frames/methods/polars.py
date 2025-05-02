@@ -45,3 +45,8 @@ class PolarsMethods(DataFrameContainer):
     @override
     def fill_na(series: pl.Series, array) -> pl.Series:
         return series.fill_null(array)
+    
+    # THIN TRANSPARENCY DELEGATION
+    
+    def __getattr__(self, name: str) -> typing.Any:
+        return getattr(self._df, name)
