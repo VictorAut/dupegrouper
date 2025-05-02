@@ -3,8 +3,7 @@
 import logging
 from typing_extensions import override
 
-from dupegrouper.definitions import DataFrameType
-from dupegrouper.frames import DataFrameContainer
+from dupegrouper.frames import WrappedDataFrame
 from dupegrouper.strategy import DeduplicationStrategy
 
 
@@ -20,7 +19,6 @@ logger = logging.getLogger(__name__)
 class Exact(DeduplicationStrategy):
 
     @override
-    def dedupe(self, attr: str, /) -> DataFrameType:
+    def dedupe(self, attr: str, /) -> WrappedDataFrame:
         logger.debug(f'Deduping attribute "{attr}" with {self.__class__.__name__}()')
-        frame_methods: DataFrameContainer = self.assign_group_id(attr)
-        return frame_methods.frame
+        return self.assign_group_id(attr)

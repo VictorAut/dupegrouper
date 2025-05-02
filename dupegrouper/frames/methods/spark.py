@@ -6,10 +6,10 @@
 
 # from pyspark.sql import DataFrame
 
-# from dupegrouper.frames.dataframe import DataFrameContainer
+# from dupegrouper.frames.dataframe import WrappedDataFrame
 
 
-# class SparkMethods(DataFrameContainer):
+# class SparkMethods(WrappedDataFrame):
 
 #     def __init__(self, df: DataFrame):
 #         super().__init__(df)

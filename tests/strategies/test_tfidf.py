@@ -1,14 +1,15 @@
 import pytest
 
-from dupegrouper.base import _dispatch_dataframe
+from dupegrouper.base import _wrap
 from dupegrouper.strategies.tfidf import TfIdf
 
 
 def do_tfidf(df, tfidf_params, group_id):
     tfidf = TfIdf(**tfidf_params)
-    tfidf._set_df(_dispatch_dataframe(df))
+    tfidf._set_df(_wrap(df))
 
-    updated_df = tfidf.dedupe("address")
+    updated_wrapped_df = tfidf.dedupe("address")
+    updated_df = updated_wrapped_df.unwrap()
 
     assert list(updated_df["group_id"]) == group_id
 

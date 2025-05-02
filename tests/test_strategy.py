@@ -4,9 +4,9 @@ import pandas as pd
 
 import pytest
 
-from dupegrouper.base import _dispatch_dataframe
+from dupegrouper.base import _wrap
 from dupegrouper.strategy import DeduplicationStrategy
-from dupegrouper.frames.methods import PandasMethods, PolarsMethods
+from dupegrouper.frames.methods import WrappedPandasDataFrame, WrappedPolarsDataFrame
 
 
 ###########################
@@ -16,21 +16,21 @@ from dupegrouper.frames.methods import PandasMethods, PolarsMethods
 
 class DummyStrategy(DeduplicationStrategy):
     def dedupe(self, attr: str):
-        return self.assign_group_id(attr).frame
+        return self.assign_group_id(attr).unwrap()
 
 
 def test_set_df_pandas(df_pandas):
     strategy = DummyStrategy()
-    strategy._set_df(_dispatch_dataframe(df_pandas))
+    strategy._set_df(_wrap(df_pandas))
 
-    assert isinstance(strategy.frame_methods, PandasMethods)
+    assert isinstance(strategy.frame_methods, WrappedPandasDataFrame)
 
 
 def test_set_df_polars(df_polars):
     strategy = DummyStrategy()
-    strategy._set_df(_dispatch_dataframe(df_polars))
+    strategy._set_df(_wrap(df_polars))
 
-    assert isinstance(strategy.frame_methods, PolarsMethods)
+    assert isinstance(strategy.frame_methods, WrappedPolarsDataFrame)
 
 
 # all length 6 arrays
@@ -55,9 +55,9 @@ def test_assign_group_id(attribute_array, expected_group_id):
     df = pd.DataFrame({"name": attribute_array, "group_id": [1, 2, 3, 4, 5, 6]})
 
     strategy = DummyStrategy()
-    strategy._set_df(_dispatch_dataframe(df))
+    strategy._set_df(_wrap(df))
 
-    updated_df = strategy.assign_group_id("name").frame
+    updated_df = strategy.assign_group_id("name").unwrap()
 
     assert list(updated_df["group_id"]) == expected_group_id
 
@@ -80,7 +80,7 @@ def test_dedupe():
     )
 
     strategy = DummyStrategy()
-    strategy._set_df(_dispatch_dataframe(df))
+    strategy._set_df(_wrap(df))
 
     deduped_df = strategy.dedupe("name")  # Uses assign_group_id internally
 

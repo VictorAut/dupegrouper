@@ -12,8 +12,8 @@ from scipy.sparse import csr_matrix
 from sklearn.feature_extraction.text import TfidfVectorizer  # type: ignore
 from sparse_dot_topn import sp_matmul_topn  # type: ignore
 
-from dupegrouper.definitions import TMP_ATTR_LABEL, DataFrameType
-from dupegrouper.frames import DataFrameContainer
+from dupegrouper.definitions import TMP_ATTR
+from dupegrouper.frames import WrappedDataFrame
 from dupegrouper.strategy import DeduplicationStrategy
 
 
@@ -160,7 +160,7 @@ class TfIdf(DeduplicationStrategy):
                 yield {i: j}
 
     @override
-    def dedupe(self, attr: str, /) -> DataFrameType:
+    def dedupe(self, attr: str, /) -> WrappedDataFrame:
         """Deduplicate with term frequency, inverse document frequency.
 
         Here, 1-to-1 maps are identified using the procedure i.e. for *each*
@@ -180,25 +180,20 @@ class TfIdf(DeduplicationStrategy):
             ")"
         )
 
-        frame_methods: DataFrameContainer = self.frame_methods
-
-        tmp_attr: str = attr + TMP_ATTR_LABEL
-
         vectorizer = self._vectorize(self._ngram)
 
-        similarities = self._get_similarities_matrix(vectorizer, frame_methods.get_col(attr))
+        similarities = self._get_similarities_matrix(vectorizer, self.frame_methods.get_col(attr))
 
-        matches = self._get_matches_array(similarities, np.array(frame_methods.get_col(attr)))
+        matches = self._get_matches_array(similarities, np.array(self.frame_methods.get_col(attr)))
 
-        logger.debug(f'Assigning duplicated "{attr}" instances to attribute "{tmp_attr}"')
         for tfidf_map in self._gen_map(matches):
 
-            attr_map = frame_methods.map_dict(attr, tfidf_map)  # i.e. "Series" like
+            attr_map = self.frame_methods.map_dict(attr, tfidf_map)  # i.e. "Series" like
 
-            new_attr = frame_methods.fill_na(attr_map, frame_methods.get_col(attr))  # i.e. "Series" like
+            new_attr = self.frame_methods.fill_na(attr_map, self.frame_methods.get_col(attr))  # i.e. "Series" like
 
-            frame_methods.put_col(tmp_attr, new_attr)  # inplace create column
+            self.frame_methods.put_col(TMP_ATTR, new_attr)
 
-            self.assign_group_id(tmp_attr).drop_col(tmp_attr)  # updates `framemethods`
+            self.assign_group_id(TMP_ATTR).drop_col(TMP_ATTR)  # updates `frame_methods`
 
-        return frame_methods.frame
+        return self.frame_methods

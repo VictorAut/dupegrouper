@@ -18,10 +18,11 @@ if typing.TYPE_CHECKING:
 GROUP_ID: typing.Final[str] = os.environ.get("GROUP_ID", "group_id")
 
 # the ethereal dataframe label created whilst deduplicating
-TMP_ATTR_LABEL: typing.Final[str] = os.environ.get("TMP_ATTR_LABEL", "__tmp_attr")
+TMP_ATTR: typing.Final[str] = os.environ.get("TMP_ATTR", "__tmp_attr")
 
 
 # TYPES:
+
 
 StrategyMapCollection: typing.TypeAlias = typing.DefaultDict[
     str,
@@ -29,4 +30,4 @@ StrategyMapCollection: typing.TypeAlias = typing.DefaultDict[
 ]
 
 
-DataFrameType: typing.TypeAlias = "pd.DataFrame | pl.DataFrame"  # | ...
+DataFrame: typing.TypeAlias = pd.DataFrame | pl.DataFrame  # | ...

@@ -7,8 +7,8 @@ from typing_extensions import override
 import numpy as np
 from rapidfuzz import fuzz
 
-from dupegrouper.definitions import TMP_ATTR_LABEL, DataFrameType
-from dupegrouper.frames import DataFrameContainer
+from dupegrouper.definitions import TMP_ATTR
+from dupegrouper.frames import WrappedDataFrame
 from dupegrouper.strategy import DeduplicationStrategy
 
 
@@ -33,7 +33,7 @@ class Fuzzy(DeduplicationStrategy):
         return fuzz.ratio(s1, s2)
 
     @override
-    def dedupe(self, attr: str, /) -> DataFrameType:
+    def dedupe(self, attr: str, /) -> WrappedDataFrame:
         """Deduplicate with string match using fuzzy wuzzy
 
         String matches are applied on only *unique* instances of the attribute,
@@ -42,11 +42,7 @@ class Fuzzy(DeduplicationStrategy):
         """
         logger.debug(f'Deduping attribute "{attr}" with {self.__class__.__name__}' f"(tolerance={self._tolerance})")
 
-        frame_methods: DataFrameContainer = self.frame_methods
-
-        tmp_attr: str = attr + TMP_ATTR_LABEL
-
-        uattrs = np.unique(frame_methods.get_col(attr))
+        uattrs = np.unique(self.frame_methods.get_col(attr))
 
         similarity_matrix = np.array([[self._fuzz_ratio(s1, s2) for s1 in uattrs] for s2 in uattrs])
 
@@ -54,10 +50,8 @@ class Fuzzy(DeduplicationStrategy):
 
         fuzzy_map = {uattrs[i]: uattrs[j] for i, j in zip(*match_indices)}
 
-        attr_map = frame_methods.map_dict(attr, fuzzy_map)  # i.e. a "Series"
+        attr_map = self.frame_methods.map_dict(attr, fuzzy_map)  # i.e. a "Series"
 
-        logger.debug(f'Assigning duplicated "{attr}" instances to attribute "{tmp_attr}"')
+        self.frame_methods.put_col(TMP_ATTR, attr_map)
 
-        frame_methods.put_col(tmp_attr, attr_map)  # inplace create column
-
-        return self.assign_group_id(tmp_attr).drop_col(tmp_attr).frame
+        return self.assign_group_id(TMP_ATTR).drop_col(TMP_ATTR)

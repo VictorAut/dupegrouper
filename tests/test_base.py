@@ -13,9 +13,9 @@ from dupegrouper.base import (
     DeduplicationStrategy,
     StrategyTypeError,
     _StrategyManager,
-    _dispatch_dataframe,
+    _wrap,
 )
-from dupegrouper.frames import DataFrameContainer
+from dupegrouper.frames import WrappedDataFrame
 import dupegrouper.definitions
 import dupegrouper.frames
 import dupegrouper.frames.methods
@@ -23,20 +23,20 @@ from dupegrouper.strategies import Exact, Fuzzy, TfIdf
 
 
 #############################
-#  TEST _dispatch_dataframe #
+#  TEST _wrap #
 #############################
 
 
 def test_init_dataframe_pandas(df_pandas_raw: pd.DataFrame):
-    df_container: DataFrameContainer = _dispatch_dataframe(df_pandas_raw)
-    df: pd.DataFrame = df_container.frame
+    df_container: WrappedDataFrame = _wrap(df_pandas_raw)
+    df: pd.DataFrame = df_container.unwrap()  # type: ignore
     assert "group_id" in df.columns
     assert df["group_id"].tolist() == [i for i in range(1, 14)]
 
 
 def test_init_dataframe_polars(df_polars_raw: pl.DataFrame):
-    df_container: DataFrameContainer = _dispatch_dataframe(df_polars_raw)
-    df: pl.DataFrame = df_container.frame
+    df_container: WrappedDataFrame = _wrap(df_polars_raw)
+    df: pl.DataFrame = df_container.unwrap()  # type: ignore
     assert "group_id" in df.columns
     assert df["group_id"].to_list() == [i for i in range(1, 14)]
 
@@ -46,7 +46,7 @@ def test_dataframe_dispatcher_unsupported():
         pass
 
     with pytest.raises(NotImplementedError, match="Unsupported data frame"):
-        _dispatch_dataframe(FakeDataFrame())
+        _wrap(FakeDataFrame())
 
 
 ######################
@@ -75,7 +75,7 @@ def test_different_group_id_env_var(env_var_value, expected_value, df_pandas_raw
 
     importlib.reload(dupegrouper.definitions)  # reset constant
     importlib.reload(dupegrouper.frames.methods.pandas)  # final value in `base`
-    df_init = _dispatch_dataframe(df_pandas_raw).frame
+    df_init = _wrap(df_pandas_raw).unwrap()
     assert expected_value in df_init.columns
 
     # clean up

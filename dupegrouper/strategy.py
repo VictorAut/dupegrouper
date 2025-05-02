@@ -9,11 +9,12 @@ overrideable `dedupe()` is defined.
 from __future__ import annotations
 from abc import ABC, abstractmethod
 import logging
+import typing
 
 import numpy as np
 
-from dupegrouper.definitions import GROUP_ID, DataFrameType
-from dupegrouper.frames import DataFrameContainer
+from dupegrouper.definitions import GROUP_ID
+from dupegrouper.frames import WrappedDataFrame
 
 
 # LOGGER:
@@ -28,7 +29,7 @@ _logger = logging.getLogger(__name__)
 class DeduplicationStrategy(ABC):
     """Defines a deduplication strategy."""
 
-    def _set_df(self, frame_methods: DataFrameContainer):
+    def _set_df(self, frame_methods: WrappedDataFrame) -> typing.Self:
         """Inject dataframe data and load dataframe methods corresponding
         to the type of the dataframe the corresponding methods.
 
@@ -38,10 +39,10 @@ class DeduplicationStrategy(ABC):
         Returns:
             self: i.e. allow for further chaining
         """
-        self.frame_methods: DataFrameContainer = frame_methods
+        self.frame_methods: WrappedDataFrame = frame_methods
         return self
 
-    def assign_group_id(self, attr: str):
+    def assign_group_id(self, attr: str) -> WrappedDataFrame:
         """Assign new group ids according to duplicated instances of attribute.
 
         Array-like contents of the dataframe's attributes are collected as a
@@ -64,16 +65,14 @@ class DeduplicationStrategy(ABC):
             attr: the dataframe label of the attribute
 
         Returns:
-            frame_methods; i.e. an instance "DataFrameContainer" i.e. container
+            frame_methods; i.e. an instance "WrappedDataFrame" i.e. container
             of data and linked dataframe methods; ready for further downstream
             processing.
         """
         _logger.debug(f'Re-assigning new "group_id" per duped instance of attribute "{attr}"')
 
-        frame_methods: DataFrameContainer = self.frame_methods
-
-        attrs = np.asarray(frame_methods.get_col(attr))
-        groups = np.asarray(frame_methods.get_col(GROUP_ID))
+        attrs = np.asarray(self.frame_methods.get_col(attr))
+        groups = np.asarray(self.frame_methods.get_col(GROUP_ID))
 
         unique_attrs, unique_indices = np.unique(
             attrs,
@@ -95,18 +94,16 @@ class DeduplicationStrategy(ABC):
             groups,
         )
 
-        frame_methods: DataFrameContainer = frame_methods.put_col(GROUP_ID, new_groups)  # type: ignore[no-redef]
-
-        return frame_methods  # i.e. has `frame` and `methods`
+        return self.frame_methods.put_col(GROUP_ID, new_groups)
 
     @abstractmethod
-    def dedupe(self, attr: str) -> DataFrameType:
+    def dedupe(self, attr: str) -> WrappedDataFrame:
         """Use `assign_group_id` to implement deduplication logic
 
         Args:
             attr: The attribute to use for deduplication.
 
         Returns:
-            DataFrameType: the deduplicated dataframe
+            A deduplicated instance of WrappedDataFrame
         """
         pass

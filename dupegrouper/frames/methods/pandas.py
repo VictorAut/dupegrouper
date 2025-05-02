@@ -7,10 +7,10 @@ import typing
 import pandas as pd
 
 from dupegrouper.definitions import GROUP_ID
-from dupegrouper.frames.dataframe import DataFrameContainer
+from dupegrouper.frames.dataframe import WrappedDataFrame
 
 
-class PandasMethods(DataFrameContainer):
+class WrappedPandasDataFrame(WrappedDataFrame):
 
     def __init__(self, df: pd.DataFrame):
         super().__init__(df)
@@ -45,7 +45,7 @@ class PandasMethods(DataFrameContainer):
     @override
     def fill_na(series: pd.Series, array) -> pd.Series:
         return series.fillna(array)
-    
+
     # THIN TRANSPARENCY DELEGATION
 
     def __getattr__(self, name: str) -> typing.Any:

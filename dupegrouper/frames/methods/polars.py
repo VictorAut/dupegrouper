@@ -7,10 +7,10 @@ import typing
 import polars as pl
 
 from dupegrouper.definitions import GROUP_ID
-from dupegrouper.frames.dataframe import DataFrameContainer
+from dupegrouper.frames.dataframe import WrappedDataFrame
 
 
-class PolarsMethods(DataFrameContainer):
+class WrappedPolarsDataFrame(WrappedDataFrame):
 
     def __init__(self, df: pl.DataFrame):
         super().__init__(df)
@@ -45,8 +45,8 @@ class PolarsMethods(DataFrameContainer):
     @override
     def fill_na(series: pl.Series, array) -> pl.Series:
         return series.fill_null(array)
-    
+
     # THIN TRANSPARENCY DELEGATION
-    
+
     def __getattr__(self, name: str) -> typing.Any:
         return getattr(self._df, name)

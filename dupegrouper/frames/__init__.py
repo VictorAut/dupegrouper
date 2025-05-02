@@ -1,5 +1,5 @@
-from .dataframe import DataFrameContainer
+from .dataframe import WrappedDataFrame
 
 __all__ = [
-    "DataFrameContainer",
+    "WrappedDataFrame",
 ]

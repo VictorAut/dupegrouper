@@ -20,10 +20,10 @@ import polars as pl
 
 from dupegrouper.definitions import (
     StrategyMapCollection,
-    DataFrameType,
+    DataFrame,
 )
-from dupegrouper.frames.methods import PandasMethods, PolarsMethods
-from dupegrouper.frames import DataFrameContainer
+from dupegrouper.frames.methods import WrappedPandasDataFrame, WrappedPolarsDataFrame
+from dupegrouper.frames import WrappedDataFrame
 from dupegrouper.strategies.custom import Custom
 from dupegrouper.strategy import DeduplicationStrategy
 
@@ -45,8 +45,8 @@ class DupeGrouper:
     starting at 1 to the length of the dataframe provided.
     """
 
-    def __init__(self, df: DataFrameType):
-        self._df: DataFrameContainer = _dispatch_dataframe(df)
+    def __init__(self, df: DataFrame):
+        self._df: WrappedDataFrame = _wrap(df)
         self._strategy_manager = _StrategyManager()
 
     @singledispatchmethod
@@ -77,11 +77,11 @@ class DupeGrouper:
         return NotImplementedError(f"Unsupported strategy: {type(strategy)}")
 
     @_call_strategy_deduper.register(DeduplicationStrategy)
-    def _(self, strategy, attr) -> DataFrameType:
+    def _(self, strategy, attr) -> WrappedDataFrame:
         return strategy._set_df(self._df).dedupe(attr)
 
     @_call_strategy_deduper.register(tuple)
-    def _(self, strategy: tuple[typing.Callable, typing.Any], attr) -> DataFrameType:
+    def _(self, strategy: tuple[typing.Callable, typing.Any], attr) -> WrappedDataFrame:
         func, kwargs = strategy
         return Custom(func, attr, **kwargs)._set_df(self._df).dedupe()
 
@@ -117,7 +117,7 @@ class DupeGrouper:
     @_dedupe.register(str)
     def _(self, attr, strategy_collection):
         for strategy in strategy_collection["default"]:
-            self._df.frame = self._call_strategy_deduper(strategy, attr)
+            self._df = self._call_strategy_deduper(strategy, attr)
         self._strategy_manager.reset()
 
     @_dedupe.register(NoneType)
@@ -125,7 +125,8 @@ class DupeGrouper:
         del attr  # Unused
         for attr, strategies in strategy_collection.items():
             for strategy in strategies:
-                self._df.frame = self._call_strategy_deduper(strategy, attr)
+
+                self._df = self._call_strategy_deduper(strategy, attr)
 
         self._strategy_manager.reset()
 
@@ -196,8 +197,8 @@ class DupeGrouper:
         return {k: parse_strategies(v) for k, v in strategies.items()}
 
     @property
-    def df(self) -> DataFrameType:
-        return self._df.frame
+    def df(self) -> DataFrame:
+        return self._df.unwrap()
 
 
 # STRATEGY MANAGER:
@@ -306,16 +307,19 @@ class StrategyTypeError(Exception):
         super().__init__(base_msg + context)
 
 
-# DATAFRAME DISPATCHER:
+# WRAP DATAFRAME DISPATCHER:
 
 
 @singledispatch
-def _dispatch_dataframe(df: DataFrameType) -> DataFrameContainer:
+def _wrap(df: DataFrame) -> WrappedDataFrame:
     """
-    Dispatch the dataframe to the appropriate handler.
+    Dispatch the dataframe to the appropriate wrapping handler.
 
     Args:
         df: The dataframe to dispatch to the appropriate handler.
+
+    Returns:
+        WrappedDataFrame, a DataFrame wrapped with a uniform interface.
 
     Raises:
         NotImplementedError
@@ -323,11 +327,11 @@ def _dispatch_dataframe(df: DataFrameType) -> DataFrameContainer:
     raise NotImplementedError(f"Unsupported data frame: {type(df)}")
 
 
-@_dispatch_dataframe.register(pd.DataFrame)
+@_wrap.register(pd.DataFrame)
 def _(df):
-    return PandasMethods(df)
+    return WrappedPandasDataFrame(df)
 
 
-@_dispatch_dataframe.register(pl.DataFrame)
+@_wrap.register(pl.DataFrame)
 def _(df):
-    return PolarsMethods(df)
+    return WrappedPolarsDataFrame(df)

@@ -1,8 +1,8 @@
-from .pandas import PandasMethods
-from .polars import PolarsMethods
+from .pandas import WrappedPandasDataFrame
+from .polars import WrappedPolarsDataFrame
 
 
 __all__ = [
-    "PandasMethods",
-    "PolarsMethods",
+    "WrappedPandasDataFrame",
+    "WrappedPolarsDataFrame",
 ]

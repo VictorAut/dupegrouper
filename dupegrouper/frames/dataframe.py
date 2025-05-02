@@ -4,10 +4,10 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 import typing
 
-from dupegrouper.definitions import DataFrameType
+from dupegrouper.definitions import DataFrame
 
 
-class DataFrameContainer(ABC):
+class WrappedDataFrame(ABC):
     """Container class for a dataframe and associated methods
 
     At runtime any instance of this class will also be a data container of the
@@ -15,12 +15,12 @@ class DataFrameContainer(ABC):
     implementations needed
     """
 
-    def __init__(self, df: DataFrameType):
-        self._df: DataFrameType = df
+    def __init__(self, df: DataFrame):
+        self._df: DataFrame = df
 
     @staticmethod
     @abstractmethod
-    def _add_group_id(df: DataFrameType):
+    def _add_group_id(df: DataFrame):
         """Return a dataframe with a group id column"""
         pass
 
@@ -58,16 +58,11 @@ class DataFrameContainer(ABC):
         """Return a column array-like of data null-filled with `array`"""
         pass
 
+    # THIN TRANSPARENCY DELEGATION
+
     @abstractmethod
     def __getattr__(self, name: str) -> typing.Any:
         return getattr(self._df, name)
 
-    @property
-    def frame(self):
+    def unwrap(self) -> DataFrame:
         return self._df
-    
-    # THIN TRANSPARENCY DELEGATION
-
-    @frame.setter
-    def frame(self, new_frame: DataFrameType):
-        self._df = new_frame
