@@ -7,7 +7,7 @@ import typing
 import polars as pl
 
 from dupegrouper.definitions import GROUP_ID
-from dupegrouper.frames.dataframe import WrappedDataFrame
+from dupegrouper.wrappers.dataframe import WrappedDataFrame
 
 
 class WrappedPolarsDataFrame(WrappedDataFrame):

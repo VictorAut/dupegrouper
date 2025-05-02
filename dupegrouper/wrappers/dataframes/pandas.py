@@ -7,7 +7,7 @@ import typing
 import pandas as pd
 
 from dupegrouper.definitions import GROUP_ID
-from dupegrouper.frames.dataframe import WrappedDataFrame
+from dupegrouper.wrappers.dataframe import WrappedDataFrame
 
 
 class WrappedPandasDataFrame(WrappedDataFrame):

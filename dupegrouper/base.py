@@ -22,8 +22,8 @@ from dupegrouper.definitions import (
     StrategyMapCollection,
     DataFrame,
 )
-from dupegrouper.frames.methods import WrappedPandasDataFrame, WrappedPolarsDataFrame
-from dupegrouper.frames import WrappedDataFrame
+from dupegrouper.wrappers.dataframes import WrappedPandasDataFrame, WrappedPolarsDataFrame
+from dupegrouper.wrappers import WrappedDataFrame
 from dupegrouper.strategies.custom import Custom
 from dupegrouper.strategy import DeduplicationStrategy
 

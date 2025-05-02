@@ -8,7 +8,7 @@ import numpy as np
 from rapidfuzz import fuzz
 
 from dupegrouper.definitions import TMP_ATTR
-from dupegrouper.frames import WrappedDataFrame
+from dupegrouper.wrappers import WrappedDataFrame
 from dupegrouper.strategy import DeduplicationStrategy
 
 

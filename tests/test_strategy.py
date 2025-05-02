@@ -6,7 +6,7 @@ import pytest
 
 from dupegrouper.base import _wrap
 from dupegrouper.strategy import DeduplicationStrategy
-from dupegrouper.frames.methods import WrappedPandasDataFrame, WrappedPolarsDataFrame
+from dupegrouper.wrappers.dataframes import WrappedPandasDataFrame, WrappedPolarsDataFrame
 
 
 ###########################

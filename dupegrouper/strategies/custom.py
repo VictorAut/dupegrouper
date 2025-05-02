@@ -8,7 +8,7 @@ import typing
 from typing_extensions import override
 
 from dupegrouper.definitions import TMP_ATTR
-from dupegrouper.frames import WrappedDataFrame
+from dupegrouper.wrappers import WrappedDataFrame
 from dupegrouper.strategy import DeduplicationStrategy
 
 

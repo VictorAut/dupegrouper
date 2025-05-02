@@ -14,7 +14,7 @@ import typing
 import numpy as np
 
 from dupegrouper.definitions import GROUP_ID
-from dupegrouper.frames import WrappedDataFrame
+from dupegrouper.wrappers import WrappedDataFrame
 
 
 # LOGGER:

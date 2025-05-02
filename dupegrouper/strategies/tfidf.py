@@ -13,7 +13,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer  # type: ignore
 from sparse_dot_topn import sp_matmul_topn  # type: ignore
 
 from dupegrouper.definitions import TMP_ATTR
-from dupegrouper.frames import WrappedDataFrame
+from dupegrouper.wrappers import WrappedDataFrame
 from dupegrouper.strategy import DeduplicationStrategy
 
 

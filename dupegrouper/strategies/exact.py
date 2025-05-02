@@ -3,7 +3,7 @@
 import logging
 from typing_extensions import override
 
-from dupegrouper.frames import WrappedDataFrame
+from dupegrouper.wrappers import WrappedDataFrame
 from dupegrouper.strategy import DeduplicationStrategy
 
 
