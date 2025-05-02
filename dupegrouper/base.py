@@ -18,10 +18,7 @@ import typing
 import pandas as pd
 import polars as pl
 
-from dupegrouper.definitions import (
-    StrategyMapCollection,
-    DataFrame,
-)
+from dupegrouper.definitions import StrategyMapCollection, DataFrame
 from dupegrouper.wrappers.dataframes import WrappedPandasDataFrame, WrappedPolarsDataFrame
 from dupegrouper.wrappers import WrappedDataFrame
 from dupegrouper.strategies.custom import Custom
@@ -245,10 +242,10 @@ class _StrategyManager:
             return
         raise StrategyTypeError(strategy)
 
-    def get(self):
+    def get(self) -> StrategyMapCollection:
         return self._strategies
 
-    def validate(self, strategy):
+    def validate(self, strategy) -> bool:
         """
         Validates a strategy
 
