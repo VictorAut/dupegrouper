@@ -6,7 +6,7 @@ from dupegrouper.strategies.tfidf import TfIdf
 
 def do_tfidf(df, tfidf_params, group_id):
     tfidf = TfIdf(**tfidf_params)
-    tfidf._set_df(_wrap(df))
+    tfidf.with_frame(_wrap(df))
 
     updated_wrapped_df = tfidf.dedupe("address")
     updated_df = updated_wrapped_df.unwrap()

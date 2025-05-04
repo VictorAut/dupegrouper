@@ -21,7 +21,7 @@ def my_func(df: pd.DataFrame, attr: str, /, match_str: str) -> dict[str, str]:
 def test_custom_dedupe(df_pandas):
 
     deduper = Custom(my_func, "address", match_str="navarra")
-    deduper._set_df(_wrap(df_pandas))
+    deduper.with_frame(_wrap(df_pandas))
 
     updated_wrapped_df = deduper.dedupe()
     updated_df = updated_wrapped_df.unwrap()

@@ -63,15 +63,15 @@ class Custom(DeduplicationStrategy):
             f'({", ".join(f"{k}={v}" for k, v in self._kwargs.items())})'
         )
 
-        attr_map = self.frame_methods.map_dict(
+        attr_map = self.wrapped_df.map_dict(
             self._attr,
             self._func(
-                self.frame_methods,
+                self.wrapped_df,
                 self._attr,
                 **self._kwargs,
             ),
         )
 
-        self.frame_methods.put_col(TMP_ATTR, attr_map)
+        self.wrapped_df.put_col(TMP_ATTR, attr_map)
 
         return self.assign_group_id(TMP_ATTR).drop_col(TMP_ATTR)

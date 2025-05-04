@@ -74,14 +74,14 @@ def test_different_group_id_env_var(env_var_value, expected_value, df_pandas_raw
         os.environ.pop("GROUP_ID", None)  # remove it if exists
 
     importlib.reload(dupegrouper.definitions)  # reset constant
-    importlib.reload(dupegrouper.wrappers.dataframes.pandas)  # final value in `base`
+    importlib.reload(dupegrouper.wrappers.dataframes._pandas)  # final value in `base`
     df_init = _wrap(df_pandas_raw).unwrap()
     assert expected_value in df_init.columns
 
     # clean up
     os.environ["GROUP_ID"] = "group_id"
     importlib.reload(dupegrouper.definitions)
-    importlib.reload(dupegrouper.wrappers.dataframes.pandas)
+    importlib.reload(dupegrouper.wrappers.dataframes._pandas)
 
 
 ##############################################

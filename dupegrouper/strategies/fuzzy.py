@@ -42,7 +42,7 @@ class Fuzzy(DeduplicationStrategy):
         """
         logger.debug(f'Deduping attribute "{attr}" with {self.__class__.__name__}' f"(tolerance={self._tolerance})")
 
-        uattrs = np.unique(self.frame_methods.get_col(attr))
+        uattrs = np.unique(self.wrapped_df.get_col(attr))
 
         similarity_matrix = np.array([[self._fuzz_ratio(s1, s2) for s1 in uattrs] for s2 in uattrs])
 
@@ -50,8 +50,8 @@ class Fuzzy(DeduplicationStrategy):
 
         fuzzy_map = {uattrs[i]: uattrs[j] for i, j in zip(*match_indices)}
 
-        attr_map = self.frame_methods.map_dict(attr, fuzzy_map)  # i.e. a "Series"
+        attr_map = self.wrapped_df.map_dict(attr, fuzzy_map)  # i.e. a "Series"
 
-        self.frame_methods.put_col(TMP_ATTR, attr_map)
+        self.wrapped_df.put_col(TMP_ATTR, attr_map)
 
         return self.assign_group_id(TMP_ATTR).drop_col(TMP_ATTR)

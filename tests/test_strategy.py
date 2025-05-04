@@ -19,18 +19,18 @@ class DummyStrategy(DeduplicationStrategy):
         return self.assign_group_id(attr).unwrap()
 
 
-def test_set_df_pandas(df_pandas):
+def testwith_frame_pandas(df_pandas):
     strategy = DummyStrategy()
-    strategy._set_df(_wrap(df_pandas))
+    strategy.with_frame(_wrap(df_pandas))
 
-    assert isinstance(strategy.frame_methods, WrappedPandasDataFrame)
+    assert isinstance(strategy.wrapped_df, WrappedPandasDataFrame)
 
 
-def test_set_df_polars(df_polars):
+def testwith_frame_polars(df_polars):
     strategy = DummyStrategy()
-    strategy._set_df(_wrap(df_polars))
+    strategy.with_frame(_wrap(df_polars))
 
-    assert isinstance(strategy.frame_methods, WrappedPolarsDataFrame)
+    assert isinstance(strategy.wrapped_df, WrappedPolarsDataFrame)
 
 
 # all length 6 arrays
@@ -55,7 +55,7 @@ def test_assign_group_id(attribute_array, expected_group_id):
     df = pd.DataFrame({"name": attribute_array, "group_id": [1, 2, 3, 4, 5, 6]})
 
     strategy = DummyStrategy()
-    strategy._set_df(_wrap(df))
+    strategy.with_frame(_wrap(df))
 
     updated_df = strategy.assign_group_id("name").unwrap()
 
@@ -80,7 +80,7 @@ def test_dedupe():
     )
 
     strategy = DummyStrategy()
-    strategy._set_df(_wrap(df))
+    strategy.with_frame(_wrap(df))
 
     deduped_df = strategy.dedupe("name")  # Uses assign_group_id internally
 

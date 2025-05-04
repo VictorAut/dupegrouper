@@ -1,4 +1,4 @@
-"""Abstract base class container"""
+"""ABC for wrapped dataframe interfaces"""
 
 from __future__ import annotations
 from abc import ABC, abstractmethod
@@ -40,7 +40,7 @@ class WrappedDataFrame(ABC):
         pass
 
     @abstractmethod
-    def map_dict(self, column: str, mapping: dict):
+    def map_dict(self, column: str, mapping: dict): # TODO type this as a "array-like"? e.g. pd.Series | list, but more expressive
         """Return a column array-like of data mapped with `mapping`"""
         pass
 

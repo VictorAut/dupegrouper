@@ -182,18 +182,18 @@ class TfIdf(DeduplicationStrategy):
 
         vectorizer = self._vectorize(self._ngram)
 
-        similarities = self._get_similarities_matrix(vectorizer, self.frame_methods.get_col(attr))
+        similarities = self._get_similarities_matrix(vectorizer, np.array(self.wrapped_df.get_col(attr)))
 
-        matches = self._get_matches_array(similarities, np.array(self.frame_methods.get_col(attr)))
+        matches = self._get_matches_array(similarities, np.array(self.wrapped_df.get_col(attr)))
 
         for tfidf_map in self._gen_map(matches):
 
-            attr_map = self.frame_methods.map_dict(attr, tfidf_map)  # i.e. "Series" like
+            attr_map = self.wrapped_df.map_dict(attr, tfidf_map)  # i.e. "Series" like
 
-            new_attr = self.frame_methods.fill_na(attr_map, self.frame_methods.get_col(attr))  # i.e. "Series" like
+            new_attr = self.wrapped_df.fill_na(attr_map, self.wrapped_df.get_col(attr))  # i.e. "Series" like
 
-            self.frame_methods.put_col(TMP_ATTR, new_attr)
+            self.wrapped_df.put_col(TMP_ATTR, new_attr)
 
-            self.assign_group_id(TMP_ATTR).drop_col(TMP_ATTR)  # updates `frame_methods`
+            self.assign_group_id(TMP_ATTR).drop_col(TMP_ATTR)  # updates `wrapped_df`
 
-        return self.frame_methods
+        return self.wrapped_df

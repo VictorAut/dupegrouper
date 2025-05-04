@@ -8,6 +8,7 @@ from __future__ import annotations
 import collections
 from functools import singledispatch, singledispatchmethod
 import inspect
+import logging
 
 try:
     from types import NoneType
@@ -17,12 +18,23 @@ import typing
 
 import pandas as pd
 import polars as pl
+import pyspark.sql as ps
 
 from dupegrouper.definitions import StrategyMapCollection, DataFrame
-from dupegrouper.wrappers.dataframes import WrappedPandasDataFrame, WrappedPolarsDataFrame
+from dupegrouper.wrappers.dataframes import (
+    WrappedPandasDataFrame,
+    WrappedPolarsDataFrame,
+    WrappedSparkDataFrame,
+)
 from dupegrouper.wrappers import WrappedDataFrame
 from dupegrouper.strategies.custom import Custom
 from dupegrouper.strategy import DeduplicationStrategy
+
+
+# LOGGER:
+
+
+_logger = logging.getLogger(__name__)
 
 
 # CORE:
@@ -42,8 +54,12 @@ class DupeGrouper:
     starting at 1 to the length of the dataframe provided.
     """
 
-    def __init__(self, df: DataFrame):
-        self._df: WrappedDataFrame = _wrap(df)
+    def __init__(
+        self,
+        df: DataFrame,
+        spark_session: None | ps.SparkSession = None,
+    ):
+        self._df: WrappedDataFrame = _wrap(df, spark_session)
         self._strategy_manager = _StrategyManager()
 
     @singledispatchmethod
@@ -75,12 +91,12 @@ class DupeGrouper:
 
     @_call_strategy_deduper.register(DeduplicationStrategy)
     def _(self, strategy, attr) -> WrappedDataFrame:
-        return strategy._set_df(self._df).dedupe(attr)
+        return strategy.with_frame(self._df).dedupe(attr)
 
     @_call_strategy_deduper.register(tuple)
     def _(self, strategy: tuple[typing.Callable, typing.Any], attr) -> WrappedDataFrame:
         func, kwargs = strategy
-        return Custom(func, attr, **kwargs)._set_df(self._df).dedupe()
+        return Custom(func, attr, **kwargs).with_frame(self._df).dedupe()
 
     @singledispatchmethod
     def _dedupe(
@@ -308,7 +324,7 @@ class StrategyTypeError(Exception):
 
 
 @singledispatch
-def _wrap(df: DataFrame) -> WrappedDataFrame:
+def _wrap(df: DataFrame, spark_session: None | ps.SparkSession = None) -> WrappedDataFrame:
     """
     Dispatch the dataframe to the appropriate wrapping handler.
 
@@ -321,14 +337,30 @@ def _wrap(df: DataFrame) -> WrappedDataFrame:
     Raises:
         NotImplementedError
     """
+    del spark_session # Unused
     raise NotImplementedError(f"Unsupported data frame: {type(df)}")
 
 
 @_wrap.register(pd.DataFrame)
-def _(df):
+def _(df, spark_session = None):
+    if not spark_session:
+        _logger.warning(
+            "Spark is not available for Pandas data. Please remove the SparkSession or switch to Spark DataFrames."
+        )
+        del spark_session
     return WrappedPandasDataFrame(df)
 
 
 @_wrap.register(pl.DataFrame)
-def _(df):
+def _(df, spark_session = None):
+    if not spark_session:
+        _logger.warning(
+            "Spark is not available for Polars data. Please remove the SparkSession or switch to Spark DataFrames."
+        )
+        del spark_session
     return WrappedPolarsDataFrame(df)
+
+
+@_wrap.register(ps.DataFrame)
+def _(df, spark_session: ps.SparkSession):
+    return WrappedSparkDataFrame(df, spark_session)

@@ -6,6 +6,7 @@ import typing
 
 import pandas as pd
 import polars as pl
+import pyspark.sql as ps
 
 if typing.TYPE_CHECKING:
     from dupegrouper.strategy import DeduplicationStrategy
@@ -30,4 +31,4 @@ StrategyMapCollection: typing.TypeAlias = typing.DefaultDict[
 ]
 
 
-DataFrame: typing.TypeAlias = "pd.DataFrame | pl.DataFrame"  # | ...
+DataFrame: typing.TypeAlias = "pd.DataFrame | pl.DataFrame | ps.DataFrame"  # | ...

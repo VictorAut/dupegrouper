@@ -6,7 +6,7 @@ from dupegrouper.strategies.fuzzy import Fuzzy
 
 def do_fuzzy(df, fuzzy_params, group_id):
     fuzzy = Fuzzy(**fuzzy_params)
-    fuzzy._set_df(_wrap(df))
+    fuzzy.with_frame(_wrap(df))
 
     updated_wrapped_df = fuzzy.dedupe("address")
     updated_df = updated_wrapped_df.unwrap()

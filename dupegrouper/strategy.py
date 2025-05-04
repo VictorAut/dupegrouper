@@ -29,7 +29,7 @@ _logger = logging.getLogger(__name__)
 class DeduplicationStrategy(ABC):
     """Defines a deduplication strategy."""
 
-    def _set_df(self, frame_methods: WrappedDataFrame) -> typing.Self:
+    def with_frame(self, wrapped_df: WrappedDataFrame) -> typing.Self:
         """Inject dataframe data and load dataframe methods corresponding
         to the type of the dataframe the corresponding methods.
 
@@ -39,7 +39,7 @@ class DeduplicationStrategy(ABC):
         Returns:
             self: i.e. allow for further chaining
         """
-        self.frame_methods: WrappedDataFrame = frame_methods
+        self.wrapped_df: WrappedDataFrame = wrapped_df
         return self
 
     def assign_group_id(self, attr: str) -> WrappedDataFrame:
@@ -65,14 +65,14 @@ class DeduplicationStrategy(ABC):
             attr: the dataframe label of the attribute
 
         Returns:
-            frame_methods; i.e. an instance "WrappedDataFrame" i.e. container
+            wrapped_df; i.e. an instance "WrappedDataFrame" i.e. container
             of data and linked dataframe methods; ready for further downstream
             processing.
         """
         _logger.debug(f'Re-assigning new "group_id" per duped instance of attribute "{attr}"')
 
-        attrs = np.asarray(self.frame_methods.get_col(attr))
-        groups = np.asarray(self.frame_methods.get_col(GROUP_ID))
+        attrs = np.asarray(self.wrapped_df.get_col(attr))
+        groups = np.asarray(self.wrapped_df.get_col(GROUP_ID))
 
         unique_attrs, unique_indices = np.unique(
             attrs,
@@ -94,7 +94,7 @@ class DeduplicationStrategy(ABC):
             groups,
         )
 
-        return self.frame_methods.put_col(GROUP_ID, new_groups)
+        return self.wrapped_df.put_col(GROUP_ID, new_groups)
 
     @abstractmethod
     def dedupe(self, attr: str) -> WrappedDataFrame:
