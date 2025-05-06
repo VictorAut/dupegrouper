@@ -5,7 +5,7 @@ from typing_extensions import override
 import typing
 
 import numpy as np
-from pyspark.sql import DataFrame, SparkSession, functions
+from pyspark.sql import DataFrame, SparkSession, functions, Row
 
 from dupegrouper.definitions import GROUP_ID
 from dupegrouper.wrappers.dataframe import WrappedDataFrame
@@ -21,47 +21,66 @@ class WrappedSparkDataFrame(WrappedDataFrame):
     @staticmethod
     @override
     def _add_group_id(df, spark: SparkSession) -> DataFrame:
-        id_array = [i + 1 for i in range(df.count())]
-        new_rows = _new_rows_from_new_column(df, id_array)
-        return spark.createDataFrame(new_rows, df.columns + [GROUP_ID])
+        # DATAFRAME
+        # id_array = [i + 1 for i in range(df.count())]
+        # new_rows = _new_rows_from_new_column(df, id_array)
+        # return spark.createDataFrame(new_rows, df.columns + [GROUP_ID])
+
+        return [Row(**{**row.asDict(), 'group_id': value}) for row, value in zip(df, list([i + 1 for i in range(len(df))]))]
 
     # SPARK API WRAPPERS:
 
     @override
     def put_col(self, column: str, array) -> typing.Self:
-        if column in self._df.columns:
-            self._df = self._df.drop(column)
-        new_rows = _new_rows_from_new_column(self._df, array)
-        self._df = self._spark.createDataFrame(data=new_rows, schema=self._df.columns + [column])
+        # DATAFRAME:
+        # if column in self._df.columns:
+        #     self._df = self._df.drop(column)
+        # new_rows = _new_rows_from_new_column(self._df, array)
+        # self._df = self._spark.createDataFrame(data=new_rows, schema=self._df.columns + [column])
+        # return self
+
+        # list of Rows
+        array = [i.item() for i in array]
+        self._df = [Row(**{**row.asDict(), column: value}) for row, value in zip(self._df, array)]
         return self
 
     @override
     def get_col(self, column: str) -> list:
-        return self._df.select(column).rdd.flatMap(lambda x: x).collect()
+        # DataFrame
+        # return self._df.select(column).rdd.flatMap(lambda x: x).collect()
+        # list of Rows
+        return [row[column] for row in self._df]
 
     @override
     def map_dict(self, column: str, mapping: dict) -> list:
+        # DATAFRMAE
         # Turn the dictionary into a Spark map literal
-        mapping_expr = functions.create_map(
-            [
-                functions.lit(x)
-                #
-                for pair in mapping.items()
-                for x in pair
-            ]
-        )
+        # mapping_expr = functions.create_map(
+        #     [
+        #         functions.lit(x)
+        #         #
+        #         for pair in mapping.items()
+        #         for x in pair
+        #     ]
+        # )
 
-        # retrieve map of column
-        return (
-            self._df.withColumn("TMP_MAPPING", mapping_expr.getItem(functions.col(column)))
-            .select("TMP_MAPPING")
-            .rdd.flatMap(lambda x: x)
-            .collect()
-        )  # "default" is still None
+        # # retrieve map of column
+        # return (
+        #     self._df.withColumn("TMP_MAPPING", mapping_expr.getItem(functions.col(column)))
+        #     .select("TMP_MAPPING")
+        #     .rdd.flatMap(lambda x: x)
+        #     .collect()
+        # )  # "default" is still None
+    
+        return [mapping.get(row[column]) for row in self._df]
 
     @override
     def drop_col(self, column: str) -> typing.Self:
-        self._df = self._df.drop(column)
+        # DataFrame:
+        # self._df = self._df.drop(column)
+        # return self
+        # list of Rows
+        self._df = [Row(**{k: v for k, v in row.asDict().items() if k != column}) for row in self._df]
         return self
 
     @staticmethod

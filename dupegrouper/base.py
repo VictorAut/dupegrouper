@@ -57,7 +57,7 @@ class DupeGrouper:
     def __init__(
         self,
         df: DataFrame,
-        spark_session: None | ps.SparkSession = None,
+        spark_session: None | ps.SparkSession = None, # TODO .getActiveSession() ???
     ):
         self._df: WrappedDataFrame = _wrap(df, spark_session)
         self._strategy_manager = _StrategyManager()
@@ -363,4 +363,8 @@ def _(df, spark_session = None):
 
 @_wrap.register(ps.DataFrame)
 def _(df, spark_session: ps.SparkSession):
+    return WrappedSparkDataFrame(df, spark_session)
+
+@_wrap.register(list)
+def _(df, spark_session: None):
     return WrappedSparkDataFrame(df, spark_session)
