@@ -52,8 +52,6 @@ class Fuzzy(DeduplicationStrategy):
 
         attr_map = self.wrapped_df.map_dict(attr, fuzzy_map)  # i.e. a "Series"
 
-        print(type(attr_map[0]))
-
         self.wrapped_df.put_col(TMP_ATTR, attr_map)
 
         return self.assign_group_id(TMP_ATTR).drop_col(TMP_ATTR)

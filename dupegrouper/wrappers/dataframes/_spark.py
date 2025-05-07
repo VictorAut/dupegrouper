@@ -26,7 +26,11 @@ class WrappedSparkDataFrame(WrappedDataFrame):
         # new_rows = _new_rows_from_new_column(df, id_array)
         # return spark.createDataFrame(new_rows, df.columns + [GROUP_ID])
 
-        return [Row(**{**row.asDict(), 'group_id': value}) for row, value in zip(df, list([i + 1 for i in range(len(df))]))]
+        return [
+            Row(**{**row.asDict(), "group_id": value})
+            #
+            for row, value in zip(df, list([i + 1 for i in range(len(df))]))
+        ]
 
     # SPARK API WRAPPERS:
 
@@ -40,7 +44,7 @@ class WrappedSparkDataFrame(WrappedDataFrame):
         # return self
 
         # list of Rows
-        array = [i.item() for i in array]
+        array = [i.item() if isinstance(i, np.generic) else i for i in array]
         self._df = [Row(**{**row.asDict(), column: value}) for row, value in zip(self._df, array)]
         return self
 
@@ -71,7 +75,7 @@ class WrappedSparkDataFrame(WrappedDataFrame):
         #     .rdd.flatMap(lambda x: x)
         #     .collect()
         # )  # "default" is still None
-    
+
         return [mapping.get(row[column]) for row in self._df]
 
     @override
