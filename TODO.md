@@ -8,3 +8,10 @@
     - include validation
     - retrospective validation for "string" dedupers
     - need to think about how this is an unparametrised method that by defintion needs several columns to work.
+
+- record selection:
+    - last/first
+
+- mapPartitions -> mapPartitionsWithIndex ?
+
+- need to test copying GROUP_ID from ID and then deduping on a a string for id's such as "a001"

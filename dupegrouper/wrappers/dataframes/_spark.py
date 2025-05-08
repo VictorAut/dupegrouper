@@ -56,21 +56,24 @@ class WrappedSparkDataFrame(WrappedDataFrame):
 
     def __getattr__(self, name: str) -> typing.Any:
         return getattr(self._df, name)
-    
+
+
 class WrappedSparkRows(WrappedDataFrame):
 
-    def __init__(self, df: DataFrame):
+    def __init__(self, df: list[Row], id: str):
         super().__init__(df)
-        self._df: DataFrame = self._add_group_id(df)
+        self._df: list[Row] = self._add_group_id(df, id)
 
     @staticmethod
     @override
-    def _add_group_id(df) -> DataFrame:
-        return [
-            Row(**{**row.asDict(), "group_id": value})
-            #
-            for row, value in zip(df, list([i + 1 for i in range(len(df))]))
-        ]
+    def _add_group_id(df, id: str) -> list[Row]:
+        # Monotonic increase:
+        # return [
+        #     Row(**{**row.asDict(), GROUP_ID: value})
+        #     #
+        #     for row, value in zip(df, list([i + 1 for i in range(len(df))]))
+        # ]
+        return [Row(**{**row.asDict(), GROUP_ID: row[id]}) for row in df]
 
     # SPARK API WRAPPERS:
 

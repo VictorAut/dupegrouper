@@ -60,9 +60,15 @@ class DupeGrouper:
     starting at 1 to the length of the dataframe provided.
     """
 
-    def __init__(self, df: DataFrame, spark_session: SparkSession = None):
-        self._df: WrappedDataFrame = _wrap(df)
+    def __init__(
+        self,
+        df: DataFrame,
+        spark_session: SparkSession = None,
+        id: str | None = None,
+    ):
+        self._df: WrappedDataFrame = _wrap(df, id)
         self._strategy_manager = _StrategyManager()
+        self._id = id
         self.spark_session = spark_session
 
     @singledispatchmethod
@@ -189,7 +195,7 @@ class DupeGrouper:
             self._dedupe(attr, self._strategy_manager.get())
         else:
 
-            def _process_partition(partition_iter: typing.Iterator[Row], strategies) -> typing.Iterator[Row]:
+            def _process_partition(partition_iter: typing.Iterator[Row], strategies, id: str) -> typing.Iterator[Row]:
                 # handle empty partitions
                 rows = list(partition_iter)
                 if not rows:
@@ -205,16 +211,17 @@ class DupeGrouper:
                     ]
 
                 # Core API reused per partition, per worker node
-                dg = DupeGrouper(rows)
+                dg = DupeGrouper(rows, id=id)
                 dg.add_strategy(strategies)
                 dg.dedupe()
 
                 return iter(dg.df)
 
             strategies = self._strategy_manager.get()
+            id = self._id
 
             deduped_rdd = self._df.rdd.mapPartitions(
-                lambda partition_iter: _process_partition(partition_iter, strategies)
+                lambda partition_iter: _process_partition(partition_iter, strategies, id)
             )
             self._df = WrappedSparkDataFrame(
                 self.spark_session.createDataFrame(
@@ -367,7 +374,7 @@ class StrategyTypeError(Exception):
 
 
 @singledispatch
-def _wrap(df: DataFrame) -> WrappedDataFrame:
+def _wrap(df: DataFrame, id: str | None = None) -> WrappedDataFrame:
     """
     Dispatch the dataframe to the appropriate wrapping handler.
 
@@ -380,24 +387,28 @@ def _wrap(df: DataFrame) -> WrappedDataFrame:
     Raises:
         NotImplementedError
     """
+    del id # Unused
     raise NotImplementedError(f"Unsupported data frame: {type(df)}")
 
 
 @_wrap.register(pd.DataFrame)
-def _(df):
+def _(df, id: str | None = None):
+    del id  # TODO implement
     return WrappedPandasDataFrame(df)
 
 
 @_wrap.register(pl.DataFrame)
-def _(df):
+def _(df, id: str | None = None):
+    del id  # TODO implement
     return WrappedPolarsDataFrame(df)
 
 
 @_wrap.register(SparkDataFrame)
-def _(df):
+def _(df, id: str | None = None):
+    del id  # TODO implement
     return WrappedSparkDataFrame(df)
 
 
 @_wrap.register(list)
-def _(df):
-    return WrappedSparkRows(df)
+def _(df, id: str):
+    return WrappedSparkRows(df, id)
