@@ -18,13 +18,19 @@ import typing
 
 import pandas as pd
 import polars as pl
-import pyspark.sql as ps
+from pyspark.sql import (
+    SparkSession,
+    Row,
+    DataFrame as SparkDataFrame, # i.e. no clash with generic DataFrame definition
+)
+from pyspark.sql.types import StringType, StructField, StructType
 
-from dupegrouper.definitions import StrategyMapCollection, DataFrame
+from dupegrouper.definitions import StrategyMapCollection, DataFrame, GROUP_ID
 from dupegrouper.wrappers.dataframes import (
     WrappedPandasDataFrame,
     WrappedPolarsDataFrame,
     WrappedSparkDataFrame,
+    WrappedSparkRows,
 )
 from dupegrouper.wrappers import WrappedDataFrame
 from dupegrouper.strategies.custom import Custom
@@ -54,13 +60,10 @@ class DupeGrouper:
     starting at 1 to the length of the dataframe provided.
     """
 
-    def __init__(
-        self,
-        df: DataFrame,
-        spark_session: None | ps.SparkSession = None, # TODO .getActiveSession() ???
-    ):
-        self._df: WrappedDataFrame = _wrap(df, spark_session)
+    def __init__(self, df: DataFrame, spark_session: SparkSession = None):
+        self._df: WrappedDataFrame = _wrap(df)
         self._strategy_manager = _StrategyManager()
+        self.spark_session = spark_session
 
     @singledispatchmethod
     def _call_strategy_deduper(
@@ -138,9 +141,7 @@ class DupeGrouper:
         del attr  # Unused
         for attr, strategies in strategy_collection.items():
             for strategy in strategies:
-
                 self._df = self._call_strategy_deduper(strategy, attr)
-
         self._strategy_manager.reset()
 
     # PUBLIC API:
@@ -184,7 +185,33 @@ class DupeGrouper:
                 a mapping object, this must not passed, as the keys of the
                 mapping object will be used instead
         """
-        self._dedupe(attr, self._strategy_manager.get())
+        if not isinstance(self._df, WrappedSparkDataFrame):
+            self._dedupe(attr, self._strategy_manager.get())
+        else:
+            def _process_partition(partition_iter: typing.Iterator[Row], strategies) -> typing.Iterator[Row]:
+                # handle empty partitions
+                rows = list(partition_iter)
+                if not rows:
+                    return iter([])
+
+                # re-instantiate strategies based on driver's
+                reinstantiated_strategies = collections.defaultdict(list)
+                for key, values in strategies.items():
+                    reinstantiated_strategies[key].append([v if isinstance(v, tuple) else v.reinstantiate() for v in values])
+
+                # Core API reused per partition, per worker node
+                dg = DupeGrouper(rows)
+                dg.add_strategy(reinstantiated_strategies)
+                dg.dedupe()
+
+                return iter(dg.df)
+            
+            strategies = self._strategy_manager.get()
+
+            deduped_rdd = self._df.rdd.mapPartitions(lambda partition_iter: _process_partition(partition_iter, strategies))
+            self._df = self.spark_session.createDataFrame(
+                deduped_rdd, schema=StructType(self._df.schema.fields + [StructField(GROUP_ID, StringType(), True)])
+            )
 
     @property
     def strategies(self) -> None | tuple[str, ...] | dict[str, tuple[str, ...]]:
@@ -306,7 +333,7 @@ class StrategyTypeError(Exception):
     """Strategy type not valid errors"""
 
     def __init__(self, strategy: DeduplicationStrategy | tuple):
-        base_msg = "Input is not valid"  # i.e. default; allow for easier testing
+        base_msg = "Input is not valid"  # i.e. default
         context = ""
         if inspect.isclass(strategy):
             base_msg = "Input class is not valid: must be an instance of `DeduplicationStrategy`"
@@ -324,7 +351,7 @@ class StrategyTypeError(Exception):
 
 
 @singledispatch
-def _wrap(df: DataFrame, spark_session: None | ps.SparkSession = None) -> WrappedDataFrame:
+def _wrap(df: DataFrame) -> WrappedDataFrame:
     """
     Dispatch the dataframe to the appropriate wrapping handler.
 
@@ -337,34 +364,24 @@ def _wrap(df: DataFrame, spark_session: None | ps.SparkSession = None) -> Wrappe
     Raises:
         NotImplementedError
     """
-    del spark_session # Unused
     raise NotImplementedError(f"Unsupported data frame: {type(df)}")
 
 
 @_wrap.register(pd.DataFrame)
-def _(df, spark_session = None):
-    if not spark_session:
-        _logger.warning(
-            "Spark is not available for Pandas data. Please remove the SparkSession or switch to Spark DataFrames."
-        )
-        del spark_session
+def _(df):
     return WrappedPandasDataFrame(df)
 
 
 @_wrap.register(pl.DataFrame)
-def _(df, spark_session = None):
-    if not spark_session:
-        _logger.warning(
-            "Spark is not available for Polars data. Please remove the SparkSession or switch to Spark DataFrames."
-        )
-        del spark_session
+def _(df):
     return WrappedPolarsDataFrame(df)
 
 
-@_wrap.register(ps.DataFrame)
-def _(df, spark_session: ps.SparkSession):
-    return WrappedSparkDataFrame(df, spark_session)
+@_wrap.register(SparkDataFrame)
+def _(df):
+    return WrappedSparkDataFrame(df)
+
 
 @_wrap.register(list)
-def _(df, spark_session: None):
-    return WrappedSparkDataFrame(df, spark_session)
+def _(df):
+    return WrappedSparkRows(df)

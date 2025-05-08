@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 class Fuzzy(DeduplicationStrategy):
 
     def __init__(self, tolerance: float = 0.05):
+        super().__init__(tolerance=tolerance)
         self._tolerance = tolerance
         self._ratio = 100 * (1 - tolerance)
 

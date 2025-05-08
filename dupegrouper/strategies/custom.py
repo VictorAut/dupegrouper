@@ -36,6 +36,11 @@ class Custom(DeduplicationStrategy):
         /,
         **kwargs,
     ):
+        super().__init__(
+            func,
+            attr,
+            **kwargs,
+        )
         self._func = func
         self._attr = attr
         self._kwargs = kwargs

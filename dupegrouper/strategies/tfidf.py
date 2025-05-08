@@ -45,6 +45,12 @@ class TfIdf(DeduplicationStrategy):
         topn: int = 2,
         **kwargs,
     ):
+        super().__init__(
+            ngram=ngram,
+            tolerance=tolerance,
+            topn=topn,
+            **kwargs,
+        )
         self._ngram = ngram
         self._tolerance = tolerance
         self._topn = topn

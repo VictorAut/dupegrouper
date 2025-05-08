@@ -28,6 +28,12 @@ _logger = logging.getLogger(__name__)
 
 class DeduplicationStrategy(ABC):
     """Defines a deduplication strategy."""
+    def __init__(self, *args, **kwargs):
+        self._init_args = args
+        self._init_kwargs = kwargs
+
+    def reinstantiate(self):
+        return self.__class__(*self._init_args, **self._init_kwargs)
 
     def with_frame(self, wrapped_df: WrappedDataFrame) -> typing.Self:
         """Inject dataframe data and load dataframe methods corresponding
