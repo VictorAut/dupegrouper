@@ -21,7 +21,7 @@ import polars as pl
 from pyspark.sql import (
     SparkSession,
     Row,
-    DataFrame as SparkDataFrame, # i.e. no clash with generic DataFrame definition
+    DataFrame as SparkDataFrame,  # i.e. no clash with generic DataFrame definition
 )
 from pyspark.sql.types import StringType, StructField, StructType
 
@@ -181,13 +181,14 @@ class DupeGrouper:
         """dedupe, and group, the data based on the provided attribute
 
         Args:
-            attr: The attribute to deduplicate. If stratgies have been added as
-                a mapping object, this must not passed, as the keys of the
+            attr: The attribute to deduplicate. If strategies have been added
+                as a mapping object, this must not passed, as the keys of the
                 mapping object will be used instead
         """
         if not isinstance(self._df, WrappedSparkDataFrame):
             self._dedupe(attr, self._strategy_manager.get())
         else:
+
             def _process_partition(partition_iter: typing.Iterator[Row], strategies) -> typing.Iterator[Row]:
                 # handle empty partitions
                 rows = list(partition_iter)
@@ -195,22 +196,31 @@ class DupeGrouper:
                     return iter([])
 
                 # re-instantiate strategies based on driver's
-                reinstantiated_strategies = collections.defaultdict(list)
+                reinstantiated_strategies = {}
                 for key, values in strategies.items():
-                    reinstantiated_strategies[key].append([v if isinstance(v, tuple) else v.reinstantiate() for v in values])
+                    reinstantiated_strategies[key] = [
+                        v if isinstance(v, tuple) else v.reinstantiate()
+                        #
+                        for v in values
+                    ]
 
                 # Core API reused per partition, per worker node
                 dg = DupeGrouper(rows)
-                dg.add_strategy(reinstantiated_strategies)
+                dg.add_strategy(strategies)
                 dg.dedupe()
 
                 return iter(dg.df)
-            
+
             strategies = self._strategy_manager.get()
 
-            deduped_rdd = self._df.rdd.mapPartitions(lambda partition_iter: _process_partition(partition_iter, strategies))
-            self._df = self.spark_session.createDataFrame(
-                deduped_rdd, schema=StructType(self._df.schema.fields + [StructField(GROUP_ID, StringType(), True)])
+            deduped_rdd = self._df.rdd.mapPartitions(
+                lambda partition_iter: _process_partition(partition_iter, strategies)
+            )
+            self._df = WrappedSparkDataFrame(
+                self.spark_session.createDataFrame(
+                    deduped_rdd,
+                    schema=StructType(self._df.schema.fields + [StructField(GROUP_ID, StringType(), True)]),
+                )
             )
 
     @property
@@ -230,7 +240,13 @@ class DupeGrouper:
             return None
 
         def parse_strategies(dict_values):
-            return tuple([(vx[0].__name__ if isinstance(vx, tuple) else vx.__class__.__name__) for vx in dict_values])
+            return tuple(
+                [
+                    (vx[0].__name__ if isinstance(vx, tuple) else vx.__class__.__name__)
+                    #
+                    for vx in dict_values
+                ]
+            )
 
         if "default" in strategies:
             return tuple([parse_strategies(v) for _, v in strategies.items()])[0]
