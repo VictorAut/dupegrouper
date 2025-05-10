@@ -6,6 +6,17 @@ import typing
 
 import pandas as pd
 import polars as pl
+from pyspark.sql import DataFrame as SparkDataFrame
+from pyspark.sql.types import (
+    StringType,
+    IntegerType,
+    LongType,
+    DoubleType,
+    FloatType,
+    BooleanType,
+    TimestampType,
+    DateType,
+)
 
 if typing.TYPE_CHECKING:
     from dupegrouper.strategy import DeduplicationStrategy
@@ -18,17 +29,31 @@ if typing.TYPE_CHECKING:
 GROUP_ID: typing.Final[str] = os.environ.get("GROUP_ID", "group_id")
 
 # the ethereal dataframe label created whilst deduplicating
-TMP_ATTR_LABEL: typing.Final[str] = os.environ.get("TMP_ATTR_LABEL", "__tmp_attr")
+TMP_ATTR: typing.Final[str] = os.environ.get("TMP_ATTR", "__tmp_attr")
 
 
 # TYPES:
 
-strategy_list_item: typing.TypeAlias = "DeduplicationStrategy | tuple[typing.Callable, dict[str, str]]"
 
-strategy_map_collection = typing.DefaultDict[
+StrategyMapCollection: typing.TypeAlias = typing.DefaultDict[
     str,
-    list[strategy_list_item],
+    list["DeduplicationStrategy | tuple[typing.Callable, dict[str, str]]"],
 ]
 
 
-frames = pd.DataFrame | pl.DataFrame  # | ...
+DataFrame: typing.TypeAlias = "pd.DataFrame | pl.DataFrame | SparkDataFrame"  # | ...
+
+
+# PYSPARK SQL TYPES TO CLASS TYPE CONVERSION
+
+PYSPARK_TYPES = {
+    "string": StringType(),
+    "int": IntegerType(),
+    "bigint": LongType(),
+    "double": DoubleType(),
+    "float": FloatType(),
+    "boolean": BooleanType(),
+    "timestamp": TimestampType(),
+    "date": DateType(),
+    # Add others as needed
+}

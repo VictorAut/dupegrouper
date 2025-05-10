@@ -1,28 +1,36 @@
-"""Abstract base class container"""
+"""ABC for wrapped dataframe interfaces"""
 
+from __future__ import annotations
 from abc import ABC, abstractmethod
-
 import typing
 
-import pandas as pd
+from dupegrouper.definitions import DataFrame
 
 
-class DFMethods(ABC):
-    """Implements needed methodsgiven any instance of a dataframe
+class WrappedDataFrame(ABC):
+    """Container class for a dataframe and associated methods
 
     At runtime any instance of this class will also be a data container of the
     dataframe. The abstractmethods defined here are all the required
     implementations needed
     """
 
-    def __init__(self, df: pd.DataFrame):
-        self._df = df
+    def __init__(self, df: DataFrame):
+        self._df: DataFrame = df
+
+    @staticmethod
+    @abstractmethod
+    def _add_group_id(df: DataFrame):
+        """Return a dataframe with a group id column"""
+        pass
+
+    # DATAFRAME `LIBRARY` WRAPPERS:
 
     @abstractmethod
     def put_col(self, column: str, array) -> typing.Self:
         """assign i.e. write a column with array-like data
 
-        No return: `_df` is updated
+        No return; `_df` is updated
         """
         pass
 
@@ -32,7 +40,7 @@ class DFMethods(ABC):
         pass
 
     @abstractmethod
-    def map_dict(self, column: str, mapping: dict):
+    def map_dict(self, column: str, mapping: dict): # TODO type this as a "array-like"? e.g. pd.Series | list, but more expressive
         """Return a column array-like of data mapped with `mapping`"""
         pass
 
@@ -46,11 +54,15 @@ class DFMethods(ABC):
 
     @staticmethod
     @abstractmethod
-    def fill_na(series: pd.Series, array):
+    def fill_na(series, array):
         """Return a column array-like of data null-filled with `array`"""
         pass
 
-    @property
+    # THIN TRANSPARENCY DELEGATION
+
     @abstractmethod
-    def frame(self):
-        pass
+    def __getattr__(self, name: str) -> typing.Any:
+        return getattr(self._df, name)
+
+    def unwrap(self) -> DataFrame:
+        return self._df

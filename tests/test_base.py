@@ -1,5 +1,7 @@
 """Tests for dupegrouper.base"""
 
+import importlib
+import os
 from unittest.mock import ANY, Mock, patch
 
 import pandas as pd
@@ -7,30 +9,79 @@ import polars as pl
 import pytest
 
 from dupegrouper.base import (
-    _InitDataFrame,
-    _StrategyManager,
     DupeGrouper,
+    DeduplicationStrategy,
     StrategyTypeError,
+    _StrategyManager,
+    _wrap,
 )
+from dupegrouper.wrappers import WrappedDataFrame
+import dupegrouper.definitions
+import dupegrouper.wrappers
+import dupegrouper.wrappers.dataframes
 from dupegrouper.strategies import Exact, Fuzzy, TfIdf
-from dupegrouper.strategy import DeduplicationStrategy
 
 
-########################
-#  TEST _InitDataFrame #
-########################
+#############################
+#  TEST _wrap #
+#############################
 
 
-def test_init_dataframe_pandas(df_pandas):
-    df_init = _InitDataFrame(df_pandas).choose
-    assert "group_id" in df_init.columns
-    assert df_init["group_id"].tolist() == [i for i in range(1, 14)]
+def test_init_dataframe_pandas(df_pandas_raw: pd.DataFrame):
+    df_container: WrappedDataFrame = _wrap(df_pandas_raw)
+    df: pd.DataFrame = df_container.unwrap()  # type: ignore
+    assert "group_id" in df.columns
+    assert df["group_id"].tolist() == [i for i in range(1, 14)]
 
 
-def test_init_dataframe_polars(df_polars):
-    df_init = _InitDataFrame(df_polars).choose
-    assert "group_id" in df_init.columns
-    assert df_init["group_id"].to_list() == [i for i in range(1, 14)]
+def test_init_dataframe_polars(df_polars_raw: pl.DataFrame):
+    df_container: WrappedDataFrame = _wrap(df_polars_raw)
+    df: pl.DataFrame = df_container.unwrap()  # type: ignore
+    assert "group_id" in df.columns
+    assert df["group_id"].to_list() == [i for i in range(1, 14)]
+
+
+def test_dataframe_dispatcher_unsupported():
+    class FakeDataFrame:
+        pass
+
+    with pytest.raises(NotImplementedError, match="Unsupported data frame"):
+        _wrap(FakeDataFrame())
+
+
+######################
+#  TEST set group_id #
+######################
+
+
+@pytest.mark.parametrize(
+    "env_var_value, expected_value",
+    [
+        # i.e. the default
+        ("group_id", "group_id"),
+        # null override to default, simulates unset
+        (None, "group_id"),
+        # arbitrary: different value
+        ("beep_boop_id", "beep_boop_id"),
+        # arbitrary: supported (but bad!) column naming with whitespace
+        ("bad group id", "bad group id"),
+    ],
+)
+def test_different_group_id_env_var(env_var_value, expected_value, df_pandas_raw):
+    if env_var_value:
+        os.environ["GROUP_ID"] = env_var_value
+    else:
+        os.environ.pop("GROUP_ID", None)  # remove it if exists
+
+    importlib.reload(dupegrouper.definitions)  # reset constant
+    importlib.reload(dupegrouper.wrappers.dataframes._pandas)  # final value in `base`
+    df_init = _wrap(df_pandas_raw).unwrap()
+    assert expected_value in df_init.columns
+
+    # clean up
+    os.environ["GROUP_ID"] = "group_id"
+    importlib.reload(dupegrouper.definitions)
+    importlib.reload(dupegrouper.wrappers.dataframes._pandas)
 
 
 ##############################################
@@ -237,3 +288,56 @@ def test_dupegrouper_add_strategy_equal_execution(df_pandas):
 
     # Q.E.D
     assert inline_group_ids == asdict_group_ids
+
+
+def test_iterative_deduplication(df_pandas):
+    """tests that deduplication can be iteratively re-applied"""
+
+    def dedupe_iteration(input):
+
+        dg = DupeGrouper(input)
+        dg.add_strategy(Fuzzy(tolerance=0.3))
+        dg.dedupe("address")
+        return dg.df
+
+    # fresh data
+
+    df_pandas = df_pandas[["id", "address", "email"]]
+
+    # dedupe once
+
+    output_iter1 = dedupe_iteration(df_pandas)
+
+    # now we mimic an additional row being added i.e. iterative deduplication
+    # But this addition results in a re-ordering!
+    # So we add at the start
+
+    print(list(output_iter1["group_id"]))
+
+    output_iter1 = pd.concat(
+        [
+            output_iter1,
+            pd.DataFrame(
+                data={
+                    "id": [99],
+                    "address": ["Calle Sueco, 56, 05688, Rioja, Navarra"],
+                    "email": ["hellothere@example.com"],
+                    "group_id": [14],
+                }
+            ),
+        ]
+    )
+
+    print(output_iter1)
+
+    # note we now expect group_id 14 -> 3 via deduplication and record selection
+
+    expected_group_ids = [1, 2, 3, 3, 5, 6, 7, 8, 1, 1, 11, 12, 13, 3]
+
+    # dedupe again
+
+    output_iter2 = dedupe_iteration(output_iter1)
+
+    print(list(output_iter2["group_id"]))
+
+    assert expected_group_ids == list(output_iter2["group_id"])
