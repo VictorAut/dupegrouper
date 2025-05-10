@@ -38,15 +38,10 @@ class WrappedPolarsDataFrame(WrappedDataFrame):
 
     @override
     def drop_col(self, column: str) -> typing.Self:
-        self._df = self._df.drop(column)  # i.e. positional only
+        self._df = self._df.drop(column)
         return self
 
     @staticmethod
     @override
-    def fill_na(series: pl.Series, array) -> pl.Series:
+    def fill_na(series: pl.Series, array: pl.Series) -> pl.Series:
         return series.fill_null(array)
-
-    # THIN TRANSPARENCY DELEGATION
-
-    def __getattr__(self, name: str) -> typing.Any:
-        return getattr(self._df, name)

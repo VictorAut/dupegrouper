@@ -1,18 +1,6 @@
-"""This test module covers the same type of tests found in
-- test_base.py
-- test_strategy.py
-
-But, collected in one place for the purpose of uniquely testing Spark cases.
-"""
-
-"""Tests for dupegrouper.base"""
-
 from pyspark.sql import DataFrame
-import pytest
-
 
 from dupegrouper.base import DupeGrouper
-
 from dupegrouper.strategies import Exact
 
 

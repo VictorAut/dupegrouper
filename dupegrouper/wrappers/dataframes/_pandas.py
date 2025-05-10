@@ -43,10 +43,5 @@ class WrappedPandasDataFrame(WrappedDataFrame):
 
     @staticmethod
     @override
-    def fill_na(series: pd.Series, array) -> pd.Series:
+    def fill_na(series: pd.Series, array: pd.Series) -> pd.Series:
         return series.fillna(array)
-
-    # THIN TRANSPARENCY DELEGATION
-
-    def __getattr__(self, name: str) -> typing.Any:
-        return getattr(self._df, name)

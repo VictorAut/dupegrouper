@@ -23,11 +23,11 @@ from pyspark.sql import (
     Row,
     DataFrame as SparkDataFrame,  # i.e. no clash with generic DataFrame
 )
-from pyspark.sql.types import StringType, StructField, StructType
+from pyspark.sql.types import StructField, StructType, DataType
 
 from dupegrouper.definitions import (
     StrategyMapCollection,
-    DataFrame,
+    DataFrameLike,
     GROUP_ID,
     PYSPARK_TYPES,
 )
@@ -67,8 +67,8 @@ class DupeGrouper:
 
     def __init__(
         self,
-        df: DataFrame,
-        spark_session: SparkSession = None,
+        df: DataFrameLike,
+        spark_session: SparkSession | None = None,
         id: str | None = None,
     ):
         self._df: WrappedDataFrame = _wrap(df, id)
@@ -200,7 +200,11 @@ class DupeGrouper:
             self._dedupe(attr, self._strategy_manager.get())
         else:
 
-            def _process_partition(partition_iter: typing.Iterator[Row], strategies, id: str) -> typing.Iterator[Row]:
+            def _process_partition(
+                partition_iter: typing.Iterator[Row],
+                strategies: StrategyMapCollection,
+                id: str,
+            ) -> typing.Iterator[Row]:
                 # handle empty partitions
                 rows = list(partition_iter)
                 if not rows:
@@ -220,17 +224,17 @@ class DupeGrouper:
                 dg.add_strategy(strategies)
                 dg.dedupe()
 
-                return iter(dg.df)
+                return iter(dg.df)  # type: ignore[arg-type]
 
-            strategies = self._strategy_manager.get()
-            id = self._id
-            id_type = PYSPARK_TYPES.get(dict(self._df.dtypes).get(id))
+            strategies: StrategyMapCollection = self._strategy_manager.get()
+            id = typing.cast(str, self._id)
+            id_type = typing.cast(DataType, PYSPARK_TYPES.get(dict(self._df.dtypes).get(id))) # type: ignore
 
             deduped_rdd = self._df.rdd.mapPartitions(
                 lambda partition_iter: _process_partition(partition_iter, strategies, id)
             )
             self._df = WrappedSparkDataFrame(
-                self.spark_session.createDataFrame(
+                typing.cast(SparkSession, self.spark_session).createDataFrame(
                     deduped_rdd,
                     schema=StructType(self._df.schema.fields + [StructField(GROUP_ID, id_type, True)]),
                 )
@@ -266,7 +270,7 @@ class DupeGrouper:
         return {k: parse_strategies(v) for k, v in strategies.items()}
 
     @property
-    def df(self) -> DataFrame:
+    def df(self) -> DataFrameLike:
         return self._df.unwrap()
 
 
@@ -380,7 +384,7 @@ class StrategyTypeError(Exception):
 
 
 @singledispatch
-def _wrap(df: DataFrame, id: str | None = None) -> WrappedDataFrame:
+def _wrap(df: DataFrameLike, id: str | None = None) -> WrappedDataFrame:
     """
     Dispatch the dataframe to the appropriate wrapping handler.
 
@@ -417,4 +421,6 @@ def _(df, id: str | None = None):
 
 @_wrap.register(list)
 def _(df, id: str):
+    """must be a list[Row]"""
+    # TODO validate all as instances of `Row`
     return WrappedSparkRows(df, id)

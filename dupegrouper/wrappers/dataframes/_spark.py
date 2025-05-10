@@ -19,40 +19,34 @@ class WrappedSparkDataFrame(WrappedDataFrame):
         super().__init__(df)
 
     @override
-    def _add_group_id(self) -> DataFrame:
+    def _add_group_id(self):
         raise NotImplementedError(self.not_implemented)
 
     # SPARK API WRAPPERS:
 
     @override
-    def put_col(self, column: str, array):
+    def put_col(self):
         raise NotImplementedError(self.not_implemented)
-
     @override
-    def get_col(self, column: str) -> list:
-        return [row[column] for row in self._df]
-
+    def get_col(self):
+        raise NotImplementedError(self.not_implemented)
     @override
-    def map_dict(self, column: str, mapping: dict) -> list:
-        return [mapping.get(row[column]) for row in self._df]
-
+    def map_dict(self):
+        raise NotImplementedError(self.not_implemented)
     @override
-    def drop_col(self, column: str) -> typing.Self:
-        self._df = [Row(**{k: v for k, v in row.asDict().items() if k != column}) for row in self._df]
-        return self
-
-    @staticmethod
+    def drop_col(self):
+        raise NotImplementedError(self.not_implemented)
     @override
-    def fill_na(series: list, array) -> list:
-        return [i[-1] if not i[0] else i[0] for i in zip(series, array)]
-
-    # THIN TRANSPARENCY DELEGATION
-
-    def __getattr__(self, name: str) -> typing.Any:
-        return getattr(self._df, name)
+    def fill_na(self):
+        raise NotImplementedError(self.not_implemented)
 
 
 class WrappedSparkRows(WrappedDataFrame):
+    """Lower level DataFrame wrapper per partition i.e. list of Rows
+    
+    Can be emulated by operating on a collected pyspark dataframe i.e.
+    df.collect()
+    """
 
     def __init__(self, df: list[Row], id: str):
         super().__init__(df)
@@ -60,12 +54,7 @@ class WrappedSparkRows(WrappedDataFrame):
 
     @staticmethod
     @override
-    def _add_group_id(df, id: str) -> list[Row]:
-        # Monotonic increase:
-        # return [
-        #     Row(**{**row.asDict(), GROUP_ID: value})
-        #     for row, value in zip(df, list([i + 1 for i in range(len(df))]))
-        # ]
+    def _add_group_id(df: list[Row], id: str) -> list[Row]:
         return [Row(**{**row.asDict(), GROUP_ID: row[id]}) for row in df]
 
     # SPARK API WRAPPERS:
@@ -77,11 +66,11 @@ class WrappedSparkRows(WrappedDataFrame):
         return self
 
     @override
-    def get_col(self, column: str) -> list:
+    def get_col(self, column: str) -> list[typing.Any]:
         return [row[column] for row in self._df]
 
     @override
-    def map_dict(self, column: str, mapping: dict) -> list:
+    def map_dict(self, column: str, mapping: dict) -> list[typing.Any]:
         return [mapping.get(row[column]) for row in self._df]
 
     @override
@@ -91,10 +80,5 @@ class WrappedSparkRows(WrappedDataFrame):
 
     @staticmethod
     @override
-    def fill_na(series: list, array) -> list:
+    def fill_na(series: list, array: list) -> list:
         return [i[-1] if not i[0] else i[0] for i in zip(series, array)]
-
-    # THIN TRANSPARENCY DELEGATION
-
-    def __getattr__(self, name: str) -> typing.Any:
-        return getattr(self._df, name)

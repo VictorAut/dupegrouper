@@ -4,7 +4,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 import typing
 
-from dupegrouper.definitions import DataFrame
+from dupegrouper.definitions import DataFrameLike, SeriesLike
 
 
 class WrappedDataFrame(ABC):
@@ -15,12 +15,15 @@ class WrappedDataFrame(ABC):
     implementations needed
     """
 
-    def __init__(self, df: DataFrame):
-        self._df: DataFrame = df
+    def __init__(self, df: DataFrameLike):
+        self._df: DataFrameLike = df
+
+    def unwrap(self) -> DataFrameLike:
+        return self._df
 
     @staticmethod
     @abstractmethod
-    def _add_group_id(df: DataFrame):
+    def _add_group_id(df: DataFrameLike):
         """Return a dataframe with a group id column"""
         pass
 
@@ -35,12 +38,12 @@ class WrappedDataFrame(ABC):
         pass
 
     @abstractmethod
-    def get_col(self, column: str):
+    def get_col(self, column: str) -> SeriesLike:
         """Return a column array-like of data"""
         pass
 
     @abstractmethod
-    def map_dict(self, column: str, mapping: dict): # TODO type this as a "array-like"? e.g. pd.Series | list, but more expressive
+    def map_dict(self, column: str, mapping: dict) -> SeriesLike:
         """Return a column array-like of data mapped with `mapping`"""
         pass
 
@@ -54,15 +57,12 @@ class WrappedDataFrame(ABC):
 
     @staticmethod
     @abstractmethod
-    def fill_na(series, array):
+    def fill_na(series, array) -> SeriesLike:
         """Return a column array-like of data null-filled with `array`"""
         pass
 
     # THIN TRANSPARENCY DELEGATION
 
-    @abstractmethod
+    # @abstractmethod
     def __getattr__(self, name: str) -> typing.Any:
         return getattr(self._df, name)
-
-    def unwrap(self) -> DataFrame:
-        return self._df

@@ -6,7 +6,7 @@ import typing
 
 import pandas as pd
 import polars as pl
-from pyspark.sql import DataFrame as SparkDataFrame
+from pyspark.sql import DataFrame as SparkDataFrame, Row
 from pyspark.sql.types import (
     StringType,
     IntegerType,
@@ -41,10 +41,12 @@ StrategyMapCollection: typing.TypeAlias = typing.DefaultDict[
 ]
 
 
-DataFrame: typing.TypeAlias = "pd.DataFrame | pl.DataFrame | SparkDataFrame"  # | ...
+DataFrameLike: typing.TypeAlias = "pd.DataFrame | pl.DataFrame | SparkDataFrame | list[Row]"  # | ...
+SeriesLike: typing.TypeAlias = "pd.Series | pl.Series | list[typing.Any]" # | ...
 
 
 # PYSPARK SQL TYPES TO CLASS TYPE CONVERSION
+
 
 PYSPARK_TYPES = {
     "string": StringType(),
@@ -55,5 +57,5 @@ PYSPARK_TYPES = {
     "boolean": BooleanType(),
     "timestamp": TimestampType(),
     "date": DateType(),
-    # Add others as needed
+    # ...
 }
