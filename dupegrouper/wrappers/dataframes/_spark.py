@@ -13,27 +13,20 @@ from dupegrouper.wrappers.dataframe import WrappedDataFrame
 
 class WrappedSparkDataFrame(WrappedDataFrame):
 
+    not_implemented = "Spark DataFrame methods are available per partition only, i.e. for lists of `pyspark.sql.Row`"
+
     def __init__(self, df: DataFrame):
         super().__init__(df)
-        # self._df: DataFrame = self._add_group_id(df)
 
-
-    @staticmethod
     @override
-    def _add_group_id(df) -> DataFrame:
-        return [
-            Row(**{**row.asDict(), "group_id": value})
-            #
-            for row, value in zip(df, list([i + 1 for i in range(len(df))]))
-        ]
+    def _add_group_id(self) -> DataFrame:
+        raise NotImplementedError(self.not_implemented)
 
     # SPARK API WRAPPERS:
 
     @override
-    def put_col(self, column: str, array) -> typing.Self:
-        array = [i.item() if isinstance(i, np.generic) else i for i in array]
-        self._df = [Row(**{**row.asDict(), column: value}) for row, value in zip(self._df, array)]
-        return self
+    def put_col(self, column: str, array):
+        raise NotImplementedError(self.not_implemented)
 
     @override
     def get_col(self, column: str) -> list:
