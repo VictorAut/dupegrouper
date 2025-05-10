@@ -1,60 +1,112 @@
 import pandas as pd
 import polars as pl
+from pyspark.sql import SparkSession
 import pytest
 
 
-@pytest.fixture
-def base_data():
+@pytest.fixture(scope="session")
+def id():
+    return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+
+
+@pytest.fixture(scope="session")
+def address():
     return [
-        [1, "123ab, OL5 9PL, UK", "bbab@example.com"],
-        [2, "99 Ambleside avenue park Road, ED3 3RT, Edinburgh, United Kingdom", "bb@example.com"],
-        [3, "Calle Ancho, 12, 05688, Rioja, Navarra, Espana", "a@example.com"],
-        [4, "Calle Sueco, 56, 05688, Rioja, Navarra", "hellothere@example.com"],
-        [5, "4 Brinkworth Way, GH9 5KL, Edinburgh, United Kingdom", "b@example.com"],
-        [6, "66b Porters street, OL5 9PL, Newark, United Kingdom", "bab@example.com"],
-        [7, "C. Ancho 49, 05687, Navarra", "b@example.com"],
-        [8, "Ambleside avenue Park Road ED3, UK", "hellthere@example.com"],
-        [9, "123ab, OL5 9PL, UK", "hellathere@example.com"],
-        [10, "123ab, OL5 9PL, UK", "irrelevant@hotmail.com"],
-        [11, "37 Lincolnshire lane, GH9 5DF, Edinburgh, UK", "yet.another.email@msn.com"],
-        [12, "37 GH9, UK", "awesome_surfer_77@yahoo.com"],
-        [13, "totally random non existant address", "fictitious@never.co.uk"],
+        "123ab, OL5 9PL, UK",
+        "99 Ambleside avenue park Road, ED3 3RT, Edinburgh, United Kingdom",
+        "Calle Ancho, 12, 05688, Rioja, Navarra, Espana",
+        "Calle Sueco, 56, 05688, Rioja, Navarra",
+        "4 Brinkworth Way, GH9 5KL, Edinburgh, United Kingdom",
+        "66b Porters street, OL5 9PL, Newark, United Kingdom",
+        "C. Ancho 49, 05687, Navarra",
+        "Ambleside avenue Park Road ED3, UK",
+        "123ab, OL5 9PL, UK",
+        "123ab, OL5 9PL, UK",
+        "37 Lincolnshire lane, GH9 5DF, Edinburgh, UK",
+        "37 GH9, UK",
+        "totally random non existant address",
     ]
 
 
-@pytest.fixture
-def raw_data(base_data):
-    return base_data
+@pytest.fixture(scope="session")
+def email():
+    return [
+        "bbab@example.com",
+        "bb@example.com",
+        "a@example.com",
+        "hellothere@example.com",
+        "b@example.com",
+        "bab@example.com",
+        "b@example.com",
+        "hellthere@example.com",
+        "hellathere@example.com",
+        "irrelevant@hotmail.com",
+        "yet.another.email@msn.com",
+        "awesome_surfer_77@yahoo.com",
+        "fictitious@never.co.uk",
+    ]
 
 
-@pytest.fixture
-def initialised_data(base_data):
-    for i in range(len(base_data)):
-        base_data[i].append(i + 1)
-    return base_data
+@pytest.fixture(scope="session")
+def group_id():
+    return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+
+
+@pytest.fixture(scope="session")
+def spark():
+    spark = (
+        SparkSession.builder.master("local[1]")
+        .appName("local-tests")
+        .config("spark.executor.cores", "1")
+        .config("spark.executor.instances", "1")
+        .config("spark.sql.shuffle.partitions", "1")
+        .config("spark.driver.bindAddress", "127.0.0.1")
+        .getOrCreate()
+    )
+    yield spark
+    spark.stop()
 
 
 # raw data i.e. no "GROUP ID"
 
 
-@pytest.fixture
-def df_pandas_raw(raw_data):
-    return pd.DataFrame(columns=["id", "address", "email"], data=raw_data)
+@pytest.fixture(scope="session")
+def df_pandas_raw(id, address, email):
+    return pd.DataFrame({"id": id, "address": address, "email": email})
 
 
-@pytest.fixture
-def df_polars_raw(raw_data):
-    return pl.DataFrame(schema=["id", "address", "email"], data=raw_data, orient="row")
+@pytest.fixture(scope="session")
+def df_polars_raw(id, address, email):
+    return pl.DataFrame({"id": id, "address": address, "email": email})
+
+
+@pytest.fixture(scope="session")
+def df_spark_raw(spark, id, address, email):
+    return spark.createDataFrame(
+        [
+            [
+                id[i],
+                address[i],
+                email[i],
+            ]
+            for i in range(len(id))
+        ],
+        schema=(
+            "id",
+            "address",
+            "email",
+        ),
+    )
 
 
 # "initialised" data
 
 
-@pytest.fixture
-def df_pandas(initialised_data):
-    return pd.DataFrame(columns=["id", "address", "email", "group_id"], data=initialised_data)
+@pytest.fixture(scope="session")
+def df_pandas(id, address, email, group_id):
+    return pd.DataFrame({"id": id, "address": address, "email": email, "group_id": group_id})
 
 
-@pytest.fixture
-def df_polars(initialised_data):
-    return pl.DataFrame(schema=["id", "address", "email", "group_id"], data=initialised_data, orient="row")
+@pytest.fixture(scope="session")
+def df_polars(id, address, email, group_id):
+    return pl.DataFrame({"id": id, "address": address, "email": email, "group_id": group_id})

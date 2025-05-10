@@ -70,7 +70,6 @@ class WrappedSparkRows(WrappedDataFrame):
         # Monotonic increase:
         # return [
         #     Row(**{**row.asDict(), GROUP_ID: value})
-        #     #
         #     for row, value in zip(df, list([i + 1 for i in range(len(df))]))
         # ]
         return [Row(**{**row.asDict(), GROUP_ID: row[id]}) for row in df]
