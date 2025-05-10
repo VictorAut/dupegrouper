@@ -6,7 +6,17 @@ import typing
 
 import pandas as pd
 import polars as pl
-import pyspark.sql as ps
+from pyspark.sql import DataFrame as SparkDataFrame
+from pyspark.sql.types import (
+    StringType,
+    IntegerType,
+    LongType,
+    DoubleType,
+    FloatType,
+    BooleanType,
+    TimestampType,
+    DateType,
+)
 
 if typing.TYPE_CHECKING:
     from dupegrouper.strategy import DeduplicationStrategy
@@ -31,4 +41,19 @@ StrategyMapCollection: typing.TypeAlias = typing.DefaultDict[
 ]
 
 
-DataFrame: typing.TypeAlias = "pd.DataFrame | pl.DataFrame | ps.DataFrame"  # | ...
+DataFrame: typing.TypeAlias = "pd.DataFrame | pl.DataFrame | SparkDataFrame"  # | ...
+
+
+# PYSPARK SQL TYPES TO CLASS TYPE CONVERSION
+
+PYSPARK_TYPES = {
+    "string": StringType(),
+    "int": IntegerType(),
+    "bigint": LongType(),
+    "double": DoubleType(),
+    "float": FloatType(),
+    "boolean": BooleanType(),
+    "timestamp": TimestampType(),
+    "date": DateType(),
+    # Add others as needed
+}

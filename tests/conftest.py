@@ -48,6 +48,25 @@ def email():
 
 
 @pytest.fixture(scope="session")
+def blocking_key():
+    return [
+        "key_2",
+        "key_2",
+        "key_2",
+        "key_2",
+        "key_2",
+        "key_2",
+        "key_1",
+        "key_1",
+        "key_1",
+        "key_1",
+        "key_1",
+        "key_1",
+        "key_1",
+    ]
+
+
+@pytest.fixture(scope="session")
 def group_id():
     return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 
@@ -81,21 +100,10 @@ def df_polars_raw(id, address, email):
 
 
 @pytest.fixture(scope="session")
-def df_spark_raw(spark, id, address, email):
+def df_spark_raw(spark, id, address, email, blocking_key):
     return spark.createDataFrame(
-        [
-            [
-                id[i],
-                address[i],
-                email[i],
-            ]
-            for i in range(len(id))
-        ],
-        schema=(
-            "id",
-            "address",
-            "email",
-        ),
+        [[id[i], address[i], email[i], blocking_key[i]] for i in range(len(id))],
+        schema=("id", "address", "email", "blocking_key"),
     )
 
 

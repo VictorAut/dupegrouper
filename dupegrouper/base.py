@@ -21,11 +21,18 @@ import polars as pl
 from pyspark.sql import (
     SparkSession,
     Row,
-    DataFrame as SparkDataFrame,  # i.e. no clash with generic DataFrame definition
+    DataFrame as SparkDataFrame,  # i.e. no clash with generic DataFrame
 )
 from pyspark.sql.types import StringType, StructField, StructType
 
-from dupegrouper.definitions import StrategyMapCollection, DataFrame, GROUP_ID
+from dupegrouper.definitions import (
+    StrategyMapCollection,
+    DataFrame,
+    GROUP_ID,
+    PYSPARK_TYPES,
+)
+from dupegrouper.strategies.custom import Custom
+from dupegrouper.strategy import DeduplicationStrategy
 from dupegrouper.wrappers.dataframes import (
     WrappedPandasDataFrame,
     WrappedPolarsDataFrame,
@@ -33,8 +40,6 @@ from dupegrouper.wrappers.dataframes import (
     WrappedSparkRows,
 )
 from dupegrouper.wrappers import WrappedDataFrame
-from dupegrouper.strategies.custom import Custom
-from dupegrouper.strategy import DeduplicationStrategy
 
 
 # LOGGER:
@@ -219,6 +224,7 @@ class DupeGrouper:
 
             strategies = self._strategy_manager.get()
             id = self._id
+            id_type = PYSPARK_TYPES.get(dict(self._df.dtypes).get(id))
 
             deduped_rdd = self._df.rdd.mapPartitions(
                 lambda partition_iter: _process_partition(partition_iter, strategies, id)
@@ -226,7 +232,7 @@ class DupeGrouper:
             self._df = WrappedSparkDataFrame(
                 self.spark_session.createDataFrame(
                     deduped_rdd,
-                    schema=StructType(self._df.schema.fields + [StructField(GROUP_ID, StringType(), True)]),
+                    schema=StructType(self._df.schema.fields + [StructField(GROUP_ID, id_type, True)]),
                 )
             )
 
@@ -387,7 +393,7 @@ def _wrap(df: DataFrame, id: str | None = None) -> WrappedDataFrame:
     Raises:
         NotImplementedError
     """
-    del id # Unused
+    del id  # Unused
     raise NotImplementedError(f"Unsupported data frame: {type(df)}")
 
 

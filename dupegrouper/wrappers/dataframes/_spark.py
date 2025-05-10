@@ -17,6 +17,7 @@ class WrappedSparkDataFrame(WrappedDataFrame):
         super().__init__(df)
         # self._df: DataFrame = self._add_group_id(df)
 
+
     @staticmethod
     @override
     def _add_group_id(df) -> DataFrame:
