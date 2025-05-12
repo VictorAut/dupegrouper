@@ -145,7 +145,6 @@ class DupeGrouper:
     def _(self, attr, strategy_collection):
         for strategy in strategy_collection["default"]:
             self._df = self._call_strategy_deduper(strategy, attr)
-        self._strategy_manager.reset()
 
     @_dedupe.register(NoneType)
     def _(self, attr, strategy_collection):
@@ -153,7 +152,6 @@ class DupeGrouper:
         for attr, strategies in strategy_collection.items():
             for strategy in strategies:
                 self._df = self._call_strategy_deduper(strategy, attr)
-        self._strategy_manager.reset()
 
     # PUBLIC API:
 
@@ -198,6 +196,7 @@ class DupeGrouper:
         """
         if not isinstance(self._df, WrappedSparkDataFrame):
             self._dedupe(attr, self._strategy_manager.get())
+            self._strategy_manager.reset()
         else:
 
             def _process_partition(
@@ -222,23 +221,27 @@ class DupeGrouper:
                 # Core API reused per partition, per worker node
                 dg = DupeGrouper(rows, id=id)
                 dg.add_strategy(strategies)
-                dg.dedupe()
+                dg.dedupe(attr)
 
                 return iter(dg.df)  # type: ignore[arg-type]
 
             strategies: StrategyMapCollection = self._strategy_manager.get()
             id = typing.cast(str, self._id)
-            id_type = typing.cast(DataType, PYSPARK_TYPES.get(dict(self._df.dtypes).get(id))) # type: ignore
+            id_type = typing.cast(DataType, PYSPARK_TYPES.get(dict(self._df.dtypes).get(id)))  # type: ignore
 
             deduped_rdd = self._df.rdd.mapPartitions(
                 lambda partition_iter: _process_partition(partition_iter, strategies, id)
             )
+
+            if GROUP_ID in self._df.columns:
+                schema = StructType(self._df.schema.fields)
+            else:
+                schema = StructType(self._df.schema.fields + [StructField(GROUP_ID, id_type, True)])
+
             self._df = WrappedSparkDataFrame(
-                typing.cast(SparkSession, self.spark_session).createDataFrame(
-                    deduped_rdd,
-                    schema=StructType(self._df.schema.fields + [StructField(GROUP_ID, id_type, True)]),
-                )
+                typing.cast(SparkSession, self.spark_session).createDataFrame(deduped_rdd, schema=schema)
             )
+            self._strategy_manager.reset()
 
     @property
     def strategies(self) -> None | tuple[str, ...] | dict[str, tuple[str, ...]]:

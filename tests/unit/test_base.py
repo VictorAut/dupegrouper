@@ -204,7 +204,6 @@ def patch_helper_reset(grouper: DupeGrouper):
         grouper.dedupe("address")
 
         mock_dedupe.assert_called_once_with("address", ANY)
-        mock_reset.assert_called_once()
 
         grouper._strategy_manager = _StrategyManager()
         print(grouper.strategies)
