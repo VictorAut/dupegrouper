@@ -7,7 +7,7 @@ from typing_extensions import override
 import numpy as np
 from rapidfuzz import fuzz
 
-from dupegrouper.definitions import TMP_ATTR
+from dupegrouper.definitions import TMP_ATTR, SeriesLike
 from dupegrouper.wrappers import WrappedDataFrame
 from dupegrouper.strategy import DeduplicationStrategy
 
@@ -51,7 +51,7 @@ class Fuzzy(DeduplicationStrategy):
 
         fuzzy_map = {uattrs[i]: uattrs[j] for i, j in zip(*match_indices)}
 
-        attr_map = self.wrapped_df.map_dict(attr, fuzzy_map)  # i.e. a "Series"
+        attr_map: SeriesLike = self.wrapped_df.map_dict(attr, fuzzy_map)
 
         self.wrapped_df.put_col(TMP_ATTR, attr_map)
 

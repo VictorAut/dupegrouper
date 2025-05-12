@@ -12,7 +12,7 @@ from scipy.sparse import csr_matrix
 from sklearn.feature_extraction.text import TfidfVectorizer  # type: ignore
 from sparse_dot_topn import sp_matmul_topn  # type: ignore
 
-from dupegrouper.definitions import TMP_ATTR
+from dupegrouper.definitions import TMP_ATTR, SeriesLike
 from dupegrouper.wrappers import WrappedDataFrame
 from dupegrouper.strategy import DeduplicationStrategy
 
@@ -194,12 +194,12 @@ class TfIdf(DeduplicationStrategy):
 
         for tfidf_map in self._gen_map(matches):
 
-            attr_map = self.wrapped_df.map_dict(attr, tfidf_map)  # i.e. "Series" like
+            attr_map: SeriesLike = self.wrapped_df.map_dict(attr, tfidf_map)
 
-            new_attr = self.wrapped_df.fill_na(attr_map, self.wrapped_df.get_col(attr))  # i.e. "Series" like
+            new_attr: SeriesLike = self.wrapped_df.fill_na(attr_map, self.wrapped_df.get_col(attr))
 
             self.wrapped_df.put_col(TMP_ATTR, new_attr)
 
-            self.assign_group_id(TMP_ATTR).drop_col(TMP_ATTR)  # updates `wrapped_df`
+            self.assign_group_id(TMP_ATTR).drop_col(TMP_ATTR)
 
         return self.wrapped_df

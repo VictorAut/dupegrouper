@@ -73,8 +73,8 @@ class DupeGrouper:
     ):
         self._df: WrappedDataFrame = _wrap(df, id)
         self._strategy_manager = _StrategyManager()
-        self._id = id
         self.spark_session = spark_session
+        self._id = id
 
     @singledispatchmethod
     def _call_strategy_deduper(
@@ -420,7 +420,6 @@ def _(df, id: str | None = None):
 
 
 @_wrap.register(list)
-def _(df, id: str):
-    """must be a list[Row]"""
+def _(df: list[Row], id: str):
     # TODO validate all as instances of `Row`
     return WrappedSparkRows(df, id)

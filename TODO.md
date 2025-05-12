@@ -17,3 +17,5 @@
 - need to test copying GROUP_ID from ID and then deduping on a a string for id's such as "a001"
 
 - Include validation that id must be populated if it's a spark frame.
+
+- Throw error if .dedupe() is used without positional argument and the strategies used are stored under "default".

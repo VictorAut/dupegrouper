@@ -4,12 +4,12 @@ from pyspark.sql import SparkSession
 import pytest
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def id():
     return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def address():
     return [
         "123ab, OL5 9PL, UK",
@@ -28,7 +28,7 @@ def address():
     ]
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def email():
     return [
         "bbab@example.com",
@@ -47,7 +47,7 @@ def email():
     ]
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def blocking_key():
     return [
         "key_2",
@@ -66,12 +66,12 @@ def blocking_key():
     ]
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def group_id():
     return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def spark():
     spark = (
         SparkSession.builder.master("local[1]")
@@ -89,17 +89,17 @@ def spark():
 # raw data i.e. no "GROUP ID"
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def df_pandas_raw(id, address, email):
     return pd.DataFrame({"id": id, "address": address, "email": email})
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def df_polars_raw(id, address, email):
     return pl.DataFrame({"id": id, "address": address, "email": email})
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def df_spark_raw(spark, id, address, email, blocking_key):
     return spark.createDataFrame(
         [[id[i], address[i], email[i], blocking_key[i]] for i in range(len(id))],
@@ -110,11 +110,11 @@ def df_spark_raw(spark, id, address, email, blocking_key):
 # "initialised" data
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def df_pandas(id, address, email, group_id):
     return pd.DataFrame({"id": id, "address": address, "email": email, "group_id": group_id})
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def df_polars(id, address, email, group_id):
     return pl.DataFrame({"id": id, "address": address, "email": email, "group_id": group_id})
