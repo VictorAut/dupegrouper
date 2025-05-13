@@ -78,6 +78,7 @@ class DeduplicationStrategy(ABC):
         _logger.debug(f'Re-assigning new "group_id" per duped instance of attribute "{attr}"')
 
         attrs = np.asarray(self.wrapped_df.get_col(attr))
+        attrs = np.array([np.nan if x is None else x for x in attrs]) # handle full None lists
         groups = np.asarray(self.wrapped_df.get_col(GROUP_ID))
 
         unique_attrs, unique_indices = np.unique(

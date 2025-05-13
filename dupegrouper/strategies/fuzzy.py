@@ -7,6 +7,7 @@ from typing_extensions import override
 import numpy as np
 from rapidfuzz import fuzz
 
+import dupegrouper.base
 from dupegrouper.definitions import TMP_ATTR, SeriesLike
 from dupegrouper.wrappers import WrappedDataFrame
 from dupegrouper.strategy import DeduplicationStrategy
@@ -30,7 +31,7 @@ class Fuzzy(DeduplicationStrategy):
 
     @staticmethod
     @functools.cache
-    def _fuzz_ratio(s1, s2):
+    def _fuzz_ratio(s1, s2) -> float:
         return fuzz.ratio(s1, s2)
 
     @override
@@ -49,7 +50,7 @@ class Fuzzy(DeduplicationStrategy):
 
         match_indices = np.where(similarity_matrix > self._ratio)
 
-        fuzzy_map = {uattrs[i]: uattrs[j] for i, j in zip(*match_indices)}
+        fuzzy_map: dict[str, str] = {uattrs[i]: uattrs[j] for i, j in zip(*match_indices)}
 
         attr_map: SeriesLike = self.wrapped_df.map_dict(attr, fuzzy_map)
 

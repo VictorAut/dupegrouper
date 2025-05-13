@@ -1,10 +1,13 @@
 """Tests for dupegrouper.strategy"""
 
-import pandas as pd
+from unittest.mock import Mock
 
+import numpy as np
+import pandas as pd
 import pytest
 
 from dupegrouper.base import _wrap
+from dupegrouper.definitions import GROUP_ID
 from dupegrouper.strategy import DeduplicationStrategy
 from dupegrouper.wrappers import WrappedDataFrame
 from dupegrouper.wrappers.dataframes import WrappedPandasDataFrame, WrappedPolarsDataFrame
@@ -43,7 +46,6 @@ def test_with_frame(dataframe):
     assert isinstance(strategy.wrapped_df, WrappedDataFrame)
 
 
-# all length 6 arrays
 @pytest.mark.parametrize(
     "attribute_array, expected_group_id",
     [
@@ -62,14 +64,29 @@ def test_with_frame(dataframe):
     ],
 )
 def test_assign_group_id(attribute_array, expected_group_id):
-    df = pd.DataFrame({"name": attribute_array, "group_id": [1, 2, 3, 4, 5, 6]})
+    attr = "address"
+    input_group_ids = [1, 2, 3, 4, 5, 6]
 
-    strategy = DummyStrategy()
-    strategy.with_frame(_wrap(df))
+    mock_wrapped_df = Mock()
+    mock_wrapped_df.get_col.side_effect = lambda key: attribute_array if key == attr else input_group_ids
+    mock_wrapped_df.put_col.return_value = expected_group_id
 
-    updated_df = strategy.assign_group_id("name").unwrap()
+    class Dummy(DeduplicationStrategy):
+        def __init__(self, wrapped_df):
+            self.wrapped_df = wrapped_df
 
-    assert list(updated_df["group_id"]) == expected_group_id
+        def dedupe(): # ABC contract forces this
+            pass 
+
+
+    obj = Dummy(mock_wrapped_df)
+    result = obj.assign_group_id(attr)
+
+    # Assert
+    mock_wrapped_df.get_col.assert_any_call(attr)
+    mock_wrapped_df.get_col.assert_any_call(GROUP_ID)
+    mock_wrapped_df.put_col.assert_called_once()
+    np.testing.assert_array_equal(result, expected_group_id)
 
 
 def test_dedupe():
@@ -96,3 +113,5 @@ def test_dedupe():
 
     expected_groups = [1, 2, 1, 4, 2, 4]
     assert list(deduped_df["group_id"]) == expected_groups
+
+

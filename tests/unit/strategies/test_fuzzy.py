@@ -1,17 +1,65 @@
+from unittest.mock import Mock, patch, call
+
+import numpy as np
 import pytest
 
 from dupegrouper.base import _wrap
+from dupegrouper.definitions import TMP_ATTR
 from dupegrouper.strategies.fuzzy import Fuzzy
 
 
-def do_fuzzy(df, fuzzy_params, group_id):
-    fuzzy = Fuzzy(**fuzzy_params)
-    fuzzy.with_frame(_wrap(df))
+####################
+# DEDUPE UNIT TEST #
+####################
 
-    updated_wrapped_df = fuzzy.dedupe("address")
-    updated_df = updated_wrapped_df.unwrap()
 
-    assert list(updated_df["group_id"]) == group_id
+def test_dedupe_unit():
+    attr = "address"
+    dummy_array = np.array(["foo", "bar", "bar"])
+
+    tfidf = Fuzzy(tolerance=0.2)
+
+    mock_wrapped_df = Mock()
+    mock_wrapped_df.get_col.return_value = dummy_array
+    tfidf.wrapped_df = mock_wrapped_df
+
+    with patch.object(
+        tfidf,
+        "_fuzz_ratio",
+        return_value=85.1,
+    ) as mock_fuzz, patch.object(
+        tfidf,
+        "assign_group_id",
+        return_value=mock_wrapped_df,
+    ) as mock_assign_group_id:
+
+        # Also mock wrapped_df chaining methods
+        mock_wrapped_df.map_dict.return_value = [None, "bar", "bar"]
+        mock_wrapped_df.put_col.return_value = mock_wrapped_df
+        mock_wrapped_df.assign_group_id.return_value = mock_wrapped_df
+        mock_wrapped_df.drop_col.return_value = mock_wrapped_df
+
+        # Run dedupe
+        result = tfidf.dedupe(attr)
+
+        # Assertions
+        mock_fuzz.assert_called_with("foo", "foo")
+
+        mock_wrapped_df.map_dict.assert_called_once_with(attr,  {'bar': 'foo', 'foo': 'foo'})
+
+        # second put call is part of assign_group_id which in another unit test
+        put_col_call = mock_wrapped_df.put_col.call_args_list[0]
+        assert put_col_call == call(TMP_ATTR, [None, "bar", "bar"])
+
+        mock_assign_group_id.assert_called_once()
+        mock_wrapped_df.drop_col.assert_called_once()
+
+        assert result == mock_wrapped_df
+
+
+##################################
+# DEDUPE NARROW INTEGRATION TEST #
+##################################
 
 
 fuzzy_parametrize_data = [
@@ -30,17 +78,21 @@ fuzzy_parametrize_data = [
     ({"tolerance": 0.95}, [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]),
 ]
 
-# i.e. pandas
 
+@pytest.mark.parametrize("input_params, expected_output", fuzzy_parametrize_data)
+def test_dedupe_integrated(input_params, expected_output, dataframe, helpers):
 
-@pytest.mark.parametrize("fuzzy_params, expected_group_id", fuzzy_parametrize_data)
-def test_fuzzy_dedupe_pandas(fuzzy_params, expected_group_id, df_pandas):
-    do_fuzzy(df_pandas, fuzzy_params, expected_group_id)
+    df, spark, id_col = dataframe
 
+    if spark:
+        # i.e. Spark DataFrame -> Spark list[Row]
+        df = df.collect()
 
-# i.e. polars
+    tfidf = Fuzzy(**input_params)
+    tfidf.with_frame(_wrap(df, id_col))
 
+    df = tfidf.dedupe("address").unwrap()
 
-@pytest.mark.parametrize("fuzzy_params, expected_group_id", fuzzy_parametrize_data)
-def test_fuzzy_dedupe_polars(fuzzy_params, expected_group_id, df_polars):
-    do_fuzzy(df_polars, fuzzy_params, expected_group_id)
+    print(df)
+
+    assert helpers.get_group_id_as_list(df) == expected_output

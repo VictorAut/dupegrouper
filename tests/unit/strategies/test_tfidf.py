@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, Mock, patch, call
+from unittest.mock import Mock, patch, call
 
 import numpy as np
 import pytest
@@ -44,12 +44,11 @@ def test_dedupe_unit():
 
     tfidf = TfIdf(ngram=(1, 1), tolerance=0.2, topn=2)
 
-    # Create a mock for wrapped_df
+    # mock for wrapped_df
     mock_wrapped_df = Mock()
     mock_wrapped_df.get_col.return_value = dummy_array
     tfidf.wrapped_df = mock_wrapped_df
 
-    # Patch internal methods to isolate behavior
     with patch.object(tfidf, "_vectorize", return_value="dummy-vectorizer") as mock_vec, patch.object(
         tfidf, "_get_similarities_matrix", return_value="dummy-matrix"
     ) as mock_sim_matrix, patch.object(
@@ -60,14 +59,12 @@ def test_dedupe_unit():
         tfidf, "assign_group_id", return_value=mock_wrapped_df
     ) as mock_assign_group_id:
 
-        # Also mock wrapped_df chaining methods
         mock_wrapped_df.map_dict.return_value = [None, "bar", "bar"]
         mock_wrapped_df.fill_na.return_value = ["foo", "bar", "bar"]
         mock_wrapped_df.put_col.return_value = mock_wrapped_df
         mock_wrapped_df.assign_group_id.return_value = mock_wrapped_df
         mock_wrapped_df.drop_col.return_value = mock_wrapped_df
 
-        # Run dedupe
         result = tfidf.dedupe(attr)
 
         # Assertions
