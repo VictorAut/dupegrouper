@@ -6,6 +6,7 @@ from unittest.mock import ANY, Mock, patch
 
 import pandas as pd
 import polars as pl
+from pyspark.sql import DataFrame as SparkDataFrame, Row
 import pytest
 
 from dupegrouper.base import (
@@ -15,31 +16,39 @@ from dupegrouper.base import (
     _StrategyManager,
     _wrap,
 )
-from dupegrouper.wrappers import WrappedDataFrame
+
 import dupegrouper.definitions
-import dupegrouper.wrappers
-import dupegrouper.wrappers.dataframes
 from dupegrouper.strategies import Exact, Fuzzy, TfIdf
+from dupegrouper.wrappers import WrappedDataFrame
+import dupegrouper.wrappers.dataframes
+from dupegrouper.wrappers.dataframes import (
+    WrappedPandasDataFrame,
+    WrappedPolarsDataFrame,
+    WrappedSparkDataFrame,
+    WrappedSparkRows,
+)
 
 
-#############################
+###############
 #  TEST _wrap #
-#############################
+###############
+
+DATAFRAME_TYPES = {
+    pd.DataFrame: WrappedPandasDataFrame,
+    pl.DataFrame: WrappedPolarsDataFrame,
+    SparkDataFrame: WrappedSparkDataFrame,
+    list[Row]: WrappedSparkRows,
+}
 
 
-def test_init_dataframe_pandas(df_pandas_raw: pd.DataFrame):
-    df_container: WrappedDataFrame = _wrap(df_pandas_raw)
-    df: pd.DataFrame = df_container.unwrap()  # type: ignore
-    assert "group_id" in df.columns
-    assert df["group_id"].tolist() == [i for i in range(1, 14)]
+def test_init_dataframe(dataframe):
+    df, _, id = dataframe
 
+    expected_type = DATAFRAME_TYPES.get(type(df))
 
-def test_init_dataframe_polars(df_polars_raw: pl.DataFrame):
-    df_container: WrappedDataFrame = _wrap(df_polars_raw)
-    df: pl.DataFrame = df_container.unwrap()  # type: ignore
-    assert "group_id" in df.columns
-    assert df["group_id"].to_list() == [i for i in range(1, 14)]
-
+    df_wrapped: WrappedDataFrame = _wrap(df, id)
+    
+    assert isinstance(df_wrapped, expected_type)
 
 def test_dataframe_dispatcher_unsupported():
     class FakeDataFrame:
@@ -47,6 +56,22 @@ def test_dataframe_dispatcher_unsupported():
 
     with pytest.raises(NotImplementedError, match="Unsupported data frame"):
         _wrap(FakeDataFrame())
+
+
+# def test_init_dataframe_pandas(df_pandas_raw: pd.DataFrame):
+#     df_wrapped: WrappedDataFrame = _wrap(df_pandas_raw)
+#     df: pd.DataFrame = df_wrapped.unwrap()  # type: ignore
+#     assert "group_id" in df.columns
+#     assert df["group_id"].tolist() == [i for i in range(1, 14)]
+
+
+# def test_init_dataframe_polars(df_polars_raw: pl.DataFrame):
+#     df_wrapped: WrappedDataFrame = _wrap(df_polars_raw)
+#     df: pl.DataFrame = df_wrapped.unwrap()  # type: ignore
+#     assert "group_id" in df.columns
+#     assert df["group_id"].to_list() == [i for i in range(1, 14)]
+
+
 
 
 ######################

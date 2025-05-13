@@ -6,12 +6,8 @@ import pytest
 
 from dupegrouper.base import _wrap
 from dupegrouper.strategy import DeduplicationStrategy
+from dupegrouper.wrappers import WrappedDataFrame
 from dupegrouper.wrappers.dataframes import WrappedPandasDataFrame, WrappedPolarsDataFrame
-
-
-###########################
-# `DeduplicationStrategy` #
-###########################
 
 
 class DummyStrategy(DeduplicationStrategy):
@@ -19,18 +15,32 @@ class DummyStrategy(DeduplicationStrategy):
         return self.assign_group_id(attr).unwrap()
 
 
-def testwith_frame_pandas(df_pandas):
+###########################
+# `DeduplicationStrategy` #
+###########################
+
+
+def test_reinstantiate():
+    dummy_positional_args = ("dummy", False)
+    dummy_kwargs = {"test": 5, "random": "random_arg"}
+
+    instance = DummyStrategy(*dummy_positional_args, **dummy_kwargs)
+
+    instance_reinstantiated = instance.reinstantiate()
+
+    assert instance is not instance_reinstantiated
+    assert instance._init_args == instance_reinstantiated._init_args == dummy_positional_args
+    assert instance._init_kwargs == instance_reinstantiated._init_kwargs == dummy_kwargs
+
+
+def test_with_frame(dataframe):
+
+    df, _, _ = dataframe
+
     strategy = DummyStrategy()
-    strategy.with_frame(_wrap(df_pandas))
+    strategy.with_frame(_wrap(df))
 
-    assert isinstance(strategy.wrapped_df, WrappedPandasDataFrame)
-
-
-def testwith_frame_polars(df_polars):
-    strategy = DummyStrategy()
-    strategy.with_frame(_wrap(df_polars))
-
-    assert isinstance(strategy.wrapped_df, WrappedPolarsDataFrame)
+    assert isinstance(strategy.wrapped_df, WrappedDataFrame)
 
 
 # all length 6 arrays

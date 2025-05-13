@@ -25,7 +25,7 @@ class WrappedDataFrame(ABC):
     @abstractmethod
     def _add_group_id(df: DataFrameLike):
         """Return a dataframe with a group id column"""
-        pass
+        pass # pragma: no cover
 
     # DATAFRAME `LIBRARY` WRAPPERS:
 
@@ -35,17 +35,17 @@ class WrappedDataFrame(ABC):
 
         No return; `_df` is updated
         """
-        pass
+        pass # pragma: no cover
 
     @abstractmethod
     def get_col(self, column: str) -> SeriesLike:
         """Return a column array-like of data"""
-        pass
+        pass # pragma: no cover
 
     @abstractmethod
     def map_dict(self, column: str, mapping: dict) -> SeriesLike:
         """Return a column array-like of data mapped with `mapping`"""
-        pass
+        pass # pragma: no cover
 
     @abstractmethod
     def drop_col(self, column: str) -> typing.Self:
@@ -53,13 +53,13 @@ class WrappedDataFrame(ABC):
 
         No return: `_df` is updated
         """
-        pass
+        pass # pragma: no cover
 
     @staticmethod
     @abstractmethod
     def fill_na(series, array) -> SeriesLike:
         """Return a column array-like of data null-filled with `array`"""
-        pass
+        pass # pragma: no cover
 
     # THIN TRANSPARENCY DELEGATION
 

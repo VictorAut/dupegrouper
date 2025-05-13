@@ -1,6 +1,6 @@
 import pandas as pd
 import polars as pl
-from pyspark.sql import SparkSession
+from pyspark.sql import SparkSession, DataFrame as SparkDataFrame
 import pytest
 
 
@@ -101,10 +101,11 @@ def df_polars_raw(id, address, email):
 
 @pytest.fixture(scope="session")
 def df_spark_raw(spark, id, address, email, blocking_key):
+    """default is a single partition"""
     return spark.createDataFrame(
         [[id[i], address[i], email[i], blocking_key[i]] for i in range(len(id))],
         schema=("id", "address", "email", "blocking_key"),
-    )
+    ).repartition(1, "blocking_key")
 
 
 # "initialised" data
@@ -118,3 +119,37 @@ def df_pandas(id, address, email, group_id):
 @pytest.fixture(scope="session")
 def df_polars(id, address, email, group_id):
     return pl.DataFrame({"id": id, "address": address, "email": email, "group_id": group_id})
+
+
+@pytest.fixture(params=["pandas", "polars", "spark"], scope="session")
+def dataframe(request, df_pandas_raw, df_polars_raw, df_spark_raw, spark) -> tuple:
+    """return a tuple of positionally ordered input parameters of DupeGrouper
+    i.e.
+        - df
+        - spark_session
+        - id
+    """
+    match request.param:
+        case "pandas":
+            return df_pandas_raw, None, None
+        case "polars":
+            return df_polars_raw, None, None
+        case "spark":
+            return df_spark_raw, spark, "id"
+        
+
+# helpers
+
+class Helpers():
+    @staticmethod
+    def get_group_id_as_list(df):
+        if isinstance(df, pd.DataFrame | pl.DataFrame):
+            return list(df["group_id"])
+        if isinstance(df, SparkDataFrame):
+            return [value["group_id"] for value in df.select("group_id").collect()]
+        if isinstance(df, list):
+            return [value["group_id"] for value in df]
+        
+@pytest.fixture(scope="session", autouse=True)
+def helpers():
+    return Helpers

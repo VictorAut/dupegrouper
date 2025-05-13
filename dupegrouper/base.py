@@ -424,5 +424,5 @@ def _(df, id: str | None = None):
 
 @_wrap.register(list)
 def _(df: list[Row], id: str):
-    # TODO validate all as instances of `Row`
+    """As lists can be large, membership is *not* validated!"""
     return WrappedSparkRows(df, id)

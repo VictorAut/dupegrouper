@@ -32,42 +32,12 @@ EXPECTED_GROUP_ID = (
 )
 
 
-@pytest.fixture(
-    params=[
-        "pandas",
-        "polars",
-        "spark",
-    ]
-)
-def dataframe(request, df_pandas_raw, df_polars_raw, df_spark_raw, spark) -> tuple:
-    """return a tuple of positionally ordered input parameters of DupeGrouper
-    i.e.
-        - df
-        - spark_session
-        - id
-    """
-    match request.param:
-        case "pandas":
-            return df_pandas_raw, None, None
-        case "polars":
-            return df_polars_raw, None, None
-        case "spark":
-            return df_spark_raw, spark, "id"
-
-
-def get_group_id_as_list(df):
-    if isinstance(df, pd.DataFrame | pl.DataFrame):
-        return list(df["group_id"])
-    if isinstance(df, SparkDataFrame):
-        return [value["group_id"] for value in df.select("group_id").collect()]
-
-
 @pytest.mark.parametrize(
     "strategy_class, strategy_params, expected_group_id",
     zip(STRATEGY_CLASSES, STRATEGY_PARAMS, EXPECTED_GROUP_ID),
     ids=[cls.__name__ for cls in STRATEGY_CLASSES],
 )
-def test_dedupe_matrix(strategy_class, strategy_params, expected_group_id, dataframe):
+def test_dedupe_matrix(strategy_class, strategy_params, expected_group_id, dataframe, helpers):
 
     df, spark_session, id = dataframe
 
@@ -76,9 +46,9 @@ def test_dedupe_matrix(strategy_class, strategy_params, expected_group_id, dataf
     # single strategy item addition
     dg.add_strategy(strategy_class(**strategy_params))
     dg.dedupe("address")
-    assert get_group_id_as_list(dg.df) == expected_group_id 
+    assert helpers.get_group_id_as_list(dg.df) == expected_group_id
 
     # dictionary straegy addition
     dg.add_strategy({"address": [strategy_class(**strategy_params)]})
     dg.dedupe()
-    assert get_group_id_as_list(dg.df) == expected_group_id
+    assert helpers.get_group_id_as_list(dg.df) == expected_group_id

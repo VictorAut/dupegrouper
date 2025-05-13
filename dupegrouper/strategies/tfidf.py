@@ -66,7 +66,7 @@ class TfIdf(DeduplicationStrategy):
         Args:
             ngram: the n-gram range"""
         del ngram  # Unused by generic
-        return TypeError("ngram must be of type int or a length 2 tuple of integers")
+        raise TypeError("ngram must be of type int or a length 2 tuple of integers")
 
     @_vectorize.register(int)
     def _(self, ngram) -> TfidfVectorizer:
