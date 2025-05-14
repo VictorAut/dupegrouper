@@ -10,6 +10,7 @@ from pyspark.sql import DataFrame as SparkDataFrame
 import pytest
 
 from dupegrouper import DupeGrouper
+from dupegrouper.definitions import GROUP_ID
 from dupegrouper.strategies import exact, fuzzy, tfidf
 
 
@@ -46,9 +47,11 @@ def test_dedupe_matrix(strategy_class, strategy_params, expected_group_id, dataf
     # single strategy item addition
     dg.add_strategy(strategy_class(**strategy_params))
     dg.dedupe("address")
-    assert helpers.get_group_id_as_list(dg.df) == expected_group_id
+    df1 = dg.df
 
     # dictionary straegy addition
     dg.add_strategy({"address": [strategy_class(**strategy_params)]})
     dg.dedupe()
-    assert helpers.get_group_id_as_list(dg.df) == expected_group_id
+    df2 = dg.df
+
+    assert helpers.get_column_as_list(df1, GROUP_ID) == expected_group_id == helpers.get_column_as_list(df2, GROUP_ID)

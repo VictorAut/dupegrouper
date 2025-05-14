@@ -62,6 +62,7 @@ def test_with_frame(dataframe):
         # white space: no matches
         (["Alice", "Bob", "Alice     ", "Charlie", "   Bob", "Charlie"], [1, 2, 3, 4, 5, 4]),
     ],
+    ids=["string matches", "no string matches", "int matches", "float matches", "mixed numeric matches", "whitespace no string match"]
 )
 def test_assign_group_id(attribute_array, expected_group_id):
     attr = "address"
@@ -89,7 +90,7 @@ def test_assign_group_id(attribute_array, expected_group_id):
     np.testing.assert_array_equal(result, expected_group_id)
 
 
-def test_dedupe():
+def test_dedupe(helpers):
     """In a way, this essentially mimics testing `dupegrouper.strategies.Exact`"""
 
     df = pd.DataFrame(
@@ -112,6 +113,6 @@ def test_dedupe():
     deduped_df = strategy.dedupe("name")  # Uses assign_group_id internally
 
     expected_groups = [1, 2, 1, 4, 2, 4]
-    assert list(deduped_df["group_id"]) == expected_groups
+    assert helpers.get_column_as_list(deduped_df, GROUP_ID) == expected_groups
 
 

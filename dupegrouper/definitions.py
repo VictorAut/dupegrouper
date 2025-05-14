@@ -19,7 +19,7 @@ from pyspark.sql.types import (
 )
 
 if typing.TYPE_CHECKING:
-    from dupegrouper.strategy import DeduplicationStrategy
+    from dupegrouper.strategy import DeduplicationStrategy # pragma: no cover
 
 
 # CONSTANTS

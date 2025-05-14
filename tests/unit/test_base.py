@@ -41,14 +41,15 @@ DATAFRAME_TYPES = {
 }
 
 
-def test_init_dataframe(dataframe):
+def test_wrap_dataframe(dataframe):
     df, _, id = dataframe
 
     expected_type = DATAFRAME_TYPES.get(type(df))
 
     df_wrapped: WrappedDataFrame = _wrap(df, id)
-    
+
     assert isinstance(df_wrapped, expected_type)
+
 
 def test_dataframe_dispatcher_unsupported():
     class FakeDataFrame:
@@ -58,25 +59,16 @@ def test_dataframe_dispatcher_unsupported():
         _wrap(FakeDataFrame())
 
 
-# def test_init_dataframe_pandas(df_pandas_raw: pd.DataFrame):
-#     df_wrapped: WrappedDataFrame = _wrap(df_pandas_raw)
-#     df: pd.DataFrame = df_wrapped.unwrap()  # type: ignore
-#     assert "group_id" in df.columns
-#     assert df["group_id"].tolist() == [i for i in range(1, 14)]
-
-
-# def test_init_dataframe_polars(df_polars_raw: pl.DataFrame):
-#     df_wrapped: WrappedDataFrame = _wrap(df_polars_raw)
-#     df: pl.DataFrame = df_wrapped.unwrap()  # type: ignore
-#     assert "group_id" in df.columns
-#     assert df["group_id"].to_list() == [i for i in range(1, 14)]
-
-
-
-
 ######################
 #  TEST set group_id #
 ######################
+
+
+def reload():
+    importlib.reload(dupegrouper.definitions)  # reset constant
+    importlib.reload(dupegrouper.wrappers.dataframes._pandas)
+    importlib.reload(dupegrouper.wrappers.dataframes._polars)
+    importlib.reload(dupegrouper.wrappers.dataframes._spark)
 
 
 @pytest.mark.parametrize(
@@ -91,22 +83,33 @@ def test_dataframe_dispatcher_unsupported():
         # arbitrary: supported (but bad!) column naming with whitespace
         ("bad group id", "bad group id"),
     ],
+    ids=["default", "null", "default-override", "default-override-bad-format"],
 )
-def test_different_group_id_env_var(env_var_value, expected_value, df_pandas_raw):
+def test_group_id_env_var(env_var_value, expected_value, lowlevel_dataframe):
+    df, wrapper, id = lowlevel_dataframe
+
     if env_var_value:
         os.environ["GROUP_ID"] = env_var_value
     else:
         os.environ.pop("GROUP_ID", None)  # remove it if exists
 
-    importlib.reload(dupegrouper.definitions)  # reset constant
-    importlib.reload(dupegrouper.wrappers.dataframes._pandas)  # final value in `base`
-    df_init = _wrap(df_pandas_raw).unwrap()
-    assert expected_value in df_init.columns
+    reload()
+
+    df = wrapper(df, id)
+
+    if isinstance(df, WrappedSparkDataFrame):
+        assert expected_value not in df.columns  # no change
+    elif isinstance(df, WrappedSparkRows):
+        for row in df.unwrap():
+            print(row.asDict().keys())
+            assert expected_value in row.asDict().keys()
+    else:
+        assert expected_value in df.columns
 
     # clean up
     os.environ["GROUP_ID"] = "group_id"
-    importlib.reload(dupegrouper.definitions)
-    importlib.reload(dupegrouper.wrappers.dataframes._pandas)
+
+    reload()
 
 
 ##############################################
@@ -125,7 +128,7 @@ DICT_ERROR_MSG = "Input dict is not valid: items must be a list of `Deduplicatio
 
 
 @pytest.mark.parametrize(
-    "test_input, expected_to_pass, base_msg",
+    "strategy, expected_to_pass, base_msg",
     [
         # correct base inputs
         (Mock(spec=DeduplicationStrategy), True, None),
@@ -163,30 +166,41 @@ DICT_ERROR_MSG = "Input dict is not valid: items must be a list of `Deduplicatio
             DICT_ERROR_MSG,
         ),
     ],
+    ids=[
+        "valid dedupe class",
+        "valid callable",
+        "valid dict",
+        "invalid class",
+        "invalid callable not in tuple",
+        "invalid callable positional args",
+        "invalid tuple",
+        "invalid list",
+        "invalid str",
+        "invalid dict"
+    ],
 )
-def test_strategy_manager_validate_addition_strategy(test_input, expected_to_pass, base_msg):
+def test_strategy_manager_validate_addition_strategy(strategy, expected_to_pass, base_msg):
     """validates that the input 'strtagey' is legit, against `StrategyTypeError`"""
     manager = _StrategyManager()
-    mock_strategy = test_input
     if expected_to_pass:
-        if isinstance(mock_strategy, dict):
-            for k, value in mock_strategy.items():
+        if isinstance(strategy, dict):
+            for k, value in strategy.items():
                 for v in value:
                     manager.add(k, v)
                     assert (k in manager.get()) is expected_to_pass
         else:
-            manager.add("default", mock_strategy)
+            manager.add("default", strategy)
             assert ("default" in manager.get()) is expected_to_pass
     else:
         with pytest.raises(StrategyTypeError) as e:
-            raise (StrategyTypeError(mock_strategy))
-        assert base_msg in str(e)
+            manager.add("default", strategy)
+            assert base_msg in str(e)
 
 
 def test_strategy_manager_reset():
     manager = _StrategyManager()
-    mock_strategy = Mock(spec=DeduplicationStrategy)
-    manager.add("name", mock_strategy)
+    strategy = Mock(spec=DeduplicationStrategy)
+    manager.add("name", strategy)
     manager.reset()
     assert manager.get() == {}
 

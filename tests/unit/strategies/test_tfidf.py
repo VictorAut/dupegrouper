@@ -5,7 +5,7 @@ import pytest
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from dupegrouper.base import _wrap
-from dupegrouper.definitions import TMP_ATTR
+from dupegrouper.definitions import TMP_ATTR, GROUP_ID
 from dupegrouper.strategies.tfidf import TfIdf
 
 
@@ -98,15 +98,6 @@ def test_dedupe_unit():
 ##################################
 
 
-def do_tfidf(df, tfidf_params, group_id, helpers):
-    tfidf = TfIdf(**tfidf_params)
-    tfidf.with_frame(_wrap(df))
-
-    df = tfidf.dedupe("address").unwrap()
-
-    assert helpers.get_group_id_as_list(df) == group_id
-
-
 tfidf_parametrize_data = [
     # i.e. no deduping, by definition
     ({"ngram": (1, 1), "tolerance": 0, "topn": 1}, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]),
@@ -131,8 +122,8 @@ tfidf_parametrize_data = [
     ({"ngram": (3, 3), "tolerance": 0.40, "topn": 2}, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]),  # No deduping!
 ]
 
-@pytest.mark.parametrize("input_params, expected_output", tfidf_parametrize_data)
-def test_dedupe_integrated(input_params, expected_output, dataframe, helpers):
+@pytest.mark.parametrize("input, output", tfidf_parametrize_data)
+def test_dedupe_integrated(input, output, dataframe, helpers):
 
     df, spark, id_col = dataframe
 
@@ -140,9 +131,9 @@ def test_dedupe_integrated(input_params, expected_output, dataframe, helpers):
         # i.e. Spark DataFrame -> Spark list[Row]
         df = df.collect()
 
-    tfidf = TfIdf(**input_params)
+    tfidf = TfIdf(**input)
     tfidf.with_frame(_wrap(df, id_col))
 
     df = tfidf.dedupe("address").unwrap()
 
-    assert helpers.get_group_id_as_list(df) == expected_output
+    assert helpers.get_column_as_list(df, GROUP_ID) == output

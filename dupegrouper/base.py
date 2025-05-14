@@ -12,7 +12,7 @@ import logging
 
 try:
     from types import NoneType
-except ImportError:
+except ImportError: # pragma: no cover
     NoneType = type(None)  # type: ignore
 import typing
 
@@ -239,7 +239,7 @@ class DupeGrouper:
                 schema = StructType(self._df.schema.fields + [StructField(GROUP_ID, id_type, True)])
 
             self._df = WrappedSparkDataFrame(
-                typing.cast(SparkSession, self.spark_session).createDataFrame(deduped_rdd, schema=schema)
+                typing.cast(SparkSession, self.spark_session).createDataFrame(deduped_rdd, schema=schema), id
             )
             self._strategy_manager.reset()
 
@@ -351,10 +351,6 @@ class _StrategyManager:
         if isinstance(strategy, tuple) and len(strategy) == 2:
             func, kwargs = strategy
             return callable(func) and isinstance(kwargs, dict)
-        if isinstance(strategy, dict):
-            for _, v in strategy.items():
-                if not self.validate(v) or not isinstance(v, list):
-                    return False
         return False
 
     def reset(self):
@@ -406,23 +402,20 @@ def _wrap(df: DataFrameLike, id: str | None = None) -> WrappedDataFrame:
 
 @_wrap.register(pd.DataFrame)
 def _(df, id: str | None = None):
-    del id  # TODO implement
-    return WrappedPandasDataFrame(df)
+    return WrappedPandasDataFrame(df, id)
 
 
 @_wrap.register(pl.DataFrame)
 def _(df, id: str | None = None):
-    del id  # TODO implement
-    return WrappedPolarsDataFrame(df)
+    return WrappedPolarsDataFrame(df, id)
 
 
 @_wrap.register(SparkDataFrame)
 def _(df, id: str | None = None):
-    del id  # TODO implement
-    return WrappedSparkDataFrame(df)
+    return WrappedSparkDataFrame(df, id)
 
 
 @_wrap.register(list)
 def _(df: list[Row], id: str):
-    """As lists can be large, membership is *not* validated!"""
+    """As lists can be large: `all` membership is `Row` is *not* validated!"""
     return WrappedSparkRows(df, id)

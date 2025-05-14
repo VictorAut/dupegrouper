@@ -15,12 +15,13 @@ class WrappedSparkDataFrame(WrappedDataFrame):
 
     not_implemented = "Spark DataFrame methods are available per partition only, i.e. for lists of `pyspark.sql.Row`"
 
-    def __init__(self, df: DataFrame):
+    def __init__(self, df: DataFrame, id: str):
         super().__init__(df)
+        del id # Not implemented, input param there for API consistency
 
     @override
     def _add_group_id(self):
-        raise NotImplementedError(self.not_implemented)
+        raise NotImplementedError(self.not_implemented) # pragma: no cover
 
     # SPARK API WRAPPERS:
 

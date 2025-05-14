@@ -113,4 +113,4 @@ class DeduplicationStrategy(ABC):
         Returns:
             A deduplicated instance of WrappedDataFrame
         """
-        pass
+        pass # pragma: no cover

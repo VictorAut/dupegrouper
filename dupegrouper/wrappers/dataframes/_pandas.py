@@ -12,9 +12,10 @@ from dupegrouper.wrappers.dataframe import WrappedDataFrame
 
 class WrappedPandasDataFrame(WrappedDataFrame):
 
-    def __init__(self, df: pd.DataFrame):
+    def __init__(self, df: pd.DataFrame, id: str):
         super().__init__(df)
         self._df: pd.DataFrame = self._add_group_id(df)
+        self._id = id
 
     @staticmethod
     @override

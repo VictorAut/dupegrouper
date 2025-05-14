@@ -3,6 +3,14 @@ import polars as pl
 from pyspark.sql import SparkSession, DataFrame as SparkDataFrame
 import pytest
 
+from dupegrouper.definitions import GROUP_ID, DataFrameLike
+from dupegrouper.wrappers.dataframes import (
+    WrappedPandasDataFrame,
+    WrappedPolarsDataFrame,
+    WrappedSparkDataFrame,
+    WrappedSparkRows,
+)
+
 
 @pytest.fixture(scope="session")
 def id():
@@ -124,10 +132,8 @@ def df_polars(id, address, email, group_id):
 @pytest.fixture(params=["pandas", "polars", "spark"], scope="session")
 def dataframe(request, df_pandas_raw, df_polars_raw, df_spark_raw, spark) -> tuple:
     """return a tuple of positionally ordered input parameters of DupeGrouper
-    i.e.
-        - df
-        - spark_session
-        - id
+
+    This is useful for implementations that ARE part of the public API
     """
     match request.param:
         case "pandas":
@@ -137,19 +143,42 @@ def dataframe(request, df_pandas_raw, df_polars_raw, df_spark_raw, spark) -> tup
         case "spark":
             return df_spark_raw, spark, "id"
         
+@pytest.fixture(params=["pandas", "polars", "spark_df", "spark_row"], scope="session")
+def lowlevel_dataframe(request, df_pandas_raw, df_polars_raw, df_spark_raw) -> tuple:
+    """Most tests require the `dataframe` fixture, also defined above.
+
+    However, this fixture offers all wrappers exhaustively, including the lower
+    level wrapper for spark.
+
+    This is useful for testing lower level implementations that are NOT part of
+    the public API
+    """
+    match request.param:
+        case "pandas":
+            return df_pandas_raw, WrappedPandasDataFrame, None
+        case "polars":
+            return df_polars_raw, WrappedPolarsDataFrame, None
+        case "spark_df":
+            return df_spark_raw, WrappedSparkDataFrame, None
+        case "spark_row":
+            return df_spark_raw.collect(), WrappedSparkRows, "id" # i.e. list[Row]
+
 
 # helpers
 
-class Helpers():
+
+class Helpers:
+
     @staticmethod
-    def get_group_id_as_list(df):
+    def get_column_as_list(df: DataFrameLike, col: str):
         if isinstance(df, pd.DataFrame | pl.DataFrame):
-            return list(df["group_id"])
+            return list(df[col])
         if isinstance(df, SparkDataFrame):
-            return [value["group_id"] for value in df.select("group_id").collect()]
-        if isinstance(df, list):
-            return [value["group_id"] for value in df]
-        
+            return [value[col] for value in df.select(col).collect()]
+        if isinstance(df, list): # i.e. list[Row]
+            return [value[col] for value in df]
+
+
 @pytest.fixture(scope="session", autouse=True)
 def helpers():
     return Helpers

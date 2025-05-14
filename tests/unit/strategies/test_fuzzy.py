@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 from dupegrouper.base import _wrap
-from dupegrouper.definitions import TMP_ATTR
+from dupegrouper.definitions import TMP_ATTR, GROUP_ID
 from dupegrouper.strategies.fuzzy import Fuzzy
 
 
@@ -79,8 +79,8 @@ fuzzy_parametrize_data = [
 ]
 
 
-@pytest.mark.parametrize("input_params, expected_output", fuzzy_parametrize_data)
-def test_dedupe_integrated(input_params, expected_output, dataframe, helpers):
+@pytest.mark.parametrize("input, output", fuzzy_parametrize_data)
+def test_dedupe_integrated(input, output, dataframe, helpers):
 
     df, spark, id_col = dataframe
 
@@ -88,11 +88,9 @@ def test_dedupe_integrated(input_params, expected_output, dataframe, helpers):
         # i.e. Spark DataFrame -> Spark list[Row]
         df = df.collect()
 
-    tfidf = Fuzzy(**input_params)
+    tfidf = Fuzzy(**input)
     tfidf.with_frame(_wrap(df, id_col))
 
     df = tfidf.dedupe("address").unwrap()
 
-    print(df)
-
-    assert helpers.get_group_id_as_list(df) == expected_output
+    assert helpers.get_column_as_list(df, GROUP_ID) == output

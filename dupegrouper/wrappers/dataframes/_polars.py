@@ -12,9 +12,10 @@ from dupegrouper.wrappers.dataframe import WrappedDataFrame
 
 class WrappedPolarsDataFrame(WrappedDataFrame):
 
-    def __init__(self, df: pl.DataFrame):
+    def __init__(self, df: pl.DataFrame, id: str):
         super().__init__(df)
         self._df: pl.DataFrame = self._add_group_id(df)
+        self._id = id
 
     @staticmethod
     @override
