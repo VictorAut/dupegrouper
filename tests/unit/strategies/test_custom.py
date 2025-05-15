@@ -18,10 +18,10 @@ def my_func(df: pd.DataFrame, attr: str, /, match_str: str) -> dict[str, str]:
     return my_map
 
 
-def test_custom_dedupe(df_pandas_raw):
+def test_custom_dedupe(df_pandas):
 
     deduper = Custom(my_func, "address", match_str="navarra")
-    deduper.with_frame(_wrap(df_pandas_raw))
+    deduper.with_frame(_wrap(df_pandas))
 
     updated_wrapped_df = deduper.dedupe()
     updated_df = updated_wrapped_df.unwrap()

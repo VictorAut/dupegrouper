@@ -6,7 +6,7 @@ import pytest
 from dupegrouper.definitions import GROUP_ID
 from dupegrouper.wrappers.dataframes import WrappedSparkDataFrame, WrappedPandasDataFrame, WrappedPolarsDataFrame
 
-def test_add_group_id(lowlevel_dataframe, helpers):
+def test__add_group_id(lowlevel_dataframe, helpers):
 
     df, wrapper, id = lowlevel_dataframe
 

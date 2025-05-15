@@ -101,8 +101,8 @@ class DupeGrouper:
             NotImplementedError.
         """
         del attr  # Unused
-        return NotImplementedError(f"Unsupported strategy: {type(strategy)}")
 
+        raise NotImplementedError(f"Unsupported strategy: {type(strategy)}")
     @_call_strategy_deduper.register(DeduplicationStrategy)
     def _(self, strategy, attr) -> WrappedDataFrame:
         return strategy.with_frame(self._df).dedupe(attr)
@@ -139,15 +139,15 @@ class DupeGrouper:
             NotImplementedError.
         """
         del strategy_collection  # Unused
-        raise NotImplementedError(f"Unsupported type: {type(attr)}")
+        raise NotImplementedError(f"Unsupported attribute type: {type(attr)}")
 
     @_dedupe.register(str)
-    def _(self, attr, strategy_collection):
+    def _(self, attr, strategy_collection) -> typing.Self:
         for strategy in strategy_collection["default"]:
             self._df = self._call_strategy_deduper(strategy, attr)
 
     @_dedupe.register(NoneType)
-    def _(self, attr, strategy_collection):
+    def _(self, attr, strategy_collection) -> typing.Self:
         del attr  # Unused
         for attr, strategies in strategy_collection.items():
             for strategy in strategies:
@@ -173,15 +173,15 @@ class DupeGrouper:
         Raises:
             NotImplementedError
         """
-        return NotImplementedError(f"Unsupported strategy: {type(strategy)}")
+        raise NotImplementedError(f"Unsupported strategy: {type(strategy)}")
 
     @add_strategy.register(DeduplicationStrategy)
     @add_strategy.register(tuple)
-    def _(self, strategy):
+    def _(self, strategy) -> typing.Self:
         self._strategy_manager.add("default", strategy)
 
     @add_strategy.register(dict)
-    def _(self, strategy: StrategyMapCollection):
+    def _(self, strategy: StrategyMapCollection) -> typing.Self:
         for attr, strat_list in strategy.items():
             for strat in strat_list:
                 self._strategy_manager.add(attr, strat)

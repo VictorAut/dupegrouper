@@ -29,6 +29,15 @@ from dupegrouper.wrappers.dataframes import (
 )
 
 
+# dummy
+
+class DummyClass:
+    pass
+
+def dummy_func():
+    pass
+
+
 ###############
 #  TEST _wrap #
 ###############
@@ -41,7 +50,7 @@ DATAFRAME_TYPES = {
 }
 
 
-def test_wrap_dataframe(dataframe):
+def test__wrap_dataframe(dataframe):
     df, _, id = dataframe
 
     expected_type = DATAFRAME_TYPES.get(type(df))
@@ -51,12 +60,9 @@ def test_wrap_dataframe(dataframe):
     assert isinstance(df_wrapped, expected_type)
 
 
-def test_dataframe_dispatcher_unsupported():
-    class FakeDataFrame:
-        pass
-
+def test__wrap_dataframe_raises():
     with pytest.raises(NotImplementedError, match="Unsupported data frame"):
-        _wrap(FakeDataFrame())
+        _wrap(DummyClass())
 
 
 ######################
@@ -117,10 +123,6 @@ def test_group_id_env_var(env_var_value, expected_value, lowlevel_dataframe):
 ##############################################
 
 
-class DummyClass:
-    pass
-
-
 DEFAULT_ERROR_MSG = "Input is not valid"
 CLASS_ERROR_MSG = "Input class is not valid: must be an instance of `DeduplicationStrategy`"
 TUPLE_ERROR_MSG = "Input tuple is not valid: must be a length 2 [callable, dict]"
@@ -176,10 +178,10 @@ DICT_ERROR_MSG = "Input dict is not valid: items must be a list of `Deduplicatio
         "invalid tuple",
         "invalid list",
         "invalid str",
-        "invalid dict"
+        "invalid dict",
     ],
 )
-def test_strategy_manager_validate_addition_strategy(strategy, expected_to_pass, base_msg):
+def test__strategy_manager_validate_addition_strategy(strategy, expected_to_pass, base_msg):
     """validates that the input 'strtagey' is legit, against `StrategyTypeError`"""
     manager = _StrategyManager()
     if expected_to_pass:
@@ -197,7 +199,7 @@ def test_strategy_manager_validate_addition_strategy(strategy, expected_to_pass,
             assert base_msg in str(e)
 
 
-def test_strategy_manager_reset():
+def test__strategy_manager_reset():
     manager = _StrategyManager()
     strategy = Mock(spec=DeduplicationStrategy)
     manager.add("name", strategy)
@@ -205,32 +207,239 @@ def test_strategy_manager_reset():
     assert manager.get() == {}
 
 
+###############################
+# TEST _call_strategy_deduper #
+###############################
+
+
+def test__call_strategy_deduper_deduplication_strategy(mocked_dupegrouper):
+    attr = "address"
+
+    strategy = Mock(spec=DeduplicationStrategy)
+    deduped_df_mock = Mock()
+    strategy.with_frame.return_value.dedupe.return_value = deduped_df_mock
+
+    result = mocked_dupegrouper._call_strategy_deduper(strategy, attr)
+
+    # assert
+
+    strategy.with_frame.assert_called_once_with(mocked_dupegrouper._df)
+    strategy.with_frame.return_value.dedupe.assert_called_once_with(attr)
+
+    assert result == deduped_df_mock
+
+
+def test__call_strategy_deduper_tuple(mocked_dupegrouper):
+    attr = "address"
+
+    mock_callable = Mock()
+    mock_callable.__name__ = "mock_func"
+
+    mock_kwargs = {"tolerance": 0.8}
+
+    deduped_df_mock = Mock()
+
+    with patch("dupegrouper.base.Custom") as Custom:
+
+        # Mock instance that Custom returns
+        instance = Mock()
+        Custom.return_value = instance
+
+        # Ensure full method chain is mocked
+        instance.with_frame.return_value = instance
+        instance.dedupe.return_value = deduped_df_mock
+
+        result = mocked_dupegrouper._call_strategy_deduper(
+            (mock_callable, mock_kwargs),  # tuple!
+            attr,
+        )
+
+        # assert
+
+        Custom.assert_called_once_with(mock_callable, attr, **mock_kwargs)
+        instance.with_frame.assert_called_once_with(mocked_dupegrouper._df)
+        instance.with_frame.return_value.dedupe.assert_called_once_with()
+
+        assert result == deduped_df_mock
+
+
+@pytest.mark.parametrize(
+    "input, type",
+    [
+        (42, r".*int.*"),
+        (DummyClass(), r".*DummyClass.*"),
+        (["a"], r".*list.*"),
+        ({"a": "b"}, r".*dict.*"),
+    ],
+    ids=["invalid int", "invalid class", "invalid list", "invalid dict"],
+)
+def test__call_strategy_deduper_raises(input, type, mocked_dupegrouper):
+    with pytest.raises(NotImplementedError, match=f"Unsupported strategy: {type}"):
+        mocked_dupegrouper._call_strategy_deduper(input, "address")
+
+
+################
+# TEST _dedupe #
+################
+
+
+def test__dedupe_str_attr(mocked_dupegrouper):
+    attr = "address"
+
+    strat1 = Mock(spec=DeduplicationStrategy)
+    strat2 = Mock(spec=DeduplicationStrategy)
+    strat3 = Mock(spec=DeduplicationStrategy)
+
+    strategy_collection = {"default": [strat1, strat2, strat3]}
+
+    with patch.object(mocked_dupegrouper, "_call_strategy_deduper") as call_deduper:
+
+        df1 = (Mock(),)  # i.e. after first
+        df2 = (Mock(),)  # ...
+        df3 = (Mock(),)  # after third
+
+        call_deduper.side_effect = [
+            df1,
+            df2,
+            df3,
+        ]
+
+        mocked_dupegrouper._dedupe(attr, strategy_collection)
+
+        assert call_deduper.call_count == 3
+
+        call_deduper.assert_any_call(strat1, attr)
+        call_deduper.assert_any_call(strat2, attr)
+        call_deduper.assert_any_call(strat3, attr)
+
+        assert mocked_dupegrouper._df == df3
+
+
+def test__dedupe_nonetype_attr(mocked_dupegrouper):
+
+    attr = None  # Important!
+
+    strat1 = Mock(spec=DeduplicationStrategy)
+    strat2 = Mock(spec=DeduplicationStrategy)
+    strat3 = Mock(spec=DeduplicationStrategy)
+    strat4 = Mock(spec=DeduplicationStrategy)
+
+    strategy_collection = {
+        "attr1": [strat1, strat2],
+        "attr2": [strat3, strat4],
+    }
+
+    with patch.object(mocked_dupegrouper, "_call_strategy_deduper") as call_deduper:
+
+        df1 = (Mock(),)  # i.e. after first
+        df2 = (Mock(),)  # ...
+        df3 = (Mock(),)  # ...
+        df4 = (Mock(),)  # after fourth dedupe
+
+        call_deduper.side_effect = [df1, df2, df3, df4]
+
+        mocked_dupegrouper._dedupe(attr, strategy_collection)
+
+        assert call_deduper.call_count == 4
+
+        call_deduper.assert_any_call(strat1, "attr1")
+        call_deduper.assert_any_call(strat2, "attr1")
+        call_deduper.assert_any_call(strat3, "attr2")
+        call_deduper.assert_any_call(strat3, "attr2")
+
+        assert mocked_dupegrouper._df == df4
+
+
+@pytest.mark.parametrize(
+    "attr_input, type",
+    [
+        (42, r".*int.*"),
+        ([42], r".*list.*"),
+        ((42,), r".*tuple.*"),
+        ({"a": 42}, r".*dict.*"),
+        (42.0, r".*float.*"),
+    ],
+    ids=["invalid int", "invalid list", "invalid tuple", "invalid dict", "invalid float"],
+)
+def test__dedupe_raises(attr_input, type, mocked_dupegrouper):
+    with pytest.raises(NotImplementedError, match=f"Unsupported attribute type: {type}"):
+        mocked_dupegrouper._dedupe(attr_input, {}) # any dict
+
+
+#####################
+# TEST add_strategy #
+#####################
+
+@pytest.mark.parametrize(
+        "strategy",
+        [
+            (dummy_func, {'tolerance': 0.8}),
+            Mock(spec=DeduplicationStrategy)
+        ],
+        ids = ["tuple", "DeduplicationStrategy"]
+)
+def test_add_strategy_deduplication_strategy_or_tuple(strategy, mocked_dupegrouper):
+
+    with patch.object(mocked_dupegrouper, "_strategy_manager") as strategy_manager:
+
+        with patch.object(strategy_manager, "add") as add:
+
+            mocked_dupegrouper.add_strategy(strategy)
+
+            assert add.call_count == 1
+
+            add.assert_any_call("default", strategy)
+
+def test_add_strategy_dict(mocked_dupegrouper):
+    strat1 = Mock(spec=DeduplicationStrategy)
+    strat2 = Mock(spec=DeduplicationStrategy)
+    strat3 = Mock(spec=DeduplicationStrategy)
+    strat4 = Mock(spec=DeduplicationStrategy)
+
+    strategy = {
+        "attr1": [strat1, strat2],
+        "attr2": [strat3, strat4],
+    }
+
+    with patch.object(mocked_dupegrouper, "_strategy_manager") as strategy_manager:
+
+        with patch.object(strategy_manager, "add") as add:
+
+            mocked_dupegrouper.add_strategy(strategy)
+
+            assert add.call_count == 4
+
+            add.assert_any_call("attr1", strat1)
+            add.assert_any_call("attr1", strat2)
+            add.assert_any_call("attr2", strat3)
+            add.assert_any_call("attr2", strat3)
+
+     
+
+@pytest.mark.parametrize(
+    "strategy, type",
+    [
+        (DummyClass(), r".*DummyClass.*"),
+        ([42], r".*list.*"),
+    ],
+    ids=["invalid class", "invalid list"],
+)
+def test_add_strategy_raises(strategy, type, mocked_dupegrouper):
+    with pytest.raises(NotImplementedError, match=f"Unsupported strategy: {type}"):
+        mocked_dupegrouper.add_strategy(strategy)
+
+
+#####################
+# TEST dedupe #
+#####################
+
+
+# TODO
+
+
 ##################################
 # TEST DupeGrouper - public API! #
 ##################################
-
-
-def test_dupegrouper_df_attribute_pandas(df_pandas):
-    grouper = DupeGrouper(df_pandas)
-    assert isinstance(grouper.df, pd.DataFrame)
-    assert "group_id" in grouper.df.columns
-
-
-def test_dupegrouper_df_attribute_polars(df_polars):
-    grouper = DupeGrouper(df_polars)
-    assert isinstance(grouper.df, pl.DataFrame)
-    assert "group_id" in grouper.df.columns
-
-
-def test_dupegrouper_add_strategy(df_pandas):
-    grouper = DupeGrouper(df_pandas)
-    mock_strategy = Mock(spec=DeduplicationStrategy)
-    grouper.add_strategy(mock_strategy)
-    assert "default" in grouper._strategy_manager.get()
-
-
-def my_dummy_func():
-    pass
 
 
 def patch_helper_reset(grouper: DupeGrouper):
@@ -255,9 +464,9 @@ def test_dupegrouper_strategies_attribute_inline(df_pandas):
 
     grouper.add_strategy(Mock(spec=Exact))
     grouper.add_strategy(Mock(spec=Fuzzy))
-    grouper.add_strategy((my_dummy_func, {"str": "random"}))
+    grouper.add_strategy((dummy_func, {"str": "random"}))
 
-    assert grouper.strategies == tuple(["Exact", "Fuzzy", "my_dummy_func"])
+    assert grouper.strategies == tuple(["Exact", "Fuzzy", "dummy_func"])
 
     patch_helper_reset(grouper)
 
@@ -269,7 +478,7 @@ def test_dupegrouper_strategies_attribute_dict(df_pandas):
         {
             "address": [
                 Mock(spec=Exact),
-                (my_dummy_func, {"key": "value"}),
+                (dummy_func, {"key": "value"}),
             ],
             "email": [
                 Mock(spec=Exact),
@@ -278,7 +487,7 @@ def test_dupegrouper_strategies_attribute_dict(df_pandas):
         }
     )
 
-    assert grouper.strategies == dict({"address": ("Exact", "my_dummy_func"), "email": ("Exact", "Fuzzy")})
+    assert grouper.strategies == dict({"address": ("Exact", "dummy_func"), "email": ("Exact", "Fuzzy")})
 
     patch_helper_reset(grouper)
 

@@ -13,15 +13,15 @@ from dupegrouper.strategies import Exact
     ],
     ids=["1 partitions", "2 partitions"]
 )
-def test_spark_partitions(num_partitions, expected_ids, df_spark_raw, spark, helpers):
+def test_spark_partitions(num_partitions, expected_ids, df_spark, spark, helpers):
 
-    df_spark_raw = df_spark_raw.repartition(num_partitions, "blocking_key")
+    df_spark = df_spark.repartition(num_partitions, "blocking_key")
 
     strategies = {
         "address": [Exact()],
         "email": [Exact()],
     }
-    dg = DupeGrouper(df_spark_raw, spark_session=spark, id="id")
+    dg = DupeGrouper(df_spark, spark_session=spark, id="id")
     dg.add_strategy(strategies)
     dg.dedupe()
 
