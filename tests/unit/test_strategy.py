@@ -10,7 +10,6 @@ from dupegrouper.base import _wrap
 from dupegrouper.definitions import GROUP_ID
 from dupegrouper.strategy import DeduplicationStrategy
 from dupegrouper.wrappers import WrappedDataFrame
-from dupegrouper.wrappers.dataframes import WrappedPandasDataFrame, WrappedPolarsDataFrame
 
 
 class DummyStrategy(DeduplicationStrategy):
@@ -62,7 +61,14 @@ def test_with_frame(dataframe):
         # white space: no matches
         (["Alice", "Bob", "Alice     ", "Charlie", "   Bob", "Charlie"], [1, 2, 3, 4, 5, 4]),
     ],
-    ids=["string matches", "no string matches", "int matches", "float matches", "mixed numeric matches", "whitespace no string match"]
+    ids=[
+        "string matches",
+        "no string matches",
+        "int matches",
+        "float matches",
+        "mixed numeric matches",
+        "whitespace no string match",
+    ],
 )
 def test_assign_group_id(attribute_array, expected_group_id):
     attr = "address"
@@ -76,9 +82,8 @@ def test_assign_group_id(attribute_array, expected_group_id):
         def __init__(self, wrapped_df):
             self.wrapped_df = wrapped_df
 
-        def dedupe(): # ABC contract forces this
-            pass 
-
+        def dedupe():  # ABC contract forces this
+            pass
 
     obj = Dummy(mock_wrapped_df)
     result = obj.assign_group_id(attr)
@@ -114,5 +119,3 @@ def test_dedupe(helpers):
 
     expected_groups = [1, 2, 1, 4, 2, 4]
     assert helpers.get_column_as_list(deduped_df, GROUP_ID) == expected_groups
-
-

@@ -19,7 +19,7 @@ from pyspark.sql.types import (
 )
 
 if typing.TYPE_CHECKING:
-    from dupegrouper.strategy import DeduplicationStrategy # pragma: no cover
+    from dupegrouper.strategy import DeduplicationStrategy  # pragma: no cover
 
 
 # CONSTANTS
@@ -42,7 +42,7 @@ StrategyMapCollection: typing.TypeAlias = typing.DefaultDict[
 
 
 DataFrameLike: typing.TypeAlias = "pd.DataFrame | pl.DataFrame | SparkDataFrame | list[Row]"  # | ...
-SeriesLike: typing.TypeAlias = "pd.Series | pl.Series | list[typing.Any]" # | ...
+SeriesLike: typing.TypeAlias = "pd.Series | pl.Series | list[typing.Any]"  # | ...
 
 
 # PYSPARK SQL TYPES TO CLASS TYPE CONVERSION

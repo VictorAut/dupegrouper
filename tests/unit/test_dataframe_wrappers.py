@@ -6,6 +6,7 @@ import pytest
 from dupegrouper.definitions import GROUP_ID
 from dupegrouper.wrappers.dataframes import WrappedSparkDataFrame, WrappedPandasDataFrame, WrappedPolarsDataFrame
 
+
 def test__add_group_id(lowlevel_dataframe, helpers):
 
     df, wrapper, id = lowlevel_dataframe
@@ -69,8 +70,8 @@ def test_get_col(lowlevel_dataframe, group_id):
                 "66b Porters street, OL5 9PL, Newark, United Kingdom": "map_6",
                 "C. Ancho 49, 05687, Navarra": "map_6",
                 "Ambleside avenue Park Road ED3, UK": "map_8",
-                "123ab, OL5 9PL, UK": "map_9",
-                "123ab, OL5 9PL, UK": "map_10",
+                "123ab, OL5 9PL, UK": "map_9", # noqa: F601
+                "123ab, OL5 9PL, UK": "map_10", # noqa: F601
                 "37 Lincolnshire lane, GH9 5DF, Edinburgh, UK": "map_11",
                 "37 GH9, UK": "map_12",
                 "totally random non existant address": "map_13",
@@ -172,7 +173,7 @@ def test_drop_col(lowlevel_dataframe):
             ["test", None, None, None, None, None, None, None, "test", "test", None, None, None],
             ["a", "b", None, "d", "e", "f", "g", "h", "i", "j", "k", "l", None],
             ["test", "b", None, "d", "e", "f", "g", "h", "test", "test", "k", "l", None],
-        )
+        ),
     ],
 )
 def test_fill_na(series, array, output, lowlevel_dataframe):

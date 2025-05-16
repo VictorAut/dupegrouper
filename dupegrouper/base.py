@@ -12,7 +12,7 @@ import logging
 
 try:
     from types import NoneType
-except ImportError: # pragma: no cover
+except ImportError:  # pragma: no cover
     NoneType = type(None)  # type: ignore
 import typing
 
@@ -73,7 +73,7 @@ class DupeGrouper:
     ):
         self._df: WrappedDataFrame = _wrap(df, id)
         self._strategy_manager = _StrategyManager()
-        self.spark_session = spark_session
+        self._spark_session = spark_session
         self._id = id
 
     @singledispatchmethod
@@ -103,6 +103,7 @@ class DupeGrouper:
         del attr  # Unused
 
         raise NotImplementedError(f"Unsupported strategy: {type(strategy)}")
+
     @_call_strategy_deduper.register(DeduplicationStrategy)
     def _(self, strategy, attr) -> WrappedDataFrame:
         return strategy.with_frame(self._df).dedupe(attr)
@@ -116,7 +117,7 @@ class DupeGrouper:
     def _dedupe(
         self,
         attr: str | None,
-        strategy_collection: StrategyMapCollection,
+        strategies: StrategyMapCollection,
     ):
         """Dispatch the appropriate deduplication logic.
 
@@ -138,20 +139,48 @@ class DupeGrouper:
         Raises:
             NotImplementedError.
         """
-        del strategy_collection  # Unused
+        del strategies  # Unused
         raise NotImplementedError(f"Unsupported attribute type: {type(attr)}")
 
     @_dedupe.register(str)
-    def _(self, attr, strategy_collection) -> typing.Self:
-        for strategy in strategy_collection["default"]:
+    def _(self, attr, strategies) -> typing.Self:
+        for strategy in strategies["default"]:
             self._df = self._call_strategy_deduper(strategy, attr)
 
     @_dedupe.register(NoneType)
-    def _(self, attr, strategy_collection) -> typing.Self:
+    def _(self, attr, strategies) -> typing.Self:
         del attr  # Unused
-        for attr, strategies in strategy_collection.items():
+        for attr, strategies in strategies.items():
             for strategy in strategies:
                 self._df = self._call_strategy_deduper(strategy, attr)
+
+    def _dedupe_spark(self, attr: str, strategies: StrategyMapCollection) -> typing.Self:
+        """Spark specific deduplication helper
+        
+        Maps dataframe partitions to be processed via the RDD API yielding low-
+        level list[Rows], which are then post-processed back to a dataframe.
+        
+        Args:
+            attr: The attribute to deduplicate.
+            strategies: the collection of strategies
+        Retuns:
+            Instance's _df attribute is updated
+        """
+        id = typing.cast(str, self._id)
+        id_type = typing.cast(DataType, PYSPARK_TYPES.get(dict(self._df.dtypes).get(id)))  # type: ignore
+
+        deduped_rdd = self._df.rdd.mapPartitions(
+            lambda partition_iter: _process_partition(partition_iter, strategies, id, attr)
+        )
+
+        if GROUP_ID in self._df.columns:
+            schema = StructType(self._df.schema.fields)
+        else:
+            schema = StructType(self._df.schema.fields + [StructField(GROUP_ID, id_type, True)])
+
+        self._df = WrappedSparkDataFrame(
+            typing.cast(SparkSession, self._spark_session).createDataFrame(deduped_rdd, schema=schema), id
+        )
 
     # PUBLIC API:
 
@@ -194,54 +223,14 @@ class DupeGrouper:
                 as a mapping object, this must not passed, as the keys of the
                 mapping object will be used instead
         """
-        if not isinstance(self._df, WrappedSparkDataFrame):
-            self._dedupe(attr, self._strategy_manager.get())
-            self._strategy_manager.reset()
+        strategies = self._strategy_manager.get()
+
+        if isinstance(self._df, WrappedSparkDataFrame):
+            self._dedupe_spark(attr, strategies)
         else:
+            self._dedupe(attr, strategies)
 
-            def _process_partition(
-                partition_iter: typing.Iterator[Row],
-                strategies: StrategyMapCollection,
-                id: str,
-            ) -> typing.Iterator[Row]:
-                # handle empty partitions
-                rows = list(partition_iter)
-                if not rows:
-                    return iter([])
-
-                # re-instantiate strategies based on driver's
-                reinstantiated_strategies = {}
-                for key, values in strategies.items():
-                    reinstantiated_strategies[key] = [
-                        v if isinstance(v, tuple) else v.reinstantiate()
-                        #
-                        for v in values
-                    ]
-
-                # Core API reused per partition, per worker node
-                dg = DupeGrouper(rows, id=id)
-                dg.add_strategy(strategies)
-                dg.dedupe(attr)
-
-                return iter(dg.df)  # type: ignore[arg-type]
-
-            strategies: StrategyMapCollection = self._strategy_manager.get()
-            id = typing.cast(str, self._id)
-            id_type = typing.cast(DataType, PYSPARK_TYPES.get(dict(self._df.dtypes).get(id)))  # type: ignore
-
-            deduped_rdd = self._df.rdd.mapPartitions(
-                lambda partition_iter: _process_partition(partition_iter, strategies, id)
-            )
-
-            if GROUP_ID in self._df.columns:
-                schema = StructType(self._df.schema.fields)
-            else:
-                schema = StructType(self._df.schema.fields + [StructField(GROUP_ID, id_type, True)])
-
-            self._df = WrappedSparkDataFrame(
-                typing.cast(SparkSession, self.spark_session).createDataFrame(deduped_rdd, schema=schema), id
-            )
-            self._strategy_manager.reset()
+        self._strategy_manager.reset()
 
     @property
     def strategies(self) -> None | tuple[str, ...] | dict[str, tuple[str, ...]]:
@@ -419,3 +408,49 @@ def _(df, id: str | None = None):
 def _(df: list[Row], id: str):
     """As lists can be large: `all` membership is `Row` is *not* validated!"""
     return WrappedSparkRows(df, id)
+
+
+# PARTITION PROCESSING:
+
+
+def _process_partition(
+    partition_iter: typing.Iterator[Row],
+    strategies: StrategyMapCollection,
+    id: str,
+    attr: str,
+) -> typing.Iterator[Row]:
+    """process a spark dataframe partition i.e. a list[Row]
+    
+    This function is functionality mapped to a worker node. For clean
+    separation from the driver, strategies are re-instantiated and the main
+    dupegrouper API is executed *per* worker node.
+    
+    Args:
+        paritition_iter: a partition
+        strategies: the collection of strategies
+        id: the unique identified of the dataset a.k.a "business key"
+        attr: the attribute on which to deduplicate
+    
+    Returns:
+        A list[Row], deduplicated
+    """
+    # handle empty partitions
+    rows = list(partition_iter)
+    if not rows:
+        return iter([])
+
+    # re-instantiate strategies based on driver's
+    reinstantiated_strategies = {}
+    for key, values in strategies.items():
+        reinstantiated_strategies[key] = [
+            v if isinstance(v, tuple) else v.reinstantiate()
+            #
+            for v in values
+        ]
+
+    # Core API reused per partition, per worker node
+    dg = DupeGrouper(rows, id=id)
+    dg.add_strategy(strategies)
+    dg.dedupe(attr)
+
+    return iter(dg.df)  # type: ignore[arg-type]

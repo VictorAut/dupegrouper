@@ -17,26 +17,30 @@ class WrappedSparkDataFrame(WrappedDataFrame):
 
     def __init__(self, df: DataFrame, id: str):
         super().__init__(df)
-        del id # Not implemented, input param there for API consistency
+        del id  # Not implemented, input param there for API consistency
 
     @override
     def _add_group_id(self):
-        raise NotImplementedError(self.not_implemented) # pragma: no cover
+        raise NotImplementedError(self.not_implemented)  # pragma: no cover
 
     # SPARK API WRAPPERS:
 
     @override
     def put_col(self):
         raise NotImplementedError(self.not_implemented)
+
     @override
     def get_col(self):
         raise NotImplementedError(self.not_implemented)
+
     @override
     def map_dict(self):
         raise NotImplementedError(self.not_implemented)
+
     @override
     def drop_col(self):
         raise NotImplementedError(self.not_implemented)
+
     @override
     def fill_na(self):
         raise NotImplementedError(self.not_implemented)
@@ -44,7 +48,7 @@ class WrappedSparkDataFrame(WrappedDataFrame):
 
 class WrappedSparkRows(WrappedDataFrame):
     """Lower level DataFrame wrapper per partition i.e. list of Rows
-    
+
     Can be emulated by operating on a collected pyspark dataframe i.e.
     df.collect()
     """

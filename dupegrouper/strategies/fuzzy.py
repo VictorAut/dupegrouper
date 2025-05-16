@@ -7,7 +7,6 @@ from typing_extensions import override
 import numpy as np
 from rapidfuzz import fuzz
 
-import dupegrouper.base
 from dupegrouper.definitions import TMP_ATTR, SeriesLike
 from dupegrouper.wrappers import WrappedDataFrame
 from dupegrouper.strategy import DeduplicationStrategy

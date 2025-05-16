@@ -20,11 +20,13 @@ def test_vectorize_with_int():
     assert isinstance(vec, TfidfVectorizer)
     assert vec.ngram_range == (3, 3)
 
+
 def test_vectorize_with_tuple():
     tfidf = TfIdf()
     vec = tfidf._vectorize((2, 5))
     assert isinstance(vec, TfidfVectorizer)
     assert vec.ngram_range == (2, 5)
+
 
 def test_vectorize_invalid_type():
     tfidf = TfIdf()
@@ -121,6 +123,7 @@ tfidf_parametrize_data = [
     ({"ngram": (2, 2), "tolerance": 0.40, "topn": 2}, [1, 2, 3, 3, 5, 6, 7, 2, 1, 1, 11, 12, 13]),
     ({"ngram": (3, 3), "tolerance": 0.40, "topn": 2}, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]),  # No deduping!
 ]
+
 
 @pytest.mark.parametrize("input, output", tfidf_parametrize_data)
 def test_dedupe_integrated(input, output, dataframe, helpers):

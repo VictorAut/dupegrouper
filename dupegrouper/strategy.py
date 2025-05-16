@@ -28,6 +28,7 @@ _logger = logging.getLogger(__name__)
 
 class DeduplicationStrategy(ABC):
     """Defines a deduplication strategy."""
+
     def __init__(self, *args, **kwargs):
         self._init_args = args
         self._init_kwargs = kwargs
@@ -78,7 +79,7 @@ class DeduplicationStrategy(ABC):
         _logger.debug(f'Re-assigning new "group_id" per duped instance of attribute "{attr}"')
 
         attrs = np.asarray(self.wrapped_df.get_col(attr))
-        attrs = np.array([np.nan if x is None else x for x in attrs]) # handle full None lists
+        attrs = np.array([np.nan if x is None else x for x in attrs])  # handle full None lists
         groups = np.asarray(self.wrapped_df.get_col(GROUP_ID))
 
         unique_attrs, unique_indices = np.unique(
@@ -113,4 +114,4 @@ class DeduplicationStrategy(ABC):
         Returns:
             A deduplicated instance of WrappedDataFrame
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover

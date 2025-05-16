@@ -3,10 +3,6 @@ Full integration test for each backend wrapper and each strategy via
 a cartesian product of (backend X strategy). For respective lower-level tests
 of backend wrappers and deduplication strategies, please see unit tests.
 """
-
-import pandas as pd
-import polars as pl
-from pyspark.sql import DataFrame as SparkDataFrame
 import pytest
 
 from dupegrouper import DupeGrouper

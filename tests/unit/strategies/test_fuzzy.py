@@ -45,7 +45,7 @@ def test_dedupe_unit():
         # Assertions
         mock_fuzz.assert_called_with("foo", "foo")
 
-        mock_wrapped_df.map_dict.assert_called_once_with(attr,  {'bar': 'foo', 'foo': 'foo'})
+        mock_wrapped_df.map_dict.assert_called_once_with(attr, {"bar": "foo", "foo": "foo"})
 
         # second put call is part of assign_group_id which in another unit test
         put_col_call = mock_wrapped_df.put_col.call_args_list[0]

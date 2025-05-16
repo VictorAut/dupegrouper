@@ -5,8 +5,8 @@ import polars as pl
 from pyspark.sql import SparkSession, DataFrame as SparkDataFrame
 import pytest
 
-from dupegrouper.base import DupeGrouper
-from dupegrouper.definitions import GROUP_ID, DataFrameLike
+from dupegrouper.base import DupeGrouper, DeduplicationStrategy
+from dupegrouper.definitions import DataFrameLike
 from dupegrouper.wrappers.dataframes import (
     WrappedPandasDataFrame,
     WrappedPolarsDataFrame,
@@ -132,7 +132,8 @@ def dataframe(request, df_pandas, df_polars, df_spark, spark) -> tuple:
             return df_polars, None, None
         case "spark":
             return df_spark, spark, "id"
-        
+
+
 @pytest.fixture(params=["pandas", "polars", "spark_df", "spark_row"], scope="session")
 def lowlevel_dataframe(request, df_pandas, df_polars, df_spark) -> tuple:
     """Most tests require the `dataframe` fixture, also defined above.
@@ -151,22 +152,27 @@ def lowlevel_dataframe(request, df_pandas, df_polars, df_spark) -> tuple:
         case "spark_df":
             return df_spark, WrappedSparkDataFrame, None
         case "spark_row":
-            return df_spark.collect(), WrappedSparkRows, "id" # i.e. list[Row]
-        
+            return df_spark.collect(), WrappedSparkRows, "id"  # i.e. list[Row]
+
 
 # Mocks
 
+
 @pytest.fixture
-def mocked_dupegrouper(dataframe):
-    df, _, _ = dataframe
+def dupegrouper_mock(dataframe):
+    df, _, id = dataframe
 
     df_mock = Mock(spec=type(df))
-    id_mock = Mock()
 
     with patch("dupegrouper.base._wrap"):
-        instance = DupeGrouper(df_mock, id_mock)
+        instance = DupeGrouper(df_mock, id)
         instance._df = Mock()
         yield instance
+
+
+@pytest.fixture
+def strategy_mock():
+    return Mock(spec=DeduplicationStrategy)
 
 
 # helpers
@@ -180,7 +186,7 @@ class Helpers:
             return list(df[col])
         if isinstance(df, SparkDataFrame):
             return [value[col] for value in df.select(col).collect()]
-        if isinstance(df, list): # i.e. list[Row]
+        if isinstance(df, list):  # i.e. list[Row]
             return [value[col] for value in df]
 
 
