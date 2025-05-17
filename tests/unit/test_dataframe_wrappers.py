@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numpy as np
 import pandas as pd
 import polars as pl
@@ -151,7 +153,7 @@ def test_drop_col(lowlevel_dataframe):
     if isinstance(df, WrappedSparkDataFrame):
         with pytest.raises(NotImplementedError, match=df.not_implemented):
             df.drop_col()
-    elif isinstance(df, WrappedPandasDataFrame | WrappedPolarsDataFrame):
+    elif isinstance(df, WrappedPandasDataFrame) or isinstance(df, WrappedPolarsDataFrame):
         df.drop_col("address")
         assert "address" not in df.unwrap().columns
     else:

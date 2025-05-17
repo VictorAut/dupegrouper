@@ -4,6 +4,8 @@ a cartesian product of (backend X strategy). For respective lower-level tests
 of backend wrappers and deduplication strategies, please see unit tests.
 """
 
+from __future__ import annotations
+
 import pytest
 
 from dupegrouper import DupeGrouper

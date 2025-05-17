@@ -125,13 +125,12 @@ def dataframe(request, df_pandas, df_polars, df_spark, spark):
 
     This is useful for implementations that ARE part of the public API
     """
-    match request.param:
-        case "pandas":
-            return df_pandas, None, None
-        case "polars":
-            return df_polars, None, None
-        case "spark":
-            return df_spark, spark, "id"
+    if request.param == "pandas":
+        return df_pandas, None, None
+    if request.param == "polars":
+        return df_polars, None, None
+    if request.param == "spark":
+        return df_spark, spark, "id"
 
 
 @pytest.fixture(params=["pandas", "polars", "spark_df", "spark_row"], scope="session")
@@ -144,15 +143,14 @@ def lowlevel_dataframe(request, df_pandas, df_polars, df_spark):
     This is useful for testing lower level implementations that are NOT part of
     the public API
     """
-    match request.param:
-        case "pandas":
-            return df_pandas, WrappedPandasDataFrame, None
-        case "polars":
-            return df_polars, WrappedPolarsDataFrame, None
-        case "spark_df":
-            return df_spark, WrappedSparkDataFrame, None
-        case "spark_row":
-            return df_spark.collect(), WrappedSparkRows, "id"  # i.e. list[Row]
+    if request.param == "pandas":
+        return df_pandas, WrappedPandasDataFrame, None
+    if request.param == "polars":
+        return df_polars, WrappedPolarsDataFrame, None
+    if request.param == "spark_df":
+        return df_spark, WrappedSparkDataFrame, None
+    if request.param == "spark_row":
+        return df_spark.collect(), WrappedSparkRows, "id"  # i.e. list[Row]
 
 
 # Mocks
@@ -182,7 +180,7 @@ class Helpers:
 
     @staticmethod
     def get_column_as_list(df: DataFrameLike, col: str):
-        if isinstance(df, pd.DataFrame | pl.DataFrame):
+        if isinstance(df, pd.DataFrame) or isinstance(df, pl.DataFrame):
             return list(df[col])
         if isinstance(df, SparkDataFrame):
             return [value[col] for value in df.select(col).collect()]
