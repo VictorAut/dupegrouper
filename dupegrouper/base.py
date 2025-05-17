@@ -143,23 +143,23 @@ class DupeGrouper:
         raise NotImplementedError(f"Unsupported attribute type: {type(attr)}")
 
     @_dedupe.register(str)
-    def _(self, attr, strategies) -> typing.Self:
+    def _(self, attr, strategies):
         for strategy in strategies["default"]:
             self._df = self._call_strategy_deduper(strategy, attr)
 
     @_dedupe.register(NoneType)
-    def _(self, attr, strategies) -> typing.Self:
+    def _(self, attr, strategies):
         del attr  # Unused
         for attr, strategies in strategies.items():
             for strategy in strategies:
                 self._df = self._call_strategy_deduper(strategy, attr)
 
-    def _dedupe_spark(self, attr: str, strategies: StrategyMapCollection) -> typing.Self:
+    def _dedupe_spark(self, attr: str | None, strategies: StrategyMapCollection):
         """Spark specific deduplication helper
-        
+
         Maps dataframe partitions to be processed via the RDD API yielding low-
         level list[Rows], which are then post-processed back to a dataframe.
-        
+
         Args:
             attr: The attribute to deduplicate.
             strategies: the collection of strategies
@@ -206,11 +206,11 @@ class DupeGrouper:
 
     @add_strategy.register(DeduplicationStrategy)
     @add_strategy.register(tuple)
-    def _(self, strategy) -> typing.Self:
+    def _(self, strategy):
         self._strategy_manager.add("default", strategy)
 
     @add_strategy.register(dict)
-    def _(self, strategy: StrategyMapCollection) -> typing.Self:
+    def _(self, strategy: StrategyMapCollection):
         for attr, strat_list in strategy.items():
             for strat in strat_list:
                 self._strategy_manager.add(attr, strat)
@@ -417,20 +417,20 @@ def _process_partition(
     partition_iter: typing.Iterator[Row],
     strategies: StrategyMapCollection,
     id: str,
-    attr: str,
+    attr: str | None,
 ) -> typing.Iterator[Row]:
     """process a spark dataframe partition i.e. a list[Row]
-    
+
     This function is functionality mapped to a worker node. For clean
     separation from the driver, strategies are re-instantiated and the main
     dupegrouper API is executed *per* worker node.
-    
+
     Args:
         paritition_iter: a partition
         strategies: the collection of strategies
         id: the unique identified of the dataset a.k.a "business key"
         attr: the attribute on which to deduplicate
-    
+
     Returns:
         A list[Row], deduplicated
     """

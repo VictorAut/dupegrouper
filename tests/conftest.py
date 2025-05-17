@@ -120,7 +120,7 @@ def df_spark(spark, id, address, email, blocking_key):
 
 
 @pytest.fixture(params=["pandas", "polars", "spark"], scope="session")
-def dataframe(request, df_pandas, df_polars, df_spark, spark) -> tuple:
+def dataframe(request, df_pandas, df_polars, df_spark, spark):
     """return a tuple of positionally ordered input parameters of DupeGrouper
 
     This is useful for implementations that ARE part of the public API
@@ -135,7 +135,7 @@ def dataframe(request, df_pandas, df_polars, df_spark, spark) -> tuple:
 
 
 @pytest.fixture(params=["pandas", "polars", "spark_df", "spark_row"], scope="session")
-def lowlevel_dataframe(request, df_pandas, df_polars, df_spark) -> tuple:
+def lowlevel_dataframe(request, df_pandas, df_polars, df_spark):
     """Most tests require the `dataframe` fixture, also defined above.
 
     However, this fixture offers all wrappers exhaustively, including the lower

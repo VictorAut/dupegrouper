@@ -2,7 +2,7 @@ from unittest.mock import Mock, patch, call
 
 import numpy as np
 import pytest
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer  # type: ignore
 
 from dupegrouper.base import _wrap
 from dupegrouper.definitions import TMP_ATTR, GROUP_ID

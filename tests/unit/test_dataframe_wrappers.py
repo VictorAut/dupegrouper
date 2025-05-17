@@ -70,8 +70,8 @@ def test_get_col(lowlevel_dataframe, group_id):
                 "66b Porters street, OL5 9PL, Newark, United Kingdom": "map_6",
                 "C. Ancho 49, 05687, Navarra": "map_6",
                 "Ambleside avenue Park Road ED3, UK": "map_8",
-                "123ab, OL5 9PL, UK": "map_9", # noqa: F601
-                "123ab, OL5 9PL, UK": "map_10", # noqa: F601
+                "123ab, OL5 9PL, UK": "map_9",  # noqa: F601
+                "123ab, OL5 9PL, UK": "map_10",  # noqa: F601
                 "37 Lincolnshire lane, GH9 5DF, Edinburgh, UK": "map_11",
                 "37 GH9, UK": "map_12",
                 "totally random non existant address": "map_13",

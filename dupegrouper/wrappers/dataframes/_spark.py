@@ -15,7 +15,7 @@ class WrappedSparkDataFrame(WrappedDataFrame):
 
     not_implemented = "Spark DataFrame methods are available per partition only, i.e. for lists of `pyspark.sql.Row`"
 
-    def __init__(self, df: DataFrame, id: str):
+    def __init__(self, df: DataFrame, id: str | None):
         super().__init__(df)
         del id  # Not implemented, input param there for API consistency
 
@@ -59,7 +59,7 @@ class WrappedSparkRows(WrappedDataFrame):
 
     @staticmethod
     @override
-    def _add_group_id(df: list[Row], id: str) -> list[Row]:
+    def _add_group_id(df: list[Row], id: str) -> list[Row]:  # type: ignore[override]
         return [Row(**{**row.asDict(), GROUP_ID: row[id]}) for row in df]
 
     # SPARK API WRAPPERS:

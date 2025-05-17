@@ -3,6 +3,7 @@ Full integration test for each backend wrapper and each strategy via
 a cartesian product of (backend X strategy). For respective lower-level tests
 of backend wrappers and deduplication strategies, please see unit tests.
 """
+
 import pytest
 
 from dupegrouper import DupeGrouper
@@ -16,7 +17,7 @@ STRATEGY_CLASSES = (
     tfidf.TfIdf,
 )
 
-STRATEGY_PARAMS = (
+STRATEGY_PARAMS: tuple[dict, ...] = (
     {},  # for exact
     {"tolerance": 0.45},  # for fuzzy
     {"ngram": (1, 1), "tolerance": 0.20, "topn": 2},  # for tfidf

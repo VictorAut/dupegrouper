@@ -53,6 +53,10 @@ pdoc = "^15.0.1"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+
+[tool.mypy]
+warn_no_return = false
+
 [[tool.mypy.overrides]]
 module = ["multipledispatch.*"]
 follow_untyped_imports = true
