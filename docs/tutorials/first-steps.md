@@ -6,6 +6,10 @@ title: First Steps
 
 See [Installation](../index.md#installation).
 
+## Agent Skills
+
+Using an AI coding agent? See [Agent Skills](../index.md#agent-skills) to install the `liken-skills` bundle and have your agent follow these tutorials' APIs correctly.
+
 ## Introduction
 
 Code blocks shown in this tutorial assume that a DataFrame, labelled `df`, will be available at runtime. No efforts are made to specify the nature of the data in `df`, the emphasis is on how to set up near deduplication correctly with **Liken**. There are datasets available for experimentation in the [`liken.datasets`](../reference/datasets.md) module for easy access to dummy data.
@@ -137,6 +141,18 @@ However, dataframe records may not be *exactly* repeated:
 ///
 
 This dummy dataset contains 3 unique emails. Using `drop_duplicates` straight from pandas won't do anything here, as "fizzpop@yahoo.com" and "FizzPop@yahoo.com" are not the same strings, nor will the above ["The Simplest Example"](./first-steps.md#the-simplest-example)
+
+## Exploring Your Data
+
+Before choosing a fuzzy threshold, use `explore` to see how duplicate rates change as matching becomes more or less strict:
+
+```python
+import liken as lk
+
+lk.dedupe(df).explore(["address", "email"])
+```
+
+The result is a small describe-like dataframe: one row for exact matching, then one row for each fuzzy threshold.
 
 ## Near Deduplication
 

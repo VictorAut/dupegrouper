@@ -1,15 +1,14 @@
-*.csv
 .cache/*
 
 scrap*
 
 **/__pycache__/*
+.python-version
 
 .coverage
-
 htmlcov/
 coverage.xml
 
-.python-version
-
 site/
+
+.memsearch

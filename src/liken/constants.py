@@ -34,6 +34,21 @@ INVALID_COLUMNS_NOT_NONE: Final[str] = (
     INVALID + "columns must be None when using the dict API, as they have been defined as dictionary keys."
 )
 
+# explore errors
+
+INVALID_EXPLORE_BACKEND: Final[str] = (
+    INVALID + "explore is only supported for the pandas, polars and modin backends, got '{}'"
+)
+INVALID_FRAC: Final[str] = INVALID + "frac must be a number in the range (0, 1], got {}"
+INVALID_THRESHOLDS: Final[str] = INVALID + "thresholds must be a non-empty list of floats in the range (0, 1), got {}"
+INVALID_EXPLORE_COLUMNS: Final[str] = (
+    INVALID + "columns for explore must be a non-empty list of column labels or a dict mapping columns to dedupers, got {}"
+)
+INVALID_EXPLORE_DEDUPER: Final[str] = (
+    INVALID + "explore dedupers must be single-column similarity (threshold) dedupers, got '{}'"
+)
+INVALID_EXPLORE_COLUMN_MISSING: Final[str] = INVALID + "column '{}' not found in the dataframe"
+
 # collection errors
 
 INVALID_DICT_KEY_MSG: Final[str] = "Invalid type for dict key type: expected str or tuple, got '{}'"
