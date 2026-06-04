@@ -17,13 +17,18 @@ from liken.core.executor import Executor
 from liken.core.executor import LocalExecutor
 from liken.core.wrapper import DF
 from liken.dedupers.exact import exact
+from liken.explore import DEFAULT_EXPLORE_THRESHOLDS
+from liken.explore import run_explore
 from liken.types import Columns
 from liken.types import InternalDataFrame
 from liken.types import Keep
 from liken.types import UserDataFrame
 from liken.validators import validate_columns_arg
+from liken.validators import validate_explore_columns_arg
+from liken.validators import validate_frac_arg
 from liken.validators import validate_keep_arg
 from liken.validators import validate_spark_arg
+from liken.validators import validate_thresholds_arg
 
 
 if TYPE_CHECKING:
@@ -129,6 +134,57 @@ class Dedupe:
         """
         self._collection.apply(deduper)
         return self
+
+    def explore(
+        self,
+        columns: list[str] | dict[str, BaseDeduper],
+        *,
+        thresholds: list[float] | None = None,
+        frac: float = 1.0,
+    ) -> UserDataFrame:
+        """Profile the potential duplicate rate of one or more columns.
+
+        Inspired by pandas `DataFrame.describe`, `explore` is an exploratory
+        tool to understand whether, and how aggressively, data deduplicates —
+        without committing to a deduplication. For each column it reports the
+        duplicate rate (the fraction of rows that are redundant duplicates, i.e.
+        that would be removed by `drop_duplicates`) for exact matching and for
+        similarity matching across a sweep of thresholds.
+
+        By default each column is analysed with the `fuzzy` deduper. Pass a dict
+        mapping a column to a single-column similarity deduper to use a
+        different deduper for that column; it is swept across the same
+        `thresholds`.
+
+        As deduplication scales at approximately O(n^2), use the `frac` arg to
+        analyse a random sample of the data for a faster, approximate result.
+
+        Note:
+            Only supported for the pandas, polars and modin backends.
+
+        Args:
+            columns (list[str] | dict[str, BaseDeduper]): The column labels to
+                analyse with the default `fuzzy` deduper, or a dict mapping a
+                column label to a single-column similarity (threshold) deduper
+                to use for that column.
+            thresholds: The similarity thresholds to sweep, each a float in the
+                range (0, 1). Defaults to [0.5, 0.75, 0.9, 0.95, 0.99].
+            frac: The fraction of rows to randomly sample before analysis, a
+                float in the range (0, 1]. Defaults to 1.0 (no sampling).
+
+        Returns:
+            A dataframe, in the same backend as the input, of duplicate rates.
+
+        Raises:
+            ValueError: Unsupported backend, invalid `frac`, invalid
+                `thresholds`, invalid `columns`, or a column not in the
+                dataframe.
+        """
+        validate_frac_arg(frac)
+        thresholds = validate_thresholds_arg(thresholds if thresholds is not None else DEFAULT_EXPLORE_THRESHOLDS)
+        validate_explore_columns_arg(columns)
+
+        return run_explore(self._df, columns, thresholds, frac)
 
     def drop_duplicates(
         self,

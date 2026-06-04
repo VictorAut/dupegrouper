@@ -37,6 +37,7 @@
 The key features are:
 
 - Near deduplication tooling
+- Exploratory duplicate-rate profiling
 - Fuzzy string matching deduper
 - TF-IDF tokenization deduper
 - LSH tokenization deduper
@@ -147,6 +148,30 @@ Jump to the [tutorial](tutorials/first-steps.md) to dive deeper into how to buil
 **Liken's** focus is on composable, complex, deduplication pipelines that scale to distributed datasets. But, extra-easy integration is provided for Pandas DataFrames.
 
 If you are a pandas user looking for intuitive near-deduplication Pandas API extension and little more, head to the [Coming from Pandas?](tutorials/applying-dedupers.md#coming-from-pandas) section!
+
+## Agent Skills
+
+**Liken**  makes available agent skills for use in agentic workflows.
+
+Install the bundle from the [tessl](https://tessl.io) registry:
+
+```bash
+tessl install victoraut/liken-skills
+```
+
+The bundle contains one skill per API tier:
+
+| Skill | Teaches |
+| ----- | ----- |
+| `liken` | Overview, and which API to reach for |
+| `liken-dedupers` | Applying built-in dedupers |
+| `liken-pipelines` | Pipelines with AND/OR/NOT rules and built-in preprocessors |
+| `liken-custom-dedupers` | Writing your own dedupers in pure Python |
+| `liken-record-linkage` | Canonicalization and synthetic records |
+| `liken-backends-performance` | Backend selection, scaling and performance |
+
+??? info "Using the skills"
+    Once installed, agent-skill-aware tools (Claude Code, Cursor, and others) discover the skills automatically and load the relevant one on demand. Pin a version for reproducibility, e.g. `tessl install victoraut/liken-skills@0.1.0`. See the [tessl documentation](https://docs.tessl.io) for managing installed skills.
 
 ## License
 
