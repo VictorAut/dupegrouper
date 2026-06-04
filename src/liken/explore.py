@@ -1,13 +1,4 @@
-"""Exploratory duplicate-rate profiling for the `Dedupe.explore` method.
-
-Reports, per column, the duplicate rate for exact matching and for a sweep of
-similarity thresholds, returning a `describe`-like dataframe in the user's own
-backend. Only supported for the pandas, polars and modin backends.
-
-The duplicate rate is the fraction of rows that are redundant duplicates (i.e.
-that would be removed by `drop_duplicates`): ``(n - n_groups) / n``. For exact
-matching this is equivalent to pandas ``Series.duplicated().mean()``.
-"""
+"""Exploratory duplicate-rate profiling"""
 
 from __future__ import annotations
 
@@ -27,7 +18,6 @@ from liken.dedupers.exact import exact
 from liken.dedupers.fuzzy import fuzzy
 from liken.types import UserDataFrame
 from liken.validators import validate_explore_column_exists
-
 
 DEFAULT_EXPLORE_THRESHOLDS: Final[list[float]] = [0.5, 0.75, 0.9, 0.95, 0.99]
 
@@ -50,7 +40,6 @@ def run_explore(
     if backend.name not in _SUPPORTED_BACKENDS:
         raise ValueError(INVALID_EXPLORE_BACKEND.format(backend.name))
 
-    # `.columns` is a list-like for all three supported backends.
     df_columns: list[str] = list(df.columns)
 
     if isinstance(columns, dict):
@@ -75,10 +64,19 @@ def run_explore(
 
     for threshold in thresholds:
         row: list[str | float] = [str(threshold)]
-        row.extend(_duplicate_rate(_at_threshold(base_dedupers[col], threshold), wdf, col) for col in col_names)
+        row.extend(
+            _duplicate_rate(
+                _at_threshold(base_dedupers[col], threshold),
+                wdf,
+                col,
+            )
+            for col in col_names
+        )
         rows.append(row)
 
-    result: UserDataFrame = backend.create_df(data=rows, schema=[_METRIC_LABEL, *col_names])
+    result: UserDataFrame = backend.create_df(
+        data=rows, schema=[_METRIC_LABEL, *col_names]
+    )
 
     if backend.name in ("pandas", "modin"):
         result = cast(Any, result).set_index(_METRIC_LABEL)
@@ -92,7 +90,6 @@ def _sample(df: UserDataFrame, backend_name: str, frac: float) -> UserDataFrame:
         return df
     if backend_name == "polars":
         return cast(UserDataFrame, cast(Any, df).sample(fraction=frac))
-    # pandas + modin share the pandas API
     return cast(UserDataFrame, cast(Any, df).sample(frac=frac))
 
 

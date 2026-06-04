@@ -42,7 +42,8 @@ INVALID_EXPLORE_BACKEND: Final[str] = (
 INVALID_FRAC: Final[str] = INVALID + "frac must be a number in the range (0, 1], got {}"
 INVALID_THRESHOLDS: Final[str] = INVALID + "thresholds must be a non-empty list of floats in the range (0, 1), got {}"
 INVALID_EXPLORE_COLUMNS: Final[str] = (
-    INVALID + "columns for explore must be a non-empty list of column labels or a dict mapping columns to dedupers, got {}"
+    INVALID
+    + "columns for explore must be a non-empty list of column labels or a dict mapping columns to dedupers, got {}"
 )
 INVALID_EXPLORE_DEDUPER: Final[str] = (
     INVALID + "explore dedupers must be single-column similarity (threshold) dedupers, got '{}'"
