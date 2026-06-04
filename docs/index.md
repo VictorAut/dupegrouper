@@ -156,7 +156,7 @@ If you are a pandas user looking for intuitive near-deduplication Pandas API ext
 Install the bundle from the [tessl](https://tessl.io) registry:
 
 ```bash
-tessl install liken/liken-skills
+tessl install victoraut/liken-skills
 ```
 
 The bundle contains one skill per API tier:
@@ -171,7 +171,7 @@ The bundle contains one skill per API tier:
 | `liken-backends-performance` | Backend selection, scaling and performance |
 
 ??? info "Using the skills"
-    Once installed, agent-skill-aware tools (Claude Code, Cursor, and others) discover the skills automatically and load the relevant one on demand. Pin a version for reproducibility, e.g. `tessl install liken/liken-skills@0.1.0`. See the [tessl documentation](https://docs.tessl.io) for managing installed skills.
+    Once installed, agent-skill-aware tools (Claude Code, Cursor, and others) discover the skills automatically and load the relevant one on demand. Pin a version for reproducibility, e.g. `tessl install victoraut/liken-skills@0.1.0`. See the [tessl documentation](https://docs.tessl.io) for managing installed skills.
 
 ## License
 

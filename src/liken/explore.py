@@ -19,6 +19,7 @@ from liken.dedupers.fuzzy import fuzzy
 from liken.types import UserDataFrame
 from liken.validators import validate_explore_column_exists
 
+
 DEFAULT_EXPLORE_THRESHOLDS: Final[list[float]] = [0.5, 0.75, 0.9, 0.95, 0.99]
 
 _SUPPORTED_BACKENDS: Final[frozenset[str]] = frozenset({"pandas", "polars", "modin"})
@@ -74,9 +75,7 @@ def run_explore(
         )
         rows.append(row)
 
-    result: UserDataFrame = backend.create_df(
-        data=rows, schema=[_METRIC_LABEL, *col_names]
-    )
+    result: UserDataFrame = backend.create_df(data=rows, schema=[_METRIC_LABEL, *col_names])
 
     if backend.name in ("pandas", "modin"):
         result = cast(Any, result).set_index(_METRIC_LABEL)

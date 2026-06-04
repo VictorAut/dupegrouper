@@ -174,9 +174,6 @@ class Dedupe:
 
         Returns:
             A dataframe, in the same backend as the input, of duplicate rates.
-            Rows are the metrics ("exact" and one per threshold); columns are
-            the analysed columns. For pandas and modin the metrics are the
-            index; for polars they are a leading "metric" column.
 
         Raises:
             ValueError: Unsupported backend, invalid `frac`, invalid
