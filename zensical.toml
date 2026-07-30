@@ -110,10 +110,6 @@ custom_checkbox = true
 [project.extra.version]
 provider = "mike"
 
-# TERMYNAL:
+# MARKDOWN EXEC:
 
-[project.markdown_extensions.termynal]
-include_assets = true
-title = "bash"
-buttons = "macos"
-prompt_literal_start = ["$"]
+[project.plugins.markdown-exec]

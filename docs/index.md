@@ -13,7 +13,7 @@
 <a href="https://pypi.python.org/pypi/liken"><img height="20" alt="PyPI Version" src="https://img.shields.io/pypi/v/liken"></a>
 <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/liken">
 <img height="20" alt="PyPI Downloads" src="https://static.pepy.tech/badge/liken">
-<img height="20" alt="Tests" src="https://img.shields.io/github/actions/workflow/status/VictorAut/liken/python-validation.yml?label=CI">
+<img height="20" alt="Tests" src="https://img.shields.io/github/actions/workflow/status/VictorAut/liken/ci.yml?label=CI">
 <img height="20" alt="Coverage" src="https://img.shields.io/codecov/c/github/VictorAut/liken">
 <img height="20" alt="License" src="https://img.shields.io/github/license/VictorAut/liken">
 </p>
@@ -32,7 +32,7 @@
 
 ## Why...
 
-**Liken** provides enhanced deduplication tooling for DataFrames.
+**Liken** provides enhanced deduplication tooling, entity resolution and canonicalization for DataFrames, scaling from single node to massively parallel processed implementations.
 
 The key features are:
 
@@ -133,7 +133,7 @@ uv pip install liken
 ```python
 import liken as lk
 
-df = ... # e.g. read data
+# df = ... # e.g. read data
 
 df = (
     lk.dedupe(df)
@@ -153,7 +153,7 @@ If you are a pandas user looking for intuitive near-deduplication Pandas API ext
 
 **Liken**  makes available agent skills for use in agentic workflows.
 
-Install the bundle from the [tessl](https://tessl.io) registry:
+Install the bundle from the [tessl](https://tessl.io/registry/victoraut/liken-skills) registry:
 
 ```bash
 tessl install victoraut/liken-skills
