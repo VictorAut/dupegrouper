@@ -109,7 +109,3 @@ custom_checkbox = true
 
 [project.extra.version]
 provider = "mike"
-
-# MARKDOWN EXEC:
-
-[project.plugins.markdown-exec]

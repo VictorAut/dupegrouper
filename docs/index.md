@@ -34,6 +34,8 @@
 
 **Liken** provides enhanced deduplication tooling, entity resolution and canonicalization for DataFrames, scaling from single node to massively parallel processed implementations.
 
+### Features
+
 The key features are:
 
 - Near deduplication tooling
@@ -57,6 +59,18 @@ The key features are:
 **Liken** aims to answer the call for as-easy-to-use near deduplication as possible, with as natural and easy to understand syntax as possible.
 
 Cut boilerplate code to simple deduplication pipelines with **Liken**.
+
+### Use Cases
+
+- **Find near-duplicate records.** Identify records that represent the same real-world entity despite differences in spelling, formatting or missing values.
+- **Perform fuzzy joins between datasets.** Join DataFrames using approximate rather than exact matching to combine imperfect data sources.
+- **Link records from multiple data sources.** Connect related records across databases, spreadsheets or data lakes using configurable matching rules.
+- **Resolve entities from messy data.** Determine when different records refer to the same person, company, product or other real-world entity.
+- **Match names, addresses and companies.** Handle abbreviations, misspellings, inconsistent formatting and other common data quality issues.
+- **Canonicalize duplicate records.** Merge groups of duplicate records into a single canonical representation using customizable aggregation rules.
+- **Build golden datasets.** Create clean, trusted master datasets by consolidating overlapping information from multiple sources.
+- **Clean and standardize messy data.** Apply preprocessing, normalization and deduplication to improve overall data quality.
+- **Prepare data for analytics and machine learning.** Reduce duplicate bias and improve data quality before reporting, modelling or downstream processing.
 
 ## Supported DataFrame Libraries
 
@@ -126,7 +140,18 @@ uv pip install liken
     uv pip install 'liken[all]'     # deduplicate with any of the above
     ```
 
+??? tip "Installing in a Python project"
+    It's recommended you set up a project with [uv](https://docs.astral.sh/uv/getting-started/installation/).
 
+    Install uv, create a project, and install **Liken**:
+
+    ```bash
+    uv init my-project
+    cd my-project
+    uv add liken
+    ```
+
+    Use `uv add` to automatically install **Liken** within a new virtual environment, and tracked as a dependency in `pyproject.toml`.
 
 ## Use `liken` In Your Code
 
@@ -149,9 +174,9 @@ Jump to the [tutorial](tutorials/first-steps.md) to dive deeper into how to buil
 
 If you are a pandas user looking for intuitive near-deduplication Pandas API extension and little more, head to the [Coming from Pandas?](tutorials/applying-dedupers.md#coming-from-pandas) section!
 
-## Agent Skills
+## AI Agent Skills
 
-**Liken**  makes available agent skills for use in agentic workflows.
+**Liken**  makes available agent skills for use in agentic workflows. This is an optional inclusion to your project, and will help you navigate the various APIs so as to best help you solve your problem. 
 
 Install the bundle from the [tessl](https://tessl.io/registry/victoraut/liken-skills) registry:
 
